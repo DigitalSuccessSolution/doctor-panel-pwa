@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-poppins), "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-poppins: var(--font-poppins), "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+:root {
+  --primary: #A5D8FF;
+  --secondary: #FFD1DC;
+  --accent: #B2F2BB;
+  --background: #F8F9FA;
+  --surface: #FFFFFF;
+  --deep-teal: #1E4E70;
+  --brand-blue: #2B6CB0;
+  --attention-red: #D93838;
+}
+
+/* Smooth crisp antialiasing across all elements */
+*, *::before, *::after {
+  font-family: var(--font-poppins), "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: #F8F9FA;
+  color: #334155;
+  font-family: var(--font-poppins), "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  font-weight: 400;
+}
+
+/* Reduce font weight across all headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-poppins), "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-weight: 500 !important;
+  letter-spacing: -0.01em;
+}
+
+/* Globally map all heavy bold utility classes down to clean medium (500) weight */
+b, strong, th, .font-bold, .font-extrabold, .font-black, .font-semibold {
+  font-weight: 500 !important;
+}
+
+/* Enforce hand pointer cursor on all clickable & interactive elements */
+button,
+select,
+summary,
+input[type="submit"],
+input[type="button"],
+input[type="checkbox"],
+input[type="radio"],
+[role="button"],
+a {
+  cursor: pointer;
+}
+
+button:disabled,
+input:disabled,
+select:disabled {
+  cursor: not-allowed;
+}
+
+/* Flat Clean Utilities */
+
+/* Custom Scrollbar for PWA */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Enlarge small font sizes on mobile screens for clear, crisp readability */
+@media (max-width: 640px) {
+  .text-\[10px\] {
+    font-size: 11.5px !important;
+  }
+  .text-\[11px\] {
+    font-size: 13px !important;
+  }
+  .text-xs {
+    font-size: 14px !important;
+  }
+  .text-sm {
+    font-size: 15.5px !important;
+  }
+}
