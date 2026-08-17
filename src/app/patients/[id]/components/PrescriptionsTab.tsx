@@ -65,7 +65,7 @@ export default function PrescriptionsTab({
       <div className="lg:col-span-7">
         <form
           onSubmit={handleCreatePrescription}
-          className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-2xs space-y-4"
+          className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-2xs space-y-4"
         >
           <div className="flex items-center justify-between border-b border-slate-100 pb-2">
             <h3 className="font-bold text-slate-800 text-sm tracking-tight flex items-center gap-2">
@@ -146,8 +146,8 @@ export default function PrescriptionsTab({
 
             <div className="space-y-3">
               {rxMedicines.map((med, index) => (
-                <div key={index} className="grid grid-cols-1 sm:grid-cols-12 gap-2 p-3 bg-slate-50 border border-slate-200/60 rounded-2xl relative text-xs">
-                  <div className="sm:col-span-4 space-y-1">
+                <div key={index} className="grid grid-cols-1 sm:grid-cols-12 gap-2 p-3 bg-slate-50 border border-slate-200/60 rounded-lg relative text-xs items-end">
+                  <div className="sm:col-span-3 space-y-1">
                     <label className="font-semibold text-slate-500">Name</label>
                     <input
                       type="text"
@@ -155,7 +155,7 @@ export default function PrescriptionsTab({
                       value={med.name}
                       onChange={(e) => handleMedicineChange(index, "name", e.target.value)}
                       placeholder="e.g. Crocin Drops"
-                      className="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs"
+                      className="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#1E4E70]"
                     />
                   </div>
                   <div className="sm:col-span-2 space-y-1">
@@ -164,33 +164,58 @@ export default function PrescriptionsTab({
                       type="text"
                       value={med.dosage}
                       onChange={(e) => handleMedicineChange(index, "dosage", e.target.value)}
-                      className="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs"
+                      className="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#1E4E70]"
                     />
                   </div>
                   <div className="sm:col-span-2 space-y-1">
                     <label className="font-semibold text-slate-500">Freq</label>
-                    <input
-                      type="text"
+                    <select
                       value={med.frequency}
                       onChange={(e) => handleMedicineChange(index, "frequency", e.target.value)}
-                      className="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs"
-                    />
+                      className="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#1E4E70] cursor-pointer"
+                    >
+                      <option value="1-0-0">1 Time (Morning)</option>
+                      <option value="0-1-0">1 Time (Afternoon)</option>
+                      <option value="0-0-1">1 Time (Night)</option>
+                      <option value="1-0-1">2 Times (Morning & Night)</option>
+                      <option value="1-1-1">3 Times A Day</option>
+                      <option value="SOS">As Needed (SOS)</option>
+                    </select>
                   </div>
                   <div className="sm:col-span-2 space-y-1">
                     <label className="font-semibold text-slate-500">Duration</label>
-                    <input
-                      type="text"
+                    <select
                       value={med.duration}
                       onChange={(e) => handleMedicineChange(index, "duration", e.target.value)}
-                      className="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs"
+                      className="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#1E4E70] cursor-pointer"
+                    >
+                      <option value="1 Day">1 Day</option>
+                      <option value="2 Days">2 Days</option>
+                      <option value="3 Days">3 Days</option>
+                      <option value="5 Days">5 Days</option>
+                      <option value="1 Week">1 Week</option>
+                      <option value="2 Weeks">2 Weeks</option>
+                      <option value="1 Month">1 Month</option>
+                      <option value="Ongoing">Ongoing</option>
+                    </select>
+                  </div>
+                  <div className="sm:col-span-2 space-y-1">
+                    <label className="font-semibold text-slate-500">Instructions</label>
+                    <input
+                      type="text"
+                      value={med.instructions}
+                      onChange={(e) => handleMedicineChange(index, "instructions", e.target.value)}
+                      placeholder="e.g. After meal"
+                      className="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#1E4E70]"
                     />
                   </div>
-                  <div className="sm:col-span-2 flex items-end justify-between gap-1">
+                  <div className="sm:col-span-1 flex items-end justify-center pb-0.5">
                     <button
                       type="button"
                       disabled={rxMedicines.length === 1}
                       onClick={() => handleRemoveMedicineRow(index)}
                       className="text-rose-600 hover:bg-rose-50 p-2 rounded-xl border border-rose-200 disabled:opacity-40 cursor-pointer"
+                      title="Remove Medicine"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -237,7 +262,7 @@ export default function PrescriptionsTab({
 
       {/* Right Side: Prescription History List */}
       <div className="lg:col-span-5 space-y-4">
-        <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs space-y-4">
+        <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-xs space-y-4">
           <h3 className="font-bold text-slate-900 text-sm uppercase tracking-wider">
             Prescription Logs History
           </h3>
@@ -249,7 +274,7 @@ export default function PrescriptionsTab({
           ) : (
             <div className="space-y-3">
               {prescriptionList.map((rx) => (
-                <div key={rx.id} className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl space-y-2">
+                <div key={rx.id} className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-lg space-y-2">
                   <div className="flex items-center justify-between text-xs border-b border-slate-200/60 pb-1.5">
                     <span className="font-bold text-slate-800">{rx.date}</span>
                     <div className="flex items-center gap-2">
@@ -279,9 +304,14 @@ export default function PrescriptionsTab({
                     <div className="text-[11px] text-slate-600 space-y-0.5">
                       <strong className="block text-slate-700">Medicines ({rx.medicines.length}):</strong>
                       {rx.medicines.map((m: any, idx: number) => (
-                        <div key={idx} className="flex justify-between font-semibold">
-                          <span>• {m.medicineName || m.name}</span>
-                          <span>{m.dosage} ({m.frequency})</span>
+                        <div key={idx} className="flex flex-col mb-1 border-b border-slate-100/50 pb-1 last:border-0">
+                          <div className="flex justify-between font-semibold">
+                            <span>• {m.medicineName || m.name}</span>
+                            <span>{m.dosage} ({m.frequency}) - {m.duration}</span>
+                          </div>
+                          {m.instructions && (
+                            <span className="text-[9px] text-slate-500 pl-2 italic">Instructions: {m.instructions}</span>
+                          )}
                         </div>
                       ))}
                     </div>

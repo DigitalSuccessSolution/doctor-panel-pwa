@@ -143,22 +143,19 @@ export const nutritionService = {
     weeklySchedule?: Array<{ day: string; mealId?: string }>;
     guidelines?: string;
   }): Promise<ApiResponse<BackendNutritionPlan>> {
-    const sanitizedSchedule = Array.isArray(data.weeklySchedule) && data.weeklySchedule.length > 0
+    const sanitizedSchedule = Array.isArray(data.weeklySchedule)
       ? data.weeklySchedule.map((item, idx) => ({
           day: ensureValidDay(item.day, idx),
           mealId: ensureValidMealId(item.mealId),
         }))
-      : [
-          { day: "Monday", mealId: DEFAULT_SAMPLE_MEAL_ID },
-          { day: "Tuesday", mealId: DEFAULT_SAMPLE_MEAL_ID },
-        ];
+      : [];
 
     return apiFetch<BackendNutritionPlan>(API_CONFIG.ENDPOINTS.NUTRITION_PLANS.LIST, {
       method: "POST",
       body: JSON.stringify({
         babyId: data.babyId,
         weeklySchedule: sanitizedSchedule,
-        guidelines: data.guidelines || "Pediatric nutritional guidance",
+        guidelines: data.guidelines || "",
       }),
     });
   },
@@ -171,7 +168,7 @@ export const nutritionService = {
     id: string,
     data: { babyId: string; weeklySchedule?: Array<{ day: string; mealId?: string }>; guidelines?: string }
   ): Promise<ApiResponse<BackendNutritionPlan>> {
-    const sanitizedSchedule = Array.isArray(data.weeklySchedule) && data.weeklySchedule.length > 0
+    const sanitizedSchedule = Array.isArray(data.weeklySchedule)
       ? data.weeklySchedule.map((item, idx) => ({
           day: ensureValidDay(item.day, idx),
           mealId: ensureValidMealId(item.mealId),
@@ -182,8 +179,8 @@ export const nutritionService = {
       method: "PUT",
       body: JSON.stringify({
         babyId: data.babyId,
-        ...(sanitizedSchedule ? { weeklySchedule: sanitizedSchedule } : {}),
-        ...(data.guidelines ? { guidelines: data.guidelines } : {}),
+        ...(sanitizedSchedule !== undefined ? { weeklySchedule: sanitizedSchedule } : {}),
+        ...(data.guidelines !== undefined ? { guidelines: data.guidelines } : {}),
       }),
     });
   },

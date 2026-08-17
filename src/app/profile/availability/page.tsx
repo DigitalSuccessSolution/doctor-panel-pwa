@@ -110,8 +110,8 @@ export default function AvailabilityManagerPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="max-w-md mx-auto p-6 bg-white rounded-3xl border border-slate-200 text-center space-y-4 font-sans animate-fadeIn my-12 shadow-sm">
-        <div className="w-12 h-12 rounded-2xl bg-[#A5D8FF]/30 text-[#1E4E70] mx-auto flex items-center justify-center">
+      <div className="max-w-md mx-auto p-6 bg-white rounded-xl border border-slate-200 text-center space-y-4 font-sans animate-fadeIn my-12 shadow-sm">
+        <div className="w-12 h-12 rounded-lg bg-[#A5D8FF]/30 text-[#1E4E70] mx-auto flex items-center justify-center">
           <Calendar className="w-6 h-6" />
         </div>
         <h2 className="text-lg font-bold text-slate-900">Login Required</h2>
@@ -120,7 +120,7 @@ export default function AvailabilityManagerPage() {
         </p>
         <button
           onClick={() => setShowLoginModal(true)}
-          className="w-full bg-[#1E4E70] hover:bg-[#153852] text-white font-semibold text-xs py-3 rounded-2xl cursor-pointer transition-colors"
+          className="w-full bg-[#1E4E70] hover:bg-[#153852] text-white font-semibold text-xs py-3 rounded-lg cursor-pointer transition-colors"
         >
           Sign In Now
         </button>
@@ -323,7 +323,7 @@ export default function AvailabilityManagerPage() {
         <button
           onClick={handleSave}
           disabled={isSubmitting}
-          className="bg-[#1E4E70] hover:bg-[#153852] disabled:bg-slate-300 text-white text-xs font-bold px-5 py-3 rounded-2xl flex items-center justify-center gap-2 cursor-pointer transition-all duration-150 active:scale-95 shadow-sm"
+          className="bg-[#1E4E70] hover:bg-[#153852] disabled:bg-slate-300 text-white text-xs font-bold px-5 py-3 rounded-lg flex items-center justify-center gap-2 cursor-pointer transition-all duration-150 active:scale-95 shadow-sm"
         >
           <Save className="w-4 h-4" />
           <span>{isSubmitting ? "Saving..." : "Save Availability"}</span>
@@ -332,7 +332,7 @@ export default function AvailabilityManagerPage() {
 
       {/* SAVE SUCCESS STATUS */}
       {saveSuccess && (
-        <div className="bg-emerald-50 border border-emerald-300 text-emerald-900 p-4 rounded-2xl flex items-center gap-3 shadow-xs animate-slideDown">
+        <div className="bg-emerald-50 border border-emerald-300 text-emerald-900 p-4 rounded-lg flex items-center gap-3 shadow-xs animate-slideDown">
           <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
           <div>
             <p className="text-xs font-bold">OPD Schedule Saved Successfully!</p>
@@ -345,7 +345,7 @@ export default function AvailabilityManagerPage() {
 
       {/* ERROR TOAST */}
       {errorMsg && (
-        <div className="bg-rose-50 border border-rose-200 text-rose-900 p-4 rounded-2xl flex items-start gap-3 shadow-xs">
+        <div className="bg-rose-50 border border-rose-200 text-rose-900 p-4 rounded-lg flex items-start gap-3 shadow-xs">
           <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
           <p className="text-xs font-medium leading-relaxed">{errorMsg}</p>
         </div>
@@ -356,7 +356,7 @@ export default function AvailabilityManagerPage() {
         
         {/* LEFT COLUMN: WEEKLY DAY SCHEDULES (8 COLS) */}
         <div className="lg:col-span-7 space-y-4">
-          <div className="bg-white rounded-3xl p-5 border border-slate-200 shadow-2xs space-y-4">
+          <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-2xs space-y-4">
             <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
               <Clock className="w-4.5 h-4.5 text-[#1E4E70]" />
               <h3 className="text-sm sm:text-base font-bold text-slate-800">
@@ -404,7 +404,7 @@ export default function AvailabilityManagerPage() {
 
                   {/* SHIFTS CONFIGURATIONS */}
                   {day.isAvailable && (
-                    <div className="bg-[#F8FAFC] p-3.5 rounded-2xl border border-slate-200/60 space-y-2">
+                    <div className="bg-[#F8FAFC] p-3.5 rounded-lg border border-slate-200/60 space-y-2">
                       {day.shifts.map((shift, sIdx) => (
                         <div key={sIdx} className="flex items-center gap-3">
                           <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-xl border border-slate-200 flex-1">
@@ -459,7 +459,7 @@ export default function AvailabilityManagerPage() {
         <div className="lg:col-span-5 space-y-6">
           
           {/* SLOT DURATION & CON-FEE CARD */}
-          <div className="bg-white rounded-3xl p-5 border border-slate-200 shadow-2xs space-y-4">
+          <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-2xs space-y-4">
             <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
               <Info className="w-4.5 h-4.5 text-[#1E4E70]" />
               <h3 className="text-sm sm:text-base font-bold text-slate-800">
@@ -496,7 +496,7 @@ export default function AvailabilityManagerPage() {
                 <label className="text-xs font-semibold text-slate-700 block">
                   Consultation Fee (₹)*
                 </label>
-                <div className="flex items-center gap-2 bg-[#F8FAFC] border border-slate-200 px-3.5 py-3 rounded-2xl focus-within:ring-2 focus-within:ring-[#1E4E70] focus-within:bg-white transition-all">
+                <div className="flex items-center gap-2 bg-[#F8FAFC] border border-slate-200 px-3.5 py-3 rounded-lg focus-within:ring-2 focus-within:ring-[#1E4E70] focus-within:bg-white transition-all">
                   <DollarSign className="w-4 h-4 text-slate-400 shrink-0" />
                   <input
                     type="number"
@@ -512,7 +512,7 @@ export default function AvailabilityManagerPage() {
           </div>
 
           {/* DATE-WISE HOLIDAYS & SPECIAL RULES (CALENDAR RULES) */}
-          <div className="bg-white rounded-3xl p-5 border border-slate-200 shadow-2xs space-y-4">
+          <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-2xs space-y-4">
             <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
               <Calendar className="w-4.5 h-4.5 text-[#1E4E70]" />
               <h3 className="text-sm sm:text-base font-bold text-slate-800">
@@ -521,7 +521,7 @@ export default function AvailabilityManagerPage() {
             </div>
 
             {/* ADD SPECIAL EXCEPTION FORM */}
-            <form onSubmit={handleAddException} className="space-y-3 bg-[#F8FAFC] p-4 rounded-2xl border border-slate-200/60">
+            <form onSubmit={handleAddException} className="space-y-3 bg-[#F8FAFC] p-4 rounded-lg border border-slate-200/60">
               <span className="block text-[11px] font-bold text-[#1E4E70] uppercase tracking-wider">
                 Add Date Custom Rule
               </span>
@@ -639,7 +639,7 @@ export default function AvailabilityManagerPage() {
                   {dateExceptions.map((exc) => (
                     <div
                       key={exc.date}
-                      className={`p-3 rounded-2xl border flex items-center justify-between gap-3 text-xs ${
+                      className={`p-3 rounded-lg border flex items-center justify-between gap-3 text-xs ${
                         exc.status === "Leave"
                           ? "bg-rose-50/50 border-rose-200/60"
                           : "bg-amber-50/50 border-amber-200/60"

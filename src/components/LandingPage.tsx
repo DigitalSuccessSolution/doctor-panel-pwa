@@ -290,22 +290,22 @@ export default function LandingPage() {
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
-              <div className="p-5 rounded-2xl bg-[#F8F9FA] border border-slate-200/80 shadow-2xs space-y-1 hover:border-[#A5D8FF] transition-all">
+              <div className="p-5 rounded-lg bg-[#F8F9FA] border border-slate-200/80 shadow-2xs space-y-1 hover:border-[#A5D8FF] transition-all">
                 <p className="text-3xl font-semibold text-[#1E4E70]">50,000+</p>
                 <p className="text-xs font-semibold text-slate-700">Active Parents Enrolled</p>
               </div>
 
-              <div className="p-5 rounded-2xl bg-[#F8F9FA] border border-slate-200/80 shadow-2xs space-y-1 hover:border-[#A5D8FF] transition-all">
+              <div className="p-5 rounded-lg bg-[#F8F9FA] border border-slate-200/80 shadow-2xs space-y-1 hover:border-[#A5D8FF] transition-all">
                 <p className="text-3xl font-semibold text-emerald-600">2,500+</p>
                 <p className="text-xs font-semibold text-slate-700">Verified Pediatricians</p>
               </div>
 
-              <div className="p-5 rounded-2xl bg-[#F8F9FA] border border-slate-200/80 shadow-2xs space-y-1 hover:border-[#A5D8FF] transition-all">
+              <div className="p-5 rounded-lg bg-[#F8F9FA] border border-slate-200/80 shadow-2xs space-y-1 hover:border-[#A5D8FF] transition-all">
                 <p className="text-3xl font-semibold text-[#1E4E70]">99.4%</p>
                 <p className="text-xs font-semibold text-slate-700">Growth Tracking Precision</p>
               </div>
 
-              <div className="p-5 rounded-2xl bg-[#F8F9FA] border border-slate-200/80 shadow-2xs space-y-1 hover:border-[#A5D8FF] transition-all">
+              <div className="p-5 rounded-lg bg-[#F8F9FA] border border-slate-200/80 shadow-2xs space-y-1 hover:border-[#A5D8FF] transition-all">
                 <p className="text-3xl font-semibold text-amber-500">4.9 ★</p>
                 <p className="text-xs font-semibold text-slate-700">Parent Satisfaction Rate</p>
               </div>
@@ -324,7 +324,7 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Card 1: Patient Management */}
-            <div className="bg-white rounded-3xl border border-slate-200/70 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden group">
+            <div className="bg-white rounded-xl border border-slate-200/70 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden group">
               <div className="relative h-44 w-full bg-slate-100 overflow-hidden">
                 <Image
                   src="/child_care.png"
@@ -346,7 +346,7 @@ export default function LandingPage() {
             </div>
 
             {/* Card 2: Growth Analytics */}
-            <div className="bg-white rounded-3xl border border-slate-200/70 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden group">
+            <div className="bg-white rounded-xl border border-slate-200/70 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden group">
               <div className="relative h-44 w-full bg-slate-100 overflow-hidden">
                 <Image
                   src="/growth_preview.png"
@@ -368,7 +368,7 @@ export default function LandingPage() {
             </div>
 
             {/* Card 3: Nutrition Plans */}
-            <div className="bg-white rounded-3xl border border-slate-200/70 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden group">
+            <div className="bg-white rounded-xl border border-slate-200/70 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden group">
               <div className="relative h-44 w-full bg-slate-100 overflow-hidden">
                 <Image
                   src="/2.png"
@@ -390,7 +390,7 @@ export default function LandingPage() {
             </div>
 
             {/* Card 4: Prescriptions */}
-            <div className="bg-white rounded-3xl border border-slate-200/70 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden group">
+            <div className="bg-white rounded-xl border border-slate-200/70 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden group">
               <div className="relative h-44 w-full bg-slate-100 overflow-hidden">
                 <Image
                   src="/3.png"
@@ -412,7 +412,7 @@ export default function LandingPage() {
             </div>
 
             {/* Card 5: Appointments */}
-            <div className="bg-white rounded-3xl border border-slate-200/70 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden group">
+            <div className="bg-white rounded-xl border border-slate-200/70 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden group">
               <div className="relative h-44 w-full bg-slate-100 overflow-hidden">
                 <Image
                   src="/opd_banner.png"
@@ -434,7 +434,7 @@ export default function LandingPage() {
             </div>
 
             {/* Card 6: Medical Notes */}
-            <div className="bg-white rounded-3xl border border-slate-200/70 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden group">
+            <div className="bg-white rounded-xl border border-slate-200/70 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden group">
               <div className="relative h-44 w-full bg-slate-100 overflow-hidden">
                 <Image
                   src="/4.png"
@@ -471,14 +471,14 @@ export default function LandingPage() {
                 />
 
                 {/* Floating Card 1: BMI 16.2 Normal */}
-                <div className="absolute top-6 right-6 bg-white/95 backdrop-blur-md rounded-2xl p-3 shadow-xl border border-slate-100 text-center w-28">
+                <div className="absolute top-6 right-6 bg-white/95 backdrop-blur-md rounded-lg p-3 shadow-xl border border-slate-100 text-center w-28">
                   <p className="text-[10px] text-slate-400 font-semibold uppercase">BMI</p>
                   <p className="text-lg font-semibold text-slate-900">16.2</p>
                   <p className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1 py-0.5 rounded">Normal</p>
                 </div>
 
                 {/* Floating Card 2: Upcoming Consultation */}
-                <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-md rounded-2xl p-3.5 shadow-xl border border-slate-100 flex items-center gap-3">
+                <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-md rounded-lg p-3.5 shadow-xl border border-slate-100 flex items-center gap-3">
                   <div className="w-8 h-8 rounded-xl bg-[#A5D8FF]/30 text-[#1E4E70] flex items-center justify-center shrink-0">
                     <Calendar className="w-4 h-4" />
                   </div>
@@ -546,9 +546,9 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-5 gap-4">
             {/* Card 1: Parent PWA */}
-            <div className="bg-[#A5D8FF]/25 p-6 rounded-3xl border border-[#A5D8FF]/50 flex flex-col justify-between space-y-6 hover:shadow-md transition-all">
+            <div className="bg-[#A5D8FF]/25 p-6 rounded-xl border border-[#A5D8FF]/50 flex flex-col justify-between space-y-6 hover:shadow-md transition-all">
               <div className="space-y-4">
-                <div className="w-10 h-10 rounded-2xl bg-white text-[#1E4E70] flex items-center justify-center shadow-xs">
+                <div className="w-10 h-10 rounded-lg bg-white text-[#1E4E70] flex items-center justify-center shadow-xs">
                   <Users className="w-5 h-5" />
                 </div>
                 <h3 className="font-semibold text-slate-900 text-base">Parent PWA</h3>
@@ -563,9 +563,9 @@ export default function LandingPage() {
             </div>
 
             {/* Card 2: Doctor Portal */}
-            <div className="bg-rose-50/80 p-6 rounded-3xl border border-rose-100 flex flex-col justify-between space-y-6 hover:shadow-md transition-all">
+            <div className="bg-rose-50/80 p-6 rounded-xl border border-rose-100 flex flex-col justify-between space-y-6 hover:shadow-md transition-all">
               <div className="space-y-4">
-                <div className="w-10 h-10 rounded-2xl bg-white text-rose-600 flex items-center justify-center shadow-xs">
+                <div className="w-10 h-10 rounded-lg bg-white text-rose-600 flex items-center justify-center shadow-xs">
                   <HeartPulse className="w-5 h-5" />
                 </div>
                 <h3 className="font-semibold text-slate-900 text-base">Doctor Portal</h3>
@@ -580,9 +580,9 @@ export default function LandingPage() {
             </div>
 
             {/* Card 3: Cloud Kitchen */}
-            <div className="bg-emerald-50/80 p-6 rounded-3xl border border-emerald-100 flex flex-col justify-between space-y-6 hover:shadow-md transition-all">
+            <div className="bg-emerald-50/80 p-6 rounded-xl border border-emerald-100 flex flex-col justify-between space-y-6 hover:shadow-md transition-all">
               <div className="space-y-4">
-                <div className="w-10 h-10 rounded-2xl bg-white text-emerald-600 flex items-center justify-center shadow-xs">
+                <div className="w-10 h-10 rounded-lg bg-white text-emerald-600 flex items-center justify-center shadow-xs">
                   <ChefHat className="w-5 h-5" />
                 </div>
                 <h3 className="font-semibold text-slate-900 text-base">Cloud Kitchen</h3>
@@ -597,9 +597,9 @@ export default function LandingPage() {
             </div>
 
             {/* Card 4: Delivery Partner */}
-            <div className="bg-purple-50/80 p-6 rounded-3xl border border-purple-100 flex flex-col justify-between space-y-6 hover:shadow-md transition-all">
+            <div className="bg-purple-50/80 p-6 rounded-xl border border-purple-100 flex flex-col justify-between space-y-6 hover:shadow-md transition-all">
               <div className="space-y-4">
-                <div className="w-10 h-10 rounded-2xl bg-white text-purple-600 flex items-center justify-center shadow-xs">
+                <div className="w-10 h-10 rounded-lg bg-white text-purple-600 flex items-center justify-center shadow-xs">
                   <Truck className="w-5 h-5" />
                 </div>
                 <h3 className="font-semibold text-slate-900 text-base">Delivery Partner</h3>
@@ -614,9 +614,9 @@ export default function LandingPage() {
             </div>
 
             {/* Card 5: Super Admin */}
-            <div className="bg-amber-50/80 p-6 rounded-3xl border border-amber-100 flex flex-col justify-between space-y-6 hover:shadow-md transition-all">
+            <div className="bg-amber-50/80 p-6 rounded-xl border border-amber-100 flex flex-col justify-between space-y-6 hover:shadow-md transition-all">
               <div className="space-y-4">
-                <div className="w-10 h-10 rounded-2xl bg-white text-amber-600 flex items-center justify-center shadow-xs">
+                <div className="w-10 h-10 rounded-lg bg-white text-amber-600 flex items-center justify-center shadow-xs">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <h3 className="font-semibold text-slate-900 text-base">Super Admin</h3>
@@ -634,7 +634,7 @@ export default function LandingPage() {
 
         {/* FOOTER CTA BANNER */}
         <section className="px-8 max-w-7xl mx-auto my-8">
-          <div className="bg-[#5B61F4] rounded-3xl p-8 xl:p-10 text-white shadow-2xl flex items-center justify-between relative overflow-hidden">
+          <div className="bg-[#5B61F4] rounded-xl p-8 xl:p-10 text-white shadow-2xl flex items-center justify-between relative overflow-hidden">
             {/* Background Heart Watermark Accents */}
             <div className="absolute inset-0 opacity-10 flex items-center justify-around pointer-events-none">
               <HeartPulse className="w-48 h-48" />
@@ -698,7 +698,7 @@ export default function LandingPage() {
                 </svg>
               </div>
 
-              <div className="w-24 h-24 bg-white p-2 rounded-2xl shadow-xl flex items-center justify-center">
+              <div className="w-24 h-24 bg-white p-2 rounded-lg shadow-xl flex items-center justify-center">
                 <QrCode className="w-full h-full text-slate-900" />
               </div>
             </div>
@@ -710,7 +710,7 @@ export default function LandingPage() {
           <div className="max-w-7xl mx-auto grid grid-cols-12 gap-8 pb-12 border-b border-slate-800 text-xs">
             <div className="col-span-4 space-y-4">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-2xl bg-[#1E4E70] text-white flex items-center justify-center font-semibold">
+                <div className="w-9 h-9 rounded-lg bg-[#1E4E70] text-white flex items-center justify-center font-semibold">
                   <HeartPulse className="w-5 h-5" />
                 </div>
                 <span className="font-semibold text-white text-lg tracking-tight">Moncradel Doctor</span>

@@ -107,7 +107,7 @@ export default function Navigation({ mode }: NavigationProps) {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-sm font-medium transition-all ${
+                    className={`flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all ${
                       isActive
                         ? "bg-[#A5D8FF]/40 text-[#1E4E70] font-semibold shadow-xs"
                         : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
@@ -124,7 +124,7 @@ export default function Navigation({ mode }: NavigationProps) {
           <div className="space-y-3 pt-4 border-t border-slate-100">
             <button
               onClick={() => setShowLoginModal(true)}
-              className="w-full bg-[#1E4E70] hover:bg-[#153852] text-white font-semibold text-xs py-3 rounded-2xl shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
+              className="w-full bg-[#1E4E70] hover:bg-[#153852] text-white font-semibold text-xs py-3 rounded-lg shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
             >
               <LogIn className="w-4 h-4" />
               <span>LOG IN / SIGN UP</span>
@@ -159,7 +159,7 @@ export default function Navigation({ mode }: NavigationProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-sm font-medium transition-all ${
+                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all ${
                   isActive
                     ? "bg-[#A5D8FF]/40 text-[#1E4E70] font-semibold shadow-xs"
                     : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
@@ -183,7 +183,7 @@ export default function Navigation({ mode }: NavigationProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-sm font-medium transition-all ${
+                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all ${
                   isActive
                     ? "bg-[#A5D8FF]/40 text-[#1E4E70] font-semibold shadow-xs"
                     : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"

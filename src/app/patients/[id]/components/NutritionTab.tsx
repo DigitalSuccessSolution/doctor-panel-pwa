@@ -1,6 +1,7 @@
 "use client";
 
-import { PlusCircle, Utensils, Search, Trash2, FileText, Save, CheckCircle2 } from "lucide-react";
+import { useState } from "react";
+import { PlusCircle, Utensils, Search, Trash2, FileText, Save, CheckCircle2, X, Loader2, AlertTriangle } from "lucide-react";
 import { Patient } from "@/data/mockData";
 import { getPatientNutrientGoals, nutritionService } from "@/services/nutritionService";
 
@@ -18,8 +19,6 @@ interface NutritionTabProps {
   setNutritionSchedule: (schedule: any[]) => void;
   savingNutrition: boolean;
   setSavingNutrition: (v: boolean) => void;
-  nutritionDayTab: string;
-  setNutritionDayTab: (v: string) => void;
   plannerSelectedDay: string;
   setPlannerSelectedDay: (v: string) => void;
   allMeals: any[];
@@ -28,6 +27,8 @@ interface NutritionTabProps {
   setCatalogSearchTerm: (v: string) => void;
   plannerSuccessMsg: string;
   setPlannerSuccessMsg: (v: string) => void;
+  plannerErrorMsg: string;
+  setPlannerErrorMsg: (v: string) => void;
   savingGuidelines: boolean;
   handleSaveGuidelines: () => void;
   handleRemoveMealFromDay: (index: number) => void;
@@ -45,8 +46,6 @@ export default function NutritionTab({
   setNutritionSchedule,
   savingNutrition,
   setSavingNutrition,
-  nutritionDayTab,
-  setNutritionDayTab,
   plannerSelectedDay,
   setPlannerSelectedDay,
   allMeals,
@@ -55,17 +54,25 @@ export default function NutritionTab({
   setCatalogSearchTerm,
   plannerSuccessMsg,
   setPlannerSuccessMsg,
+  plannerErrorMsg,
+  setPlannerErrorMsg,
   savingGuidelines,
   handleSaveGuidelines,
   handleRemoveMealFromDay,
 }: NutritionTabProps) {
+  const [catalogFilterAge, setCatalogFilterAge] = useState<string>("All");
+  const [isCatalogModalOpen, setIsCatalogModalOpen] = useState(false);
+  const [selectedMealIds, setSelectedMealIds] = useState<string[]>([]);
+  const [expandedMealId, setExpandedMealId] = useState<string | null>(null);
+  const [mealToDelete, setMealToDelete] = useState<number | null>(null);
+
   // Calculate dynamic nutrient totals based on actual assigned meals
   const summary = (() => {
     const goals = getPatientNutrientGoals(patient);
     const activeMeals = nutritionSchedule.filter((s) => {
       if (!s.title || s.title.trim() === "") return false;
-      if (nutritionDayTab === "All Days") return true;
-      return s.day.toLowerCase() === nutritionDayTab.toLowerCase();
+      if (plannerSelectedDay === "All Days") return true;
+      return s.day.toLowerCase() === plannerSelectedDay.toLowerCase();
     });
 
     let totalCalories = 0;
@@ -85,7 +92,7 @@ export default function NutritionTab({
       }
     });
 
-    const factor = nutritionDayTab === "All Days" ? 7 : 1;
+    const factor = plannerSelectedDay === "All Days" ? 7 : 1;
     const avgCalories = Math.round(totalCalories / factor);
     const avgProtein = Math.round((totalProtein / factor) * 10) / 10;
     const avgFat = Math.round((totalFat / factor) * 10) / 10;
@@ -108,18 +115,19 @@ export default function NutritionTab({
   })();
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
       {/* Left Column: Nutrient Targets & Weaning Catalog */}
       <div className="lg:col-span-4 space-y-4">
         {/* Dynamic WHO Nutrient Target Progress Card */}
-        <div className="bg-[#1E4E70] text-white rounded-3xl p-5 shadow-xs space-y-4">
+        <div className="bg-[#1E4E70] text-white rounded-xl p-5 shadow-xs space-y-4">
           <div className="flex items-center justify-between border-b border-white/10 pb-2">
             <div>
               <h3 className="font-bold text-sm uppercase tracking-wider">Nutrient Targets</h3>
               <p className="text-[10px] text-slate-300 font-medium">Assigned plan vs WHO Goals</p>
             </div>
             <span className="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded border border-white/30">
-              {nutritionDayTab}
+              {plannerSelectedDay}
             </span>
           </div>
 
@@ -174,125 +182,51 @@ export default function NutritionTab({
           </div>
         </div>
 
-        {/* System Weaning Foods Catalog Card */}
-        <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs space-y-3 text-xs">
-          <div className="border-b border-slate-100 pb-1.5 flex items-center justify-between gap-2">
-            <span className="font-bold text-slate-800 uppercase block tracking-wider text-[10px]">Weaning Catalog</span>
-            <span className="bg-slate-100 text-slate-500 font-bold px-1.5 py-0.5 rounded text-[9px] border border-slate-200">
-              {allMeals.length} Items
-            </span>
-          </div>
 
-          <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search catalog meals..."
-              value={catalogSearchTerm}
-              onChange={(e) => setCatalogSearchTerm(e.target.value)}
-              className="w-full bg-[#F8FAFC] border border-slate-200 rounded-xl pl-8 pr-3 py-1.5 text-[11px] focus:outline-none focus:ring-1 focus:ring-[#1E4E70]"
-            />
-          </div>
-
-          <div className="max-h-[350px] overflow-y-auto space-y-2 pr-1 no-scrollbar">
-            {mealsLoading ? (
-              <p className="text-center text-slate-400 text-[10px] py-4">Loading catalog...</p>
-            ) : allMeals.filter((m) => m.name.toLowerCase().includes(catalogSearchTerm.toLowerCase())).length === 0 ? (
-              <p className="text-center text-slate-400 text-[10px] py-4 italic">No matching catalog meals.</p>
-            ) : (
-              allMeals
-                .filter((m) => m.name.toLowerCase().includes(catalogSearchTerm.toLowerCase()))
-                .map((m) => (
-                  <div
-                    key={m._id || m.id}
-                    className="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100/70 transition-all flex items-start justify-between gap-3 text-left"
-                  >
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <span className="font-bold text-slate-800 text-[11px] truncate">{m.name}</span>
-                        <span className="text-[9px] font-extrabold text-[#1E4E70] bg-[#F0F7FF] px-1.5 py-0.5 rounded border border-[#BEE0FF] shrink-0 capitalize">
-                          {m.suitableForAgeGroup || "6-12m"}
-                        </span>
-                      </div>
-                      <p className="text-[10px] text-slate-500 line-clamp-2 mt-0.5 leading-snug">{m.description}</p>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={async () => {
-                        setSavingNutrition(true);
-                        setPlannerSuccessMsg("");
-                        try {
-                          const newScheduleItem = {
-                            day: plannerSelectedDay,
-                            mealId: m._id || m.id,
-                          };
-                          const scheduleItems = nutritionSchedule
-                            .filter((s) => s.mealId && s.mealId.trim() !== "")
-                            .map((s) => ({
-                              day: s.day,
-                              mealId: s.mealId,
-                            }));
-                          scheduleItems.push(newScheduleItem);
-
-                          let res;
-                          if (nutritionPlan && (nutritionPlan.id || nutritionPlan._id)) {
-                            res = await nutritionService.updateNutritionPlan(nutritionPlan.id || nutritionPlan._id, {
-                              babyId: patientId,
-                              guidelines: nutritionGuidelines.trim(),
-                              weeklySchedule: scheduleItems,
-                            });
-                          } else {
-                            res = await nutritionService.createNutritionPlan({
-                              babyId: patientId,
-                              guidelines: nutritionGuidelines.trim(),
-                              weeklySchedule: scheduleItems,
-                            });
-                          }
-
-                          if (res.success && res.data) {
-                            setNutritionPlan(res.data);
-                            setPlannerSuccessMsg(`Added ${m.name} to ${plannerSelectedDay}!`);
-                            setTimeout(() => setPlannerSuccessMsg(""), 4000);
-                          }
-                        } catch (err) {
-                          console.error(err);
-                        } finally {
-                          setSavingNutrition(false);
-                        }
-                      }}
-                      disabled={savingNutrition}
-                      className="bg-[#1E4E70] text-white hover:bg-[#153852] font-bold text-[9px] px-2.5 py-1 rounded-lg transition-colors shrink-0 cursor-pointer disabled:opacity-50 mt-0.5"
-                    >
-                      + Add
-                    </button>
-                  </div>
-                ))
-            )}
-          </div>
-        </div>
       </div>
 
       {/* Right Column: Planner & Weekly Active Board */}
       <div className="lg:col-span-8 space-y-6">
-        {/* Day-Wise Meal Plan Assigner Form Card */}
-        <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-2xs space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
-            <div>
-              <h3 className="font-bold text-slate-800 text-sm tracking-tight flex items-center gap-2">
-                <PlusCircle className="w-4.5 h-4.5 text-[#1E4E70]" />
-                <span>Configure Day-Wise Meal Target</span>
-              </h3>
-              <p className="text-[11px] text-slate-400 font-medium">Select a week day below to view and assign multiple weaning foods</p>
-            </div>
+        {/* Unified Planner Card (Guidelines + Day-Wise Assigner) */}
+        <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-2xs space-y-6">
+          {/* Top Section: Special Diet Guidelines */}
+          <div className="border-b border-slate-100 pb-5">
+            <h3 className="font-bold text-slate-800 text-sm tracking-tight flex items-center gap-2 mb-1">
+              <FileText className="w-4.5 h-4.5 text-[#1E4E70]" />
+              <span>Special Diet Guidelines</span>
+            </h3>
+            <p className="text-[11px] text-slate-400 font-medium mb-3">
+              This note applies to the entire plan and is shared directly on the parent's dashboard.
+            </p>
+            <textarea
+              rows={2}
+              value={nutritionGuidelines}
+              onChange={(e) => setNutritionGuidelines(e.target.value)}
+              placeholder="e.g. Focus on iron-rich foods. Introduce variety of pureed vegetables..."
+              className="w-full bg-[#F8FAFC] border border-slate-200 rounded-xl p-3 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1E4E70] font-medium leading-relaxed"
+            />
           </div>
+
+          {/* Bottom Section: Day-Wise Meal Target */}
+          <div>
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2.5 mb-4">
+              <div>
+                <h3 className="font-bold text-slate-800 text-sm tracking-tight flex items-center gap-2">
+                  <PlusCircle className="w-4.5 h-4.5 text-[#1E4E70]" />
+                  <span>Configure Day-Wise Meal Target</span>
+                </h3>
+                <p className="text-[11px] text-slate-400 font-medium">Select a week day below to assign meals</p>
+              </div>
+            </div>
 
           {/* Day selector button row */}
           <div className="space-y-1.5">
             <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Target Week Day</label>
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 no-scrollbar text-[11px] font-bold">
-              {DAYS_OF_WEEK.map((day) => {
-                const dayMealsCount = nutritionSchedule.filter((s) => s.day.toLowerCase() === day.toLowerCase()).length;
+              {["All Days", ...DAYS_OF_WEEK].map((day) => {
+                const dayMealsCount = day === "All Days" 
+                  ? nutritionSchedule.filter((s) => s.title && s.title.trim() !== "").length 
+                  : nutritionSchedule.filter((s) => s.day.toLowerCase() === day.toLowerCase() && s.title && s.title.trim() !== "").length;
                 const isSelected = plannerSelectedDay === day;
 
                 return (
@@ -325,20 +259,16 @@ export default function NutritionTab({
           {/* List of currently assigned meals for selected day */}
           <div className="space-y-2 border-t border-slate-100 pt-3.5">
             <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">
-              Currently Assigned for {plannerSelectedDay}
+              {plannerSelectedDay === "All Days" ? "All Assigned Meals" : `Currently Assigned for ${plannerSelectedDay}`}
             </label>
             {(() => {
               const assigned = nutritionSchedule
                 .map((s, idx) => ({ ...s, originalIdx: idx }))
-                .filter((s) => s.day.toLowerCase() === plannerSelectedDay.toLowerCase());
-
-              if (assigned.length === 0) {
-                return (
-                  <p className="text-slate-400 text-[11px] italic font-medium py-1">
-                    No weaning foods assigned for {plannerSelectedDay} yet. Click Weaning Catalog meals on the left to assign.
-                  </p>
-                );
-              }
+                .filter((s) => {
+                  if (!s.title || s.title.trim() === "") return false;
+                  if (plannerSelectedDay === "All Days") return true;
+                  return s.day.toLowerCase() === plannerSelectedDay.toLowerCase();
+                });
 
               return (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -349,13 +279,18 @@ export default function NutritionTab({
                     >
                       <div className="min-w-0">
                         <span className="font-bold text-slate-800 text-xs block truncate">{s.title}</span>
-                        <span className="text-[10px] text-slate-500 line-clamp-1 leading-normal font-sans">
+                        {plannerSelectedDay === "All Days" && (
+                          <span className="inline-block text-[9px] font-bold text-[#1E4E70] bg-[#F0F7FF] border border-[#BEE0FF] px-1.5 py-0.5 rounded mt-0.5 mb-1">
+                            {s.day}
+                          </span>
+                        )}
+                        <span className="text-[10px] text-slate-500 line-clamp-1 leading-normal font-sans block mt-0.5">
                           {s.desc || "Assigned weaning meal."}
                         </span>
                       </div>
                       <button
                         type="button"
-                        onClick={() => handleRemoveMealFromDay(s.originalIdx)}
+                        onClick={() => setMealToDelete(s.originalIdx)}
                         disabled={savingNutrition}
                         className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1.5 rounded-lg transition-colors cursor-pointer shrink-0 disabled:opacity-50"
                         title="Remove meal"
@@ -364,158 +299,367 @@ export default function NutritionTab({
                       </button>
                     </div>
                   ))}
+
+                  {/* Add Meal Button Card */}
+                  {plannerSelectedDay !== "All Days" && (
+                    <button
+                      type="button"
+                      onClick={() => setIsCatalogModalOpen(true)}
+                      className="flex flex-col items-center justify-center gap-1.5 bg-slate-50 border-2 border-dashed border-slate-200 hover:border-[#1E4E70] hover:bg-[#F0F7FF] text-slate-400 hover:text-[#1E4E70] p-3 rounded-xl transition-all cursor-pointer min-h-[60px]"
+                    >
+                      <PlusCircle className="w-5 h-5" />
+                      <span className="text-[10px] font-bold uppercase tracking-wider">Add Meal</span>
+                    </button>
+                  )}
                 </div>
               );
             })()}
           </div>
+          </div>
         </div>
 
-        {/* Special Diet Guidelines & Focus Instructions Card */}
-        <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-2xs space-y-4">
-          <div>
-            <h3 className="font-bold text-slate-800 text-sm tracking-tight flex items-center gap-2">
-              <FileText className="w-4.5 h-4.5 text-[#1E4E70]" />
-              <span>Special Diet Guidelines & Focus Instructions</span>
-            </h3>
-            <p className="text-[11px] text-slate-400 font-medium mt-0.5">
-              This note is shared directly on the parent's dashboard (e.g. weaning precautions, allergens, hydration guidelines).
-            </p>
-          </div>
+        {/* Master Save Button for the Entire Plan */}
+        <div className="flex justify-end pt-2">
+           <button
+             type="button"
+             onClick={handleSaveGuidelines}
+             disabled={savingGuidelines}
+             className="bg-[#1E4E70] hover:bg-[#153852] text-white font-bold px-8 py-3.5 rounded-xl text-sm transition-colors cursor-pointer flex items-center justify-center gap-2 shadow-md disabled:opacity-50 w-full sm:w-auto"
+           >
+             {savingGuidelines ? (
+               <Loader2 className="w-4.5 h-4.5 animate-spin" />
+             ) : (
+               <Save className="w-4.5 h-4.5" />
+             )}
+             <span>{savingGuidelines ? "Saving Nutrition Plan..." : "Save Entire Nutrition Plan"}</span>
+           </button>
+        </div>
+         </div>
+      </div>
 
-          <div className="space-y-3">
-            <textarea
-              rows={2}
-              value={nutritionGuidelines}
-              onChange={(e) => setNutritionGuidelines(e.target.value)}
-              placeholder="e.g. Focus on iron-rich foods. Introduce variety of pureed vegetables. Continue formula/breast milk..."
-              className="w-full bg-[#F8FAFC] border border-slate-200 rounded-xl p-3 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1E4E70] font-medium leading-relaxed"
-            />
-            <div className="flex items-center justify-between gap-4 flex-wrap sm:flex-nowrap">
-              <p className="text-[10px] text-slate-500 font-medium italic">
-                Click save to publish these instructions to the parent's mobile app.
-              </p>
+      {/* Multi-Select Meal Catalog Modal */}
+      {isCatalogModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-[150] flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-white rounded-xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col font-sans max-h-[90vh]">
+            
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-50 shrink-0">
+              <div>
+                <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
+                  <Utensils className="w-5 h-5 text-[#1E4E70]" />
+                  <span>Weaning Foods Catalog</span>
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">Select meals to add to {plannerSelectedDay}</p>
+              </div>
               <button
                 type="button"
-                onClick={handleSaveGuidelines}
-                disabled={savingGuidelines}
-                className="bg-[#1E4E70] hover:bg-[#153852] text-white font-bold px-5 py-2 rounded-xl text-xs transition-colors cursor-pointer flex items-center gap-1.5 disabled:opacity-50 shadow-3xs shrink-0 ml-auto"
+                onClick={() => {
+                  setIsCatalogModalOpen(false);
+                  setSelectedMealIds([]);
+                  setExpandedMealId(null);
+                }}
+                className="bg-white text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-2 rounded-xl transition-colors border border-slate-200"
               >
-                <Save className="w-3.5 h-3.5" />
-                <span>{savingGuidelines ? "Saving Guidelines..." : "Save Diet Guidelines"}</span>
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Filters */}
+            <div className="p-4 border-b border-slate-100 shrink-0 flex items-center gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Search catalog meals..."
+                  value={catalogSearchTerm}
+                  onChange={(e) => setCatalogSearchTerm(e.target.value)}
+                  className="w-full bg-[#F8FAFC] border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-[#1E4E70]"
+                />
+              </div>
+              <select
+                value={catalogFilterAge}
+                onChange={(e) => setCatalogFilterAge(e.target.value)}
+                className="bg-[#F8FAFC] border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#1E4E70] cursor-pointer"
+              >
+                <option value="All">All Ages</option>
+                {Array.from(new Set(allMeals.map((m) => m.suitableForAgeGroup || "6-12 Months"))).map((age) => (
+                  <option key={age} value={age}>
+                    {age}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Modal Body: Meal List */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/50">
+              {mealsLoading ? (
+                <p className="text-center text-slate-400 text-sm py-8">Loading catalog...</p>
+              ) : (() => {
+                const filteredMeals = allMeals.filter(
+                  (m) =>
+                    m.name.toLowerCase().includes(catalogSearchTerm.toLowerCase()) &&
+                    (catalogFilterAge === "All" || (m.suitableForAgeGroup || "6-12 Months") === catalogFilterAge)
+                );
+
+                if (filteredMeals.length === 0) {
+                  return (
+                    <p className="text-center text-slate-400 text-sm py-8 italic">
+                      No matching catalog meals found.
+                    </p>
+                  );
+                }
+
+                return filteredMeals.map((m) => {
+                  const mId = m._id || m.id;
+                  const isSelected = selectedMealIds.includes(mId);
+                  const isExpanded = expandedMealId === mId;
+
+                  return (
+                    <div
+                      key={mId}
+                      className={`rounded-xl border transition-all overflow-hidden ${
+                        isSelected ? "border-[#1E4E70] bg-[#F0F7FF] shadow-sm" : "border-slate-200 bg-white hover:border-slate-300"
+                      }`}
+                    >
+                      {/* Summary Row */}
+                      <div className="p-3 flex items-center gap-3 cursor-pointer" onClick={() => setExpandedMealId(isExpanded ? null : mId)}>
+                        {/* Checkbox */}
+                        <div
+                          className={`w-5 h-5 rounded border flex items-center justify-center shrink-0 cursor-pointer transition-colors ${
+                            isSelected ? "bg-[#1E4E70] border-[#1E4E70] text-white" : "border-slate-300 bg-white"
+                          }`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (isSelected) {
+                              setSelectedMealIds((prev) => prev.filter((id) => id !== mId));
+                            } else {
+                              setSelectedMealIds((prev) => [...prev, mId]);
+                            }
+                          }}
+                        >
+                          {isSelected && <CheckCircle2 className="w-3.5 h-3.5" />}
+                        </div>
+
+                        {/* Title and Badge */}
+                        <div className="flex-1 min-w-0 flex items-center justify-between gap-2">
+                          <div className="min-w-0">
+                            <span className={`font-bold text-sm block truncate ${isSelected ? "text-[#1E4E70]" : "text-slate-800"}`}>
+                              {m.name}
+                            </span>
+                            <span className="text-[10px] text-slate-500 block truncate">{m.description}</span>
+                          </div>
+                          <span className="text-[10px] font-extrabold text-[#1E4E70] bg-[#F0F7FF] px-2 py-0.5 rounded-lg border border-[#BEE0FF] shrink-0 capitalize">
+                            {m.suitableForAgeGroup || "6-12m"}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Expanded Details */}
+                      {isExpanded && (
+                        <div className="p-3 border-t border-slate-100 bg-white text-xs">
+                          <div className="flex flex-col sm:flex-row gap-4">
+                            <div className="w-full sm:w-24 sm:h-24 shrink-0 bg-slate-100 rounded-xl overflow-hidden relative flex items-center justify-center">
+                              {m.imageUrl || m.image || (m.images && m.images[0]) ? (
+                                <>
+                                  <img
+                                    src={m.imageUrl || m.image || (m.images && m.images[0])}
+                                    alt={m.name}
+                                    onError={(e) => {
+                                      e.currentTarget.style.display = 'none';
+                                      e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                                    }}
+                                    className="w-full h-full object-cover"
+                                  />
+                                  <div className="hidden absolute inset-0 flex items-center justify-center">
+                                    <Utensils className="w-8 h-8 text-slate-300" />
+                                  </div>
+                                </>
+                              ) : (
+                                <Utensils className="w-8 h-8 text-slate-300" />
+                              )}
+                            </div>
+                            
+                            <div className="flex-1 space-y-3">
+                              {/* Category */}
+                              <div className="flex items-center gap-2 flex-wrap mb-1">
+                                {m.category && (
+                                  <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 uppercase tracking-wider">
+                                    {m.category}
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* Nutrition Grid */}
+                              <div className="grid grid-cols-4 gap-2">
+                                <div className="bg-slate-50 p-2 rounded-lg text-center border border-slate-100">
+                                  <span className="text-[9px] font-semibold text-slate-400 uppercase block">Calories</span>
+                                  <span className="font-bold text-slate-800">{m.nutritionalInfo?.calories || 120}</span>
+                                </div>
+                                <div className="bg-slate-50 p-2 rounded-lg text-center border border-slate-100">
+                                  <span className="text-[9px] font-semibold text-slate-400 uppercase block">Protein</span>
+                                  <span className="font-bold text-slate-800">{m.nutritionalInfo?.protein || 3.5}g</span>
+                                </div>
+                                <div className="bg-slate-50 p-2 rounded-lg text-center border border-slate-100">
+                                  <span className="text-[9px] font-semibold text-slate-400 uppercase block">Carbs</span>
+                                  <span className="font-bold text-slate-800">{m.nutritionalInfo?.carbs || 15}g</span>
+                                </div>
+                                <div className="bg-slate-50 p-2 rounded-lg text-center border border-slate-100">
+                                  <span className="text-[9px] font-semibold text-slate-400 uppercase block">Fat</span>
+                                  <span className="font-bold text-slate-800">{m.nutritionalInfo?.fat || 2.5}g</span>
+                                </div>
+                              </div>
+
+                              {/* Ingredients */}
+                              {m.ingredients && m.ingredients.length > 0 && (
+                                <div>
+                                  <h4 className="font-bold text-slate-700 mb-1 flex items-center gap-1">
+                                    <FileText className="w-3 h-3 text-[#1E4E70]" /> Ingredients
+                                  </h4>
+                                  <p className="text-slate-600 leading-relaxed font-medium">
+                                    {m.ingredients.join(", ")}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                });
+              })()}
+            </div>
+
+            {/* Modal Footer Actions */}
+            <div className="p-4 border-t border-slate-100 bg-white shrink-0 flex items-center justify-between gap-4">
+              <span className="text-xs font-bold text-slate-500">
+                {selectedMealIds.length} meal(s) selected
+              </span>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsCatalogModalOpen(false);
+                    setSelectedMealIds([]);
+                    setExpandedMealId(null);
+                  }}
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition-colors border border-transparent hover:border-slate-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                      // Prepare new schedule items from the selected IDs and add locally
+                      const newScheduleItems = selectedMealIds.map((id) => {
+                        const meal = allMeals.find(m => (m._id || m.id) === id);
+                        return {
+                          day: plannerSelectedDay,
+                          mealId: id,
+                          title: meal?.name || "Assigned Meal",
+                          desc: meal?.description || ""
+                        };
+                      });
+                      
+                      setNutritionSchedule([...nutritionSchedule, ...newScheduleItems]);
+                      setIsCatalogModalOpen(false);
+                      setSelectedMealIds([]);
+                      setExpandedMealId(null);
+                  }}
+                  className="bg-[#1E4E70] hover:bg-[#153852] text-white font-bold px-5 py-2 rounded-xl text-xs transition-colors cursor-pointer flex items-center justify-center gap-2 shadow-xs disabled:opacity-50"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  <span>
+                    {savingNutrition ? "Adding..." : `Add ${selectedMealIds.length} Meal(s)`}
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Modal for Meal Deletion */}
+      {mealToDelete !== null && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-[200] flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-white rounded-xl max-w-sm w-full shadow-2xl border border-slate-200 overflow-hidden font-sans text-center p-6 space-y-4">
+            <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center mx-auto mb-2">
+              <AlertTriangle className="w-6 h-6 text-rose-500" />
+            </div>
+            <h3 className="font-bold text-slate-800 text-lg">Remove Meal?</h3>
+            <p className="text-sm text-slate-500 font-medium">
+              Are you sure you want to remove this meal from the schedule? This action cannot be undone.
+            </p>
+            <div className="flex items-center gap-3 pt-4">
+              <button
+                type="button"
+                onClick={() => setMealToDelete(null)}
+                className="flex-1 px-4 py-2.5 rounded-xl font-bold text-slate-600 bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  handleRemoveMealFromDay(mealToDelete);
+                  setMealToDelete(null);
+                }}
+                className="flex-1 px-4 py-2.5 rounded-xl font-bold text-white bg-rose-600 hover:bg-rose-700 transition-colors shadow-sm"
+              >
+                Remove
               </button>
             </div>
           </div>
         </div>
+      )}
 
-        {/* Weekly Feeding Schedule board */}
-        <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-2xs space-y-4 font-sans">
-          <div className="border-b border-slate-100 pb-2.5 flex items-center justify-between gap-3">
-            <div>
-              <h3 className="font-bold text-slate-800 text-sm tracking-tight flex items-center gap-2">
-                <Utensils className="w-4.5 h-4.5 text-[#1E4E70]" />
-                <span>Weekly Feeding Schedule (Current Active Plan)</span>
-              </h3>
-              <p className="text-[11px] text-slate-400 font-medium">Meals logged/assigned to {patient.name} by doctors and parents</p>
+      {/* Success Popup Modal */}
+      {plannerSuccessMsg && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-[200] flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-white rounded-xl max-w-sm w-full shadow-2xl border border-slate-200 overflow-hidden font-sans text-center p-6 space-y-4">
+            <div className="w-12 h-12 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center mx-auto mb-2">
+              <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+            </div>
+            <h3 className="font-bold text-slate-800 text-lg">Success</h3>
+            <p className="text-sm text-slate-500 font-medium">
+              {plannerSuccessMsg}
+            </p>
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => setPlannerSuccessMsg("")}
+                className="w-full px-4 py-2.5 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-colors shadow-sm"
+              >
+                Okay
+              </button>
             </div>
           </div>
-
-          {/* Day tabs Selector */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 no-scrollbar text-[11px] font-bold">
-            {["All Days", ...DAYS_OF_WEEK].map((day) => {
-              const count =
-                day === "All Days"
-                  ? nutritionSchedule.filter((s) => s.title && s.title.trim() !== "").length
-                  : nutritionSchedule.filter((s) => s.day.toLowerCase() === day.toLowerCase() && s.title && s.title.trim() !== "").length;
-              const isSelected = nutritionDayTab === day;
-
-              return (
-                <button
-                  key={day}
-                  type="button"
-                  onClick={() => setNutritionDayTab(day)}
-                  className={`px-3 py-1.5 rounded-full border transition-all whitespace-nowrap cursor-pointer ${
-                    isSelected
-                      ? "bg-[#1E4E70] text-white border-[#1E4E70] shadow-2xs"
-                      : "bg-slate-50 hover:bg-slate-100 text-slate-600 border-slate-200/80"
-                  }`}
-                >
-                  {day} {count > 0 ? `(${count})` : ""}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Meal Cards grid */}
-          {nutritionLoading ? (
-            <p className="text-center text-xs text-slate-400 py-8">Loading schedule...</p>
-          ) : nutritionSchedule.filter((s) => {
-              if (!s.title || s.title.trim() === "") return false;
-              if (nutritionDayTab === "All Days") return true;
-              return s.day.toLowerCase() === nutritionDayTab.toLowerCase();
-            }).length === 0 ? (
-            <div className="text-center py-8 text-slate-400 italic text-xs">
-              No active meals scheduled for {nutritionDayTab === "All Days" ? "any day" : nutritionDayTab}.
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {nutritionSchedule
-                .map((s, idx) => ({ ...s, originalIdx: idx }))
-                .filter((s) => {
-                  if (!s.title || s.title.trim() === "") return false;
-                  if (nutritionDayTab === "All Days") return true;
-                  return s.day.toLowerCase() === nutritionDayTab.toLowerCase();
-                })
-                .map((s) => (
-                  <div
-                    key={s.originalIdx}
-                    className="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-2xs flex flex-col justify-between space-y-4 hover:shadow-xs transition-shadow relative overflow-hidden"
-                  >
-                    <div className="space-y-2.5">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-700 border border-amber-200/60 flex items-center justify-center shrink-0 shadow-2xs">
-                            <Utensils className="w-4.5 h-4.5 text-amber-700" />
-                          </div>
-                          <div className="min-w-0">
-                            <h4 className="font-extrabold text-slate-800 text-sm tracking-tight leading-snug truncate">{s.title}</h4>
-                            <span className="text-[10px] text-slate-400 font-semibold block">{s.day}</span>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-1.5 shrink-0">
-                          <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-                            08:00 AM
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveMealFromDay(s.originalIdx)}
-                            disabled={savingNutrition}
-                            className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1.5 rounded-lg transition-colors cursor-pointer shrink-0 disabled:opacity-50"
-                            title="Delete from schedule"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </div>
-
-                      <p className="text-xs text-slate-600 font-medium leading-relaxed font-sans min-h-[48px] line-clamp-3">
-                        {s.desc || "Assigned weaning meals recommendations."}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center gap-1.5 pt-2 border-t border-slate-100">
-                      <span className="text-[9px] font-bold text-[#1E4E70] bg-[#F0F7FF] border border-[#BEE0FF] px-2 py-0.5 rounded-md">
-                        NUTRITION
-                      </span>
-                      <span className="text-[9px] font-bold text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
-                        PEDIATRIC
-                      </span>
-                    </div>
-                  </div>
-                ))}
-            </div>
-          )}
         </div>
-      </div>
-    </div>
+      )}
+
+      {/* Error Popup Modal */}
+      {plannerErrorMsg && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-[200] flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-white rounded-xl max-w-sm w-full shadow-2xl border border-slate-200 overflow-hidden font-sans text-center p-6 space-y-4">
+            <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center mx-auto mb-2">
+              <AlertTriangle className="w-6 h-6 text-rose-500" />
+            </div>
+            <h3 className="font-bold text-slate-800 text-lg">Cannot Save Plan</h3>
+            <p className="text-sm text-slate-500 font-medium">
+              {plannerErrorMsg}
+            </p>
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => setPlannerErrorMsg("")}
+                className="w-full px-4 py-2.5 rounded-xl font-bold text-slate-600 bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-colors"
+              >
+                Okay
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

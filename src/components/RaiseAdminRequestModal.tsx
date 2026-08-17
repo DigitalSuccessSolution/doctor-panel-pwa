@@ -59,7 +59,7 @@ export default function RaiseAdminRequestModal() {
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
-      <div className="bg-white w-full max-w-lg rounded-3xl border border-slate-200 shadow-2xl overflow-hidden space-y-0">
+      <div className="bg-white w-full max-w-lg rounded-xl border border-slate-200 shadow-2xl overflow-hidden space-y-0">
         {/* Modal Header */}
         <div className="p-5 bg-gradient-to-r from-[#1E4E70] to-[#153852] text-white flex items-center justify-between">
           <div className="flex items-center gap-2.5">

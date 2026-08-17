@@ -164,7 +164,7 @@ export default function MobileWelcomeModal() {
               return (
                 <div
                   key={idx}
-                  className="bg-slate-50/80 rounded-2xl p-2.5 border border-slate-200/80 flex items-center gap-2 text-left transition-all hover:border-slate-300 shadow-2xs overflow-hidden"
+                  className="bg-slate-50/80 rounded-lg p-2.5 border border-slate-200/80 flex items-center gap-2 text-left transition-all hover:border-slate-300 shadow-2xs overflow-hidden"
                 >
                   <div className={`w-7 h-7 rounded-xl ${chip.color} flex items-center justify-center shrink-0`}>
                     <ChipIcon className="w-3.5 h-3.5" />

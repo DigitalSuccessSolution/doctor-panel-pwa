@@ -42,13 +42,13 @@ export default function ClinicalFaqPage() {
 
   return (
     <div className="w-full max-w-5xl mx-auto animate-fadeIn pb-24 font-sans">
-      <div className="bg-white rounded-3xl p-5 sm:p-7 border border-slate-200/80 shadow-card space-y-6">
+      <div className="bg-white rounded-xl p-5 sm:p-7 border border-slate-200/80 shadow-card space-y-6">
         {/* Header Bar */}
         <div className="flex items-center justify-between gap-4 pb-4 border-b border-slate-100">
           <div className="flex items-center gap-3.5 min-w-0">
             <button
               onClick={handleBack}
-              className="w-10 h-10 rounded-2xl bg-[#F8F9FA] hover:bg-[#A5D8FF]/30 text-slate-700 hover:text-[#1E4E70] flex items-center justify-center transition-all shrink-0 cursor-pointer border border-slate-200/60"
+              className="w-10 h-10 rounded-lg bg-[#F8F9FA] hover:bg-[#A5D8FF]/30 text-slate-700 hover:text-[#1E4E70] flex items-center justify-center transition-all shrink-0 cursor-pointer border border-slate-200/60"
               title="Go Back"
             >
               <ArrowLeft className="w-5 h-5 stroke-[2.5]" />

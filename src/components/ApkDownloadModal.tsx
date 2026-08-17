@@ -30,11 +30,11 @@ export default function ApkDownloadModal({ isOpen, onClose }: { isOpen: boolean;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md animate-fadeIn">
-      <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden border border-slate-100 animate-scaleUp flex flex-col relative">
+      <div className="bg-white w-full max-w-md rounded-xl shadow-2xl overflow-hidden border border-slate-100 animate-scaleUp flex flex-col relative">
         {/* Header */}
         <div className="p-6 bg-gradient-to-tr from-[#1E4E70] to-[#0071E3] text-white flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center font-semibold">
+            <div className="w-10 h-10 rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center font-semibold">
               <Download className="w-5 h-5" />
             </div>
             <div>
@@ -68,7 +68,7 @@ export default function ApkDownloadModal({ isOpen, onClose }: { isOpen: boolean;
             <button
               onClick={handleDownloadApk}
               disabled={downloading}
-              className="w-full bg-[#0071E3] hover:bg-[#0077ED] text-white font-semibold text-sm py-3.5 rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full bg-[#0071E3] hover:bg-[#0077ED] text-white font-semibold text-sm py-3.5 rounded-lg shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <Download className="w-4 h-4" />
               <span>{downloading ? "Downloading APK..." : downloadComplete ? "APK Downloaded! Install Now" : "Download Android APK (v2.4.0)"}</span>
@@ -79,7 +79,7 @@ export default function ApkDownloadModal({ isOpen, onClose }: { isOpen: boolean;
                 alert("To add app shortcut: Open in browser menu and select 'Add to Home Screen'!");
                 onClose();
               }}
-              className="w-full bg-[#F5F5F7] hover:bg-slate-200 text-slate-800 font-semibold text-xs py-3 rounded-2xl transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+              className="w-full bg-[#F5F5F7] hover:bg-slate-200 text-slate-800 font-semibold text-xs py-3 rounded-lg transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <Laptop className="w-4 h-4" />
               <span>Add Shortcut to Home Screen</span>

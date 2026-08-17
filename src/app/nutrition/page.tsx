@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   Search,
   ChevronRight,
@@ -12,6 +13,7 @@ import { useDoctorData } from "@/context/DoctorDataContext";
 import { maskPhoneNumber } from "@/data/mockData";
 
 export default function NutritionPage() {
+  const router = useRouter();
   const { patients } = useDoctorData();
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -30,20 +32,10 @@ export default function NutritionPage() {
       {/* 1. Simplified Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
-              <Utensils className="w-5 h-5 text-emerald-600" />
-            </div>
-            <div>
-              <h1 className="text-xl sm:text-2xl font-semibold text-slate-800 tracking-tight">
-                Nutrition Plans
-              </h1>
-              <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-lg border border-emerald-200 whitespace-nowrap mt-1">
-                Select a patient to manage nutrition
-              </span>
-            </div>
-          </div>
-          <p className="text-xs text-slate-500 font-medium mt-2">
+          <h1 className="text-xl sm:text-2xl font-semibold text-slate-800 tracking-tight">
+            Nutrition Plans
+          </h1>
+          <p className="text-xs text-slate-500 font-medium mt-1">
             Browse patients to create, edit, or view their customized pediatric feeding schedules.
           </p>
         </div>
@@ -57,12 +49,12 @@ export default function NutritionPage() {
           placeholder="Search by Baby Name, Parent Name, Phone, or Medical Condition..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full bg-white border border-slate-200/80 rounded-2xl pl-11 pr-4 py-3 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-200 shadow-2xs"
+          className="w-full bg-white border border-slate-200/80 rounded-lg pl-11 pr-4 py-3 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-200 shadow-2xs"
         />
       </div>
 
       {/* 3. Patient Table Layout (Desktop) & List Card Layout (Mobile) */}
-      <div className="bg-white rounded-3xl border border-slate-200/80 overflow-hidden shadow-2xs">
+      <div className="bg-white rounded-xl border border-slate-200/80 overflow-hidden shadow-2xs">
         
         {/* DESKTOP TABLE VIEW */}
         <div className="hidden md:block overflow-x-auto">
@@ -78,7 +70,11 @@ export default function NutritionPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {filteredPatients.map((child) => (
-                <tr key={child.id} className="hover:bg-slate-50/50 transition-colors text-xs">
+                <tr 
+                  key={child.id} 
+                  onClick={() => router.push(`/patients/${child.id}?tab=nutrition`)}
+                  className="hover:bg-slate-50/50 transition-colors text-xs cursor-pointer"
+                >
                   {/* Column 1: Patient (Baby) */}
                   <td className="p-4">
                     <div className="flex items-center gap-3">
@@ -93,7 +89,6 @@ export default function NutritionPage() {
                       </div>
                       <div>
                         <span className="font-bold text-slate-800 block text-sm">{child.name}</span>
-                        <span className="text-[10px] text-slate-400 font-mono">ID: {child.id.substring(child.id.length - 6)}</span>
                       </div>
                     </div>
                   </td>
@@ -160,7 +155,11 @@ export default function NutritionPage() {
         {/* MOBILE CARDS LIST VIEW */}
         <div className="block md:hidden divide-y divide-slate-100">
           {filteredPatients.map((child) => (
-            <div key={child.id} className="p-4 space-y-3.5 hover:bg-slate-50/50 transition-colors">
+            <div 
+              key={child.id} 
+              onClick={() => router.push(`/patients/${child.id}?tab=nutrition`)}
+              className="p-4 space-y-3.5 hover:bg-slate-50/50 transition-colors cursor-pointer"
+            >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div className="w-11 h-11 rounded-full overflow-hidden relative border border-slate-200 bg-slate-50 shrink-0">
@@ -174,7 +173,6 @@ export default function NutritionPage() {
                   </div>
                   <div>
                     <span className="font-bold text-slate-900 text-sm block leading-tight">{child.name}</span>
-                    <span className="text-[10px] text-slate-400 font-mono">ID: {child.id.substring(child.id.length - 6)}</span>
                   </div>
                 </div>
 

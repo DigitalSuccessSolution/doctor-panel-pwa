@@ -37,6 +37,7 @@ export function transformBackendBabyToPatient(baby: any): Patient {
     parentName: parent.name || baby.parentName || "Parent Account",
     parentPhone: parent.phone || baby.parentPhone || "N/A",
     parentEmail: parent.email || baby.parentEmail || "",
+    parentAddress: parent.address || baby.parentAddress || "",
     avatar: baby.avatar || "/child_avatar_1.png",
     
     // UI Helpers

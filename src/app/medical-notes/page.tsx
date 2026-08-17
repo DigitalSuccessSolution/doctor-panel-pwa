@@ -79,7 +79,7 @@ export default function MedicalNotesPage() {
         </div>
         <button
           onClick={handleSaveNote}
-          className="flex items-center justify-center gap-1.5 bg-[#1E4E70] text-white font-semibold text-xs px-5 py-2.5 rounded-2xl shadow-xs hover:bg-[#153852] transition-colors"
+          className="flex items-center justify-center gap-1.5 bg-[#1E4E70] text-white font-semibold text-xs px-5 py-2.5 rounded-lg shadow-xs hover:bg-[#153852] transition-colors"
         >
           <Save className="w-4 h-4" />
           <span>{savedSuccess ? "Note Saved to History!" : "Save Clinical Note"}</span>
@@ -87,7 +87,7 @@ export default function MedicalNotesPage() {
       </div>
 
       {/* Top Patient Selector Bar */}
-      <div className="bg-white rounded-2xl p-3.5 border border-slate-200/80 shadow-xs flex items-center gap-3 overflow-x-auto scrollbar-none font-sans">
+      <div className="bg-white rounded-lg p-3.5 border border-slate-200/80 shadow-xs flex items-center gap-3 overflow-x-auto scrollbar-none font-sans">
         <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider shrink-0 pl-1 whitespace-nowrap">
           Select Patient File:
         </span>
@@ -118,7 +118,7 @@ export default function MedicalNotesPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Side: SOAP Form Pad (7 Cols on Desktop) */}
         <div className="lg:col-span-7 space-y-6">
-          <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-5 font-sans">
+          <div className="bg-white rounded-lg p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-5 font-sans">
             {/* Subjective */}
             <div>
               <label className="block text-xs font-semibold text-[#1E4E70] uppercase tracking-wider mb-1.5">
@@ -182,14 +182,14 @@ export default function MedicalNotesPage() {
               Clinical Notes History ({filteredNotes.length})
             </h3>
             {filteredNotes.length === 0 ? (
-              <div className="bg-white rounded-2xl p-8 border border-slate-200/80 text-center text-slate-400 text-xs">
+              <div className="bg-white rounded-lg p-8 border border-slate-200/80 text-center text-slate-400 text-xs">
                 No notes saved yet for {selectedPatient.name}. Fill in the form and click &quot;Save Clinical Note&quot;.
               </div>
             ) : (
               filteredNotes.map((n) => (
                 <div
                   key={n.id}
-                  className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-xs space-y-2.5"
+                  className="bg-white rounded-lg p-4 sm:p-5 border border-slate-200/80 shadow-xs space-y-2.5"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">

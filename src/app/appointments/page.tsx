@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   Calendar,
   Clock,
@@ -197,10 +198,10 @@ export default function AppointmentsPage() {
       {/* 1. Page Header & Booking Trigger */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-semibold text-slate-800 tracking-tight">
             Appointments
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
+          <p className="text-xs text-slate-500 font-medium mt-1">
             Real-time OPD & tele-consultation queue management dashboard
           </p>
         </div>
@@ -208,24 +209,16 @@ export default function AppointmentsPage() {
         <div className="flex items-center gap-2.5 flex-wrap">
           <button
             onClick={fetchLiveAppointments}
-            className="p-2.5 text-[#1E4E70] bg-white hover:bg-slate-100 rounded-2xl transition-colors cursor-pointer border border-slate-200 shadow-2xs"
+            className="p-2.5 text-[#1E4E70] bg-white hover:bg-slate-100 rounded-lg transition-colors cursor-pointer border border-slate-200 shadow-2xs"
             title="Refresh Appointments"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-          </button>
-
-          <button
-            onClick={handleOpenQuickAdd}
-            className="flex items-center justify-center gap-2 bg-[#1E4E70] hover:bg-[#153852] text-white font-semibold text-xs sm:text-sm px-4 py-2.5 rounded-2xl shadow-xs transition-all cursor-pointer active:scale-95"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Book Appointment</span>
           </button>
         </div>
       </div>
 
       {/* 2. Top Filter Controls & Search Bar */}
-      <div className="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white rounded-xl p-4 border border-slate-200/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         {/* Status Filter Tabs */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
           {[
@@ -263,7 +256,7 @@ export default function AppointmentsPage() {
       </div>
 
       {/* 3. Dashboard Table View (Matching Screenshot 1) */}
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs overflow-hidden">
         {loading ? (
           <div className="py-16 text-center text-xs text-slate-500 font-medium space-y-2">
             <RefreshCw className="w-6 h-6 text-[#1E4E70] animate-spin mx-auto" />
@@ -311,8 +304,8 @@ export default function AppointmentsPage() {
                     <tr key={apt.id} className="hover:bg-slate-50/70 transition-colors">
                       {/* Patient & Profile Click */}
                       <td className="py-3.5 px-5">
-                        <button
-                          onClick={() => handleOpenPatientProfile(apt)}
+                        <Link
+                          href={`/patients/${apt.patientId}?tab=profile`}
                           className="flex items-center gap-3 text-left group cursor-pointer"
                           title="Click to view complete patient profile file"
                         >
@@ -334,7 +327,7 @@ export default function AppointmentsPage() {
                               Parent: {apt.parentName}
                             </span>
                           </div>
-                        </button>
+                        </Link>
                       </td>
 
                       {/* Date & Time */}
@@ -347,7 +340,7 @@ export default function AppointmentsPage() {
 
                       {/* Phone */}
                       <td className="py-3.5 px-4 text-slate-600 font-mono text-[11px]">
-                        {apt.parentPhone}
+                        {apt.parentPhone ? apt.parentPhone.slice(0, -4) + "XXXX" : "N/A"}
                       </td>
 
                       {/* Status Pill */}
@@ -448,29 +441,29 @@ export default function AppointmentsPage() {
                 </h4>
 
                 <div className="grid grid-cols-2 gap-3 text-xs">
-                  <div className="p-3 bg-slate-50 border border-slate-200/70 rounded-2xl space-y-0.5">
+                  <div className="p-3 bg-slate-50 border border-slate-200/70 rounded-lg space-y-0.5">
                     <span className="text-[10px] font-semibold text-slate-400 block uppercase">Age</span>
                     <span className="font-bold text-slate-900">{selectedPatientModal.age || "1 Months"}</span>
                   </div>
 
-                  <div className="p-3 bg-slate-50 border border-slate-200/70 rounded-2xl space-y-0.5">
+                  <div className="p-3 bg-slate-50 border border-slate-200/70 rounded-lg space-y-0.5">
                     <span className="text-[10px] font-semibold text-slate-400 block uppercase">Gender</span>
                     <span className="font-bold text-slate-900 capitalize">{selectedPatientModal.gender || "girl"}</span>
                   </div>
 
-                  <div className="p-3 bg-slate-50 border border-slate-200/70 rounded-2xl space-y-0.5">
+                  <div className="p-3 bg-slate-50 border border-slate-200/70 rounded-lg space-y-0.5">
                     <span className="text-[10px] font-semibold text-slate-400 block uppercase">Parent Name</span>
                     <span className="font-bold text-slate-900">{selectedPatientModal.parentName || "Parent Account"}</span>
                   </div>
 
-                  <div className="p-3 bg-slate-50 border border-slate-200/70 rounded-2xl space-y-0.5">
+                  <div className="p-3 bg-slate-50 border border-slate-200/70 rounded-lg space-y-0.5">
                     <span className="text-[10px] font-semibold text-slate-400 block uppercase">Phone Number</span>
                     <span className="font-bold text-slate-900 font-mono">{selectedPatientModal.phone || "N/A"}</span>
                   </div>
                 </div>
 
                 {/* Additional Clinical Info */}
-                <div className="p-4 bg-emerald-50/70 border border-emerald-200/80 rounded-2xl space-y-1 text-xs">
+                <div className="p-4 bg-emerald-50/70 border border-emerald-200/80 rounded-lg space-y-1 text-xs">
                   <span className="font-bold text-emerald-900 block">Growth Score & WHO Status</span>
                   <p className="text-emerald-800 font-medium">
                     Growth Velocity: <span className="font-bold">{selectedPatientModal.growthScore || 90}/100</span> (WHO 50th Percentile Normal)
@@ -481,7 +474,7 @@ export default function AppointmentsPage() {
 
             <button
               onClick={() => setSelectedPatientModal(null)}
-              className="w-full bg-[#1E4E70] text-white font-semibold text-xs py-3 rounded-2xl cursor-pointer hover:bg-[#153852] transition-colors"
+              className="w-full bg-[#1E4E70] text-white font-semibold text-xs py-3 rounded-lg cursor-pointer hover:bg-[#153852] transition-colors"
             >
               Close Patient Profile
             </button>
@@ -494,7 +487,7 @@ export default function AppointmentsPage() {
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-fadeIn">
           <form
             onSubmit={handleConfirmReject}
-            className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4 font-sans"
+            className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4 font-sans"
           >
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
@@ -522,7 +515,7 @@ export default function AppointmentsPage() {
                 value={cancellationReason}
                 onChange={(e) => setCancellationReason(e.target.value)}
                 placeholder="e.g. Doctor emergency OPD duty at requested time slot..."
-                className="w-full bg-[#F8FAFC] border border-slate-200 rounded-2xl p-3 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1E4E70]"
+                className="w-full bg-[#F8FAFC] border border-slate-200 rounded-lg p-3 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1E4E70]"
               />
             </div>
 
@@ -551,7 +544,7 @@ export default function AppointmentsPage() {
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-fadeIn">
           <form
             onSubmit={handleSaveEdit}
-            className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4 font-sans"
+            className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4 font-sans"
           >
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="font-bold text-slate-900 text-sm">Edit Appointment Details</h3>
@@ -571,7 +564,7 @@ export default function AppointmentsPage() {
                 value={editNotes}
                 onChange={(e) => setEditNotes(e.target.value)}
                 placeholder="Clinical consultation observations..."
-                className="w-full bg-[#F8FAFC] border border-slate-200 rounded-2xl p-3 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1E4E70]"
+                className="w-full bg-[#F8FAFC] border border-slate-200 rounded-lg p-3 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1E4E70]"
               />
             </div>
 
@@ -582,7 +575,7 @@ export default function AppointmentsPage() {
                 value={editMeetingLink}
                 onChange={(e) => setEditMeetingLink(e.target.value)}
                 placeholder="https://meet.google.com/xyz..."
-                className="w-full bg-[#F8FAFC] border border-slate-200 rounded-2xl p-3 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1E4E70]"
+                className="w-full bg-[#F8FAFC] border border-slate-200 rounded-lg p-3 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1E4E70]"
               />
             </div>
 

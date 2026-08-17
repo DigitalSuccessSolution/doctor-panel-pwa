@@ -150,7 +150,7 @@ export default function Header() {
 
           {/* Interactive Live Search Dropdown */}
           {showSearchDropdown && searchQuery.trim() !== "" && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden z-50 animate-fadeIn">
+            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg border border-slate-200 shadow-xl overflow-hidden z-50 animate-fadeIn">
               <div className="p-2 bg-slate-50 border-b border-slate-100 flex items-center justify-between text-xs text-slate-500 font-semibold">
                 <span>Matching Patients ({filteredPatients.length})</span>
                 <span>Press ESC to close</span>
@@ -209,7 +209,7 @@ export default function Header() {
           {!isAuthenticated ? (
             <button
               onClick={() => setShowLoginModal(true)}
-              className="bg-[#1E4E70] hover:bg-[#153852] text-white text-xs font-semibold px-4 py-2 rounded-2xl shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
+              className="bg-[#1E4E70] hover:bg-[#153852] text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
             >
               <LogIn className="w-3.5 h-3.5" />
               <span>LOGIN / SIGN UP</span>
@@ -218,7 +218,7 @@ export default function Header() {
             <>
               {/* Raise Admin Request Ticket Button */}
               <button
-                onClick={() => window.dispatchEvent(new CustomEvent("open-raise-request"))}
+                onClick={() => router.push("/support")}
                 className="hidden sm:flex items-center gap-1.5 bg-[#1E4E70]/10 hover:bg-[#1E4E70]/20 border border-[#1E4E70]/30 text-[#1E4E70] text-xs font-semibold px-3 py-1.5 rounded-full transition-all cursor-pointer shadow-2xs"
                 title="Raise Ticket / Request to Super Admin"
               >
@@ -246,15 +246,6 @@ export default function Header() {
                   <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-rose-500 border-2 border-white rounded-full animate-pulse"></span>
                 )}
               </Link>
-
-              {/* + Quick Add Primary Button */}
-              <button
-                onClick={handleOpenQuickAdd}
-                className="flex items-center gap-1 bg-[#1E4E70] hover:bg-[#153852] text-white font-medium text-xs sm:text-sm px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl shadow-xs transition-all hover:shadow shrink-0"
-              >
-                <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
-                <span className="font-semibold text-xs sm:text-sm">Quick Add</span>
-              </button>
             </>
           )}
         </div>

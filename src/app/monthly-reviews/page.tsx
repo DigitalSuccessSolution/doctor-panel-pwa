@@ -104,7 +104,7 @@ export default function MonthlyReviewsPage() {
       </div>
 
       {/* Patient Selector Strip */}
-      <div className="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-sans w-full max-w-full">
+      <div className="bg-white rounded-xl p-4 border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-sans w-full max-w-full">
         <div className="flex items-center gap-2.5 min-w-0">
           <div className="w-8 h-8 rounded-xl bg-[#A5D8FF]/30 text-[#1E4E70] flex items-center justify-center shrink-0 border border-[#A5D8FF]/60">
             <UserCheck className="w-4 h-4 text-[#1E4E70]" />
@@ -139,7 +139,7 @@ export default function MonthlyReviewsPage() {
       <div className="space-y-6 font-sans">
         {/* Patient Overview Summary Card */}
         {patient && (
-          <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4 w-full">
+          <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4 w-full">
             <div className="flex items-center gap-3.5 min-w-0 max-w-full w-full sm:w-auto">
               <div className="w-14 h-14 rounded-full overflow-hidden relative border-2 border-[#A5D8FF] shrink-0 shadow-2xs bg-slate-100">
                 <Image src={patient.avatar || "/child_care.png"} alt={patient.name} fill className="object-cover" unoptimized />
@@ -165,7 +165,7 @@ export default function MonthlyReviewsPage() {
         )}
 
         {/* Developmental Milestones Audit Section (From Backend milestoneService) */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+        <div className="bg-white rounded-xl p-6 border border-slate-200/80 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="font-bold text-slate-900 text-sm uppercase tracking-wider">
@@ -187,7 +187,7 @@ export default function MonthlyReviewsPage() {
           {loading ? (
             <div className="py-8 text-center text-xs text-slate-500 font-medium">Fetching milestones...</div>
           ) : babyMilestones.length === 0 ? (
-            <div className="py-10 text-center space-y-2 border border-dashed border-slate-200 rounded-2xl bg-slate-50/50">
+            <div className="py-10 text-center space-y-2 border border-dashed border-slate-200 rounded-lg bg-slate-50/50">
               <Award className="w-8 h-8 text-slate-300 mx-auto" />
               <p className="text-xs font-bold text-slate-700">No Milestones Logged Yet for {patient?.name}</p>
               <p className="text-[11px] text-slate-400">Milestone records logged in backend will automatically display here.</p>
@@ -195,7 +195,7 @@ export default function MonthlyReviewsPage() {
           ) : (
             <div className="space-y-3">
               {babyMilestones.map((m, idx) => (
-                <div key={m._id || m.id || idx} className="flex items-center justify-between p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200">
+                <div key={m._id || m.id || idx} className="flex items-center justify-between p-3.5 rounded-lg bg-emerald-50/70 border border-emerald-200">
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
                     <div>
@@ -213,7 +213,7 @@ export default function MonthlyReviewsPage() {
         </div>
 
         {/* Real Patient Reviews Section (From Backend reviewService) */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+        <div className="bg-white rounded-xl p-6 border border-slate-200/80 shadow-xs space-y-4">
           <h3 className="font-bold text-slate-900 text-sm uppercase tracking-wider">
             Patient Reviews & Rating Feedback
           </h3>
@@ -221,7 +221,7 @@ export default function MonthlyReviewsPage() {
           {loading ? (
             <div className="py-6 text-center text-xs text-slate-500 font-medium">Fetching patient reviews...</div>
           ) : reviewsList.length === 0 ? (
-            <div className="py-10 text-center space-y-2 border border-dashed border-slate-200 rounded-2xl bg-slate-50/50">
+            <div className="py-10 text-center space-y-2 border border-dashed border-slate-200 rounded-lg bg-slate-50/50">
               <MessageSquare className="w-8 h-8 text-slate-300 mx-auto" />
               <p className="text-xs font-bold text-slate-700">No Patient Reviews Logged Yet</p>
               <p className="text-[11px] text-slate-400">Parent feedback & ratings submitted after consultations will appear here.</p>
@@ -229,7 +229,7 @@ export default function MonthlyReviewsPage() {
           ) : (
             <div className="space-y-3">
               {reviewsList.map((rev, idx) => (
-                <div key={rev._id || rev.id || idx} className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5">
+                <div key={rev._id || rev.id || idx} className="p-4 rounded-lg bg-slate-50 border border-slate-200/80 space-y-1.5">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-xs text-slate-900">{rev.patientName || "Patient Review"}</span>
                     <div className="flex items-center gap-1 text-amber-500 text-xs font-bold">

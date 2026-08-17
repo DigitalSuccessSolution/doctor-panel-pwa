@@ -73,7 +73,7 @@ export default function GrowthCurveChart({ currentWeight, ageInMonths, records }
   const activeData = activePoint !== null && activePoint >= 0 ? growthData[activePoint] : null;
 
   return (
-    <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-xs relative overflow-hidden font-sans">
+    <div className="bg-white rounded-xl p-5 sm:p-6 border border-slate-200/80 shadow-xs relative overflow-hidden font-sans">
       {/* Header & Legend */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
         <div>
@@ -114,11 +114,12 @@ export default function GrowthCurveChart({ currentWeight, ageInMonths, records }
       )}
 
       {/* SVG Growth Curve Render Constrained to max-h-[320px] on Desktop */}
-      <div className="w-full overflow-x-auto max-h-[340px] flex justify-center">
-        <svg
-          viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-          className="w-full h-auto max-w-4xl max-h-[320px] select-none"
-        >
+      <div className="w-full overflow-x-auto thin-scrollbar pb-2 mt-2 max-h-[340px] flex justify-start sm:justify-center">
+        <div className="min-w-[500px] w-full">
+          <svg
+            viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+            className="w-full h-auto max-w-4xl max-h-[320px] select-none"
+          >
           {/* Grid lines */}
           {[3, 6, 9, 12].map((w) => (
             <line
@@ -210,6 +211,7 @@ export default function GrowthCurveChart({ currentWeight, ageInMonths, records }
             </text>
           ))}
         </svg>
+        </div>
       </div>
     </div>
   );

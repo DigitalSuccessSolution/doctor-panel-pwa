@@ -52,7 +52,7 @@ export default function NutrientRings({
   ];
 
   return (
-    <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-card space-y-5">
+    <div className="bg-white rounded-xl p-6 border border-slate-100 shadow-card space-y-5">
       <h3 className="font-semibold text-slate-800 text-lg leading-tight">
         Daily Nutrient Goals
       </h3>

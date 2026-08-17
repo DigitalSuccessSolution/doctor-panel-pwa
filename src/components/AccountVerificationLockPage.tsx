@@ -26,7 +26,7 @@ export default function AccountVerificationLockPage() {
     logout,
   } = useDoctorData();
 
-  const [checking, setChecking] = useState(false);
+  const [checking, setChecking] = useState(true);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   /**
@@ -61,6 +61,20 @@ export default function AccountVerificationLockPage() {
     }
   };
 
+  React.useEffect(() => {
+    handleCheckStatus();
+  }, []);
+
+  if (checking && !statusMessage) {
+    return (
+      <div className="min-h-screen bg-[#F0F7FF] flex flex-col items-center justify-center font-sans">
+        <RefreshCw className="w-10 h-10 text-[#1E4E70] animate-spin mb-4" />
+        <h2 className="text-xl font-bold text-slate-800 tracking-tight">Verifying Credentials...</h2>
+        <p className="text-sm text-slate-500 mt-2 font-medium">Checking live status with Admin Desk</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white md:bg-[#F0F7FF] flex flex-col justify-between font-sans relative">
       {/* Top App Header */}
@@ -92,7 +106,7 @@ export default function AccountVerificationLockPage() {
           
           {/* Left Side (Visuals) */}
           <div className="md:w-5/12 bg-gradient-to-b from-slate-50 to-[#E8F3FF] border-b md:border-b-0 md:border-r border-blue-100/50 p-8 md:p-10 flex flex-col items-center justify-center text-center relative">
-            <div className="relative mx-auto w-32 h-32 md:w-48 md:h-48 shrink-0 mb-6 rounded-3xl overflow-hidden shadow-lg border-[4px] border-white ring-4 ring-blue-50/50">
+            <div className="relative mx-auto w-32 h-32 md:w-48 md:h-48 shrink-0 mb-6 rounded-xl overflow-hidden shadow-lg border-[4px] border-white ring-4 ring-blue-50/50">
               <Image
                 src="/verification-illustration.jpg"
                 alt="Verification in Progress"
@@ -128,7 +142,7 @@ export default function AccountVerificationLockPage() {
             </div>
 
             {/* Submitted Clinical Credentials Summary Box */}
-            <div className="bg-[#F8F9FA] rounded-2xl p-5 border border-slate-200/80 text-left space-y-4 shadow-xs">
+            <div className="bg-[#F8F9FA] rounded-lg p-5 border border-slate-200/80 text-left space-y-4 shadow-xs">
               <div className="flex items-center gap-2 border-b border-slate-200 pb-3">
                 <Award className="w-5 h-5 text-[#1E4E70] shrink-0" />
                 <h4 className="font-bold text-slate-800 text-sm">

@@ -21,7 +21,7 @@ export default function PolicyModal() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/60 backdrop-blur-md animate-fadeIn">
-      <div className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border border-slate-100 animate-scaleUp flex flex-col max-h-[85vh]">
+      <div className="bg-white w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden border border-slate-100 animate-scaleUp flex flex-col max-h-[85vh]">
         {/* Modal Header */}
         <div className="px-6 py-4 bg-[#F8F9FA] border-b border-slate-200 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
@@ -86,7 +86,7 @@ export default function PolicyModal() {
               <p>
                 Join over 2,500+ pediatricians and child nutritionists utilizing automated WHO z-score growth tracking and instant parent notification tools.
               </p>
-              <div className="bg-[#F8F9FA] p-4 rounded-2xl border border-slate-200 space-y-2">
+              <div className="bg-[#F8F9FA] p-4 rounded-lg border border-slate-200 space-y-2">
                 <p className="font-semibold text-slate-800">Partner Benefits:</p>
                 <ul className="list-disc pl-4 space-y-1 text-slate-600">
                   <li>Direct patient referrals from MONCRADEL Parent PWA</li>
@@ -117,7 +117,7 @@ export default function PolicyModal() {
           {activePolicy === "contact" && (
             <div className="space-y-3">
               <p>For urgent clinical portal support or account onboarding assistance, contact our team:</p>
-              <div className="bg-[#F8F9FA] p-4 rounded-2xl border border-slate-200 space-y-2">
+              <div className="bg-[#F8F9FA] p-4 rounded-lg border border-slate-200 space-y-2">
                 <p className="font-semibold text-slate-800">MONCRADEL Doctor Support Desk</p>
                 <p className="text-slate-600">Email: doctor-support@moncradel.com</p>
                 <p className="text-slate-600">Phone: +91 1800-419-8800 (Mon-Sat, 9 AM - 8 PM)</p>
@@ -130,11 +130,11 @@ export default function PolicyModal() {
             <div className="space-y-3">
               <p>Designed in collaboration with leading pediatricians, clinical dietitians, and software engineers dedicated to early childhood growth surveillance.</p>
               <div className="grid grid-cols-2 gap-3 pt-1">
-                <div className="bg-[#F8F9FA] p-3 rounded-2xl border border-slate-200">
+                <div className="bg-[#F8F9FA] p-3 rounded-lg border border-slate-200">
                   <p className="font-semibold text-slate-900">Dr. Sarah Chen, MD</p>
                   <p className="text-[11px] text-slate-500">Chief Pediatric Consultant</p>
                 </div>
-                <div className="bg-[#F8F9FA] p-3 rounded-2xl border border-slate-200">
+                <div className="bg-[#F8F9FA] p-3 rounded-lg border border-slate-200">
                   <p className="font-semibold text-slate-900">Dr. Rajesh Mehta, DCH</p>
                   <p className="text-[11px] text-slate-500">Growth Velocity Advisor</p>
                 </div>
@@ -156,11 +156,11 @@ export default function PolicyModal() {
 
           {activePolicy === "blogs" && (
             <div className="space-y-3">
-              <div className="bg-[#F8F9FA] p-3.5 rounded-2xl border border-slate-200">
+              <div className="bg-[#F8F9FA] p-3.5 rounded-lg border border-slate-200">
                 <p className="font-semibold text-[#1E4E70]">Understanding WHO z-Score Percentiles in 0-24m Infants</p>
                 <p className="text-[11px] text-slate-500 mt-1">Clinical guide on evaluating length velocity and head circumference percentiles.</p>
               </div>
-              <div className="bg-[#F8F9FA] p-3.5 rounded-2xl border border-slate-200">
+              <div className="bg-[#F8F9FA] p-3.5 rounded-lg border border-slate-200">
                 <p className="font-semibold text-[#1E4E70]">Bioavailability of Iron Drops in Weaning Infants</p>
                 <p className="text-[11px] text-slate-500 mt-1">Pediatric nutrition advisory on complementary feeding and iron supplementation.</p>
               </div>
@@ -172,7 +172,7 @@ export default function PolicyModal() {
         <div className="p-4 bg-[#F8F9FA] border-t border-slate-200 flex justify-end shrink-0">
           <button
             onClick={() => setActivePolicy(null)}
-            className="bg-[#1E4E70] text-white font-semibold text-xs px-5 py-2.5 rounded-2xl"
+            className="bg-[#1E4E70] text-white font-semibold text-xs px-5 py-2.5 rounded-lg"
           >
             Close
           </button>

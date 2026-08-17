@@ -234,6 +234,9 @@ export function DoctorDataProvider({ children }: { children: React.ReactNode }) 
       const storedRx = localStorage.getItem("moncradel_doctor_rx");
       if (storedRx) setPrescriptions(JSON.parse(storedRx));
 
+      const storedProfile = localStorage.getItem("moncradel_doctor_profile");
+      if (storedProfile) setDoctorProfile(JSON.parse(storedProfile));
+
       const storedToken = getStoredToken();
       if (storedToken) {
         setAuthToken(storedToken);

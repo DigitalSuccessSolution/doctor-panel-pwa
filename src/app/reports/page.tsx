@@ -49,10 +49,10 @@ export default function ReportsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-semibold text-slate-800 tracking-tight">
             Reports & Doctor Earnings
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
+          <p className="text-xs text-slate-500 font-medium mt-1">
             Real-time consultation revenue & payout settlement records
           </p>
         </div>
@@ -60,14 +60,14 @@ export default function ReportsPage() {
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => alert("Exporting Earnings Dataset to CSV...")}
-            className="flex items-center gap-1.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold text-xs px-3.5 py-2.5 rounded-2xl shadow-xs transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold text-xs px-3.5 py-2.5 rounded-lg shadow-xs transition-colors cursor-pointer"
           >
             <FileSpreadsheet className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>Export CSV</span>
           </button>
           <button
             onClick={() => window.print()}
-            className="flex items-center gap-1.5 bg-[#1E4E70] text-white hover:bg-[#153852] font-semibold text-xs px-4 py-2.5 rounded-2xl shadow-xs transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 bg-[#1E4E70] text-white hover:bg-[#153852] font-semibold text-xs px-4 py-2.5 rounded-lg shadow-xs transition-colors cursor-pointer"
           >
             <Download className="w-4 h-4 shrink-0" />
             <span>Download Report</span>
@@ -76,7 +76,7 @@ export default function ReportsPage() {
       </div>
 
       {/* Segmented Control Tabs */}
-      <div className="bg-slate-200/70 p-1.5 rounded-2xl flex items-center gap-1 max-w-md">
+      <div className="bg-slate-200/70 p-1.5 rounded-lg flex items-center gap-1 max-w-md">
         <button
           onClick={() => setActiveTab("financial")}
           className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-2 ${
@@ -101,7 +101,7 @@ export default function ReportsPage() {
         <div className="space-y-6">
           {/* Top 4 Financial Metrics Grid (No Dummy Fallbacks) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs space-y-2">
+            <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-xs space-y-2">
               <div className="flex items-center justify-between text-xs text-slate-400 font-semibold uppercase tracking-wider">
                 <span>Total Earned</span>
                 <IndianRupee className="w-4 h-4 text-emerald-600" />
@@ -110,7 +110,7 @@ export default function ReportsPage() {
               <p className="text-xs font-medium text-slate-500">Total gross revenue</p>
             </div>
 
-            <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs space-y-2">
+            <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-xs space-y-2">
               <div className="flex items-center justify-between text-xs text-slate-400 font-semibold uppercase tracking-wider">
                 <span>Paid Out</span>
                 <CheckCircle2 className="w-4 h-4 text-sky-600" />
@@ -119,7 +119,7 @@ export default function ReportsPage() {
               <p className="text-xs font-medium text-emerald-600">Settled payouts</p>
             </div>
 
-            <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs space-y-2">
+            <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-xs space-y-2">
               <div className="flex items-center justify-between text-xs text-slate-400 font-semibold uppercase tracking-wider">
                 <span>Pending Amount</span>
                 <Clock className="w-4 h-4 text-amber-600" />
@@ -128,7 +128,7 @@ export default function ReportsPage() {
               <p className="text-xs font-medium text-slate-500">Awaiting settlement</p>
             </div>
 
-            <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs space-y-2">
+            <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-xs space-y-2">
               <div className="flex items-center justify-between text-xs text-slate-400 font-semibold uppercase tracking-wider">
                 <span>Payout Records</span>
                 <Users className="w-4 h-4 text-[#1E4E70]" />
@@ -139,7 +139,7 @@ export default function ReportsPage() {
           </div>
 
           {/* Backend Earnings Payout Table */}
-          <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+          <div className="bg-white rounded-xl p-6 border border-slate-200/80 shadow-xs space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-semibold text-slate-900 text-base">Consultation Payout History</h3>
@@ -157,7 +157,7 @@ export default function ReportsPage() {
             {loading ? (
               <div className="py-8 text-center text-xs text-slate-500 font-medium">Fetching earnings records...</div>
             ) : earningsList.length === 0 ? (
-              <div className="py-12 text-center space-y-3 border border-dashed border-slate-200 rounded-2xl">
+              <div className="py-12 text-center space-y-3 border border-dashed border-slate-200 rounded-lg">
                 <Receipt className="w-10 h-10 text-slate-300 mx-auto" />
                 <div className="space-y-1">
                   <h4 className="text-xs font-bold text-slate-800">No Earnings Recorded Yet</h4>
@@ -210,7 +210,7 @@ export default function ReportsPage() {
         /* Clinical Growth Reports Tab */
         <div className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs">
+            <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-xs">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Total Consultations</span>
                 <Users className="w-4 h-4 text-[#1E4E70]" />
@@ -219,7 +219,7 @@ export default function ReportsPage() {
               <span className="text-xs font-medium text-slate-500">Recorded Entries</span>
             </div>
 
-            <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs">
+            <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-xs">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Paid Amount</span>
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
@@ -228,7 +228,7 @@ export default function ReportsPage() {
               <span className="text-xs font-medium text-slate-500">Settled Revenue</span>
             </div>
 
-            <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs">
+            <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-xs">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Pending Payouts</span>
                 <Clock className="w-4 h-4 text-amber-600" />
@@ -238,12 +238,12 @@ export default function ReportsPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+          <div className="bg-white rounded-xl p-6 border border-slate-200/80 shadow-xs space-y-4">
             <h3 className="font-semibold text-slate-900 text-base">Clinical Reports Summary</h3>
             <p className="text-xs text-slate-500 font-medium">
               Export clinical dataset and pediatric growth summaries
             </p>
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-3">
+            <div className="p-4 rounded-lg bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <FileText className="w-5 h-5 text-[#1E4E70]" />
                 <div>

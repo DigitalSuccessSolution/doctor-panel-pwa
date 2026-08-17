@@ -96,7 +96,7 @@ export default function NotificationsPage() {
     <div className="space-y-6 animate-fadeIn pb-16 font-sans w-full max-w-full overflow-hidden">
       {/* Live Notification Bar Toast Overlay */}
       {showLiveBanner && (
-        <div className="fixed top-14 sm:top-16 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-md bg-white/95 backdrop-blur-xl border border-slate-200/90 rounded-2xl p-3.5 shadow-xl flex items-center justify-between gap-3 animate-bounce font-sans">
+        <div className="fixed top-14 sm:top-16 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-md bg-white/95 backdrop-blur-xl border border-slate-200/90 rounded-lg p-3.5 shadow-xl flex items-center justify-between gap-3 animate-bounce font-sans">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center shrink-0">
               <ShieldAlert className="w-5 h-5 animate-pulse" />
@@ -123,7 +123,7 @@ export default function NotificationsPage() {
       )}
 
       {/* 1. Header Section */}
-      <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-white rounded-xl p-5 sm:p-6 border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
             <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
@@ -196,7 +196,7 @@ export default function NotificationsPage() {
         {loading ? (
           <div className="py-12 text-center text-xs text-slate-500 font-medium">Fetching live notifications...</div>
         ) : filteredNotifs.length === 0 ? (
-          <div className="py-14 text-center space-y-3 border border-dashed border-slate-200 rounded-3xl bg-white p-8">
+          <div className="py-14 text-center space-y-3 border border-dashed border-slate-200 rounded-xl bg-white p-8">
             <Bell className="w-10 h-10 text-slate-300 mx-auto" />
             <div className="space-y-1">
               <h4 className="text-sm font-bold text-slate-800">No Notifications Found</h4>
@@ -218,7 +218,7 @@ export default function NotificationsPage() {
             return (
               <div
                 key={n.id}
-                className={`rounded-2xl p-4 sm:p-5 border transition-all duration-300 flex items-start gap-3.5 w-full max-w-full min-w-0 overflow-hidden ${
+                className={`rounded-lg p-4 sm:p-5 border transition-all duration-300 flex items-start gap-3.5 w-full max-w-full min-w-0 overflow-hidden ${
                   isHigh
                     ? "bg-rose-50/90 border-rose-200/80 shadow-xs"
                     : !n.read
@@ -227,7 +227,7 @@ export default function NotificationsPage() {
                 }`}
               >
                 <div
-                  className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 shadow-2xs ${
+                  className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 shadow-2xs ${
                     isHigh
                       ? "bg-rose-500 text-white"
                       : !n.read

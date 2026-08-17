@@ -59,15 +59,15 @@ export default function Dashboard() {
 
       {/* 2. Quick Action Cards (Distinct Soft Baby Pastel Themes - Border-Free) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* New Consultation Card - Soft Baby Sky Blue */}
-        <button
-          onClick={() => handleOpenQuickAddTab("consultation")}
-          className="bg-[#F0F7FF] hover:bg-[#E0F0FF] text-left p-5 rounded-3xl transition-colors group cursor-pointer flex flex-col justify-between min-h-[140px] border border-[#BEE0FF]/40"
+        {/* Appointments Card - Soft Baby Sky Blue */}
+        <Link
+          href="/appointments"
+          className="bg-[#F0F7FF] hover:bg-[#E0F0FF] text-left p-5 rounded-xl transition-colors group cursor-pointer flex flex-col justify-between min-h-[140px] border border-[#BEE0FF]/40 block"
         >
           <div className="mb-4">
             <Image
               src="/pediatric_consultation.png"
-              alt="New Consultation"
+              alt="Appointments"
               width={56}
               height={56}
               className="w-14 h-14 object-contain group-hover:scale-105 transition-transform"
@@ -76,18 +76,18 @@ export default function Dashboard() {
           </div>
           <div>
             <h3 className="font-semibold text-[#1E4E70] text-sm sm:text-base leading-tight">
-              New Consultation
+              Appointments
             </h3>
             <p className="text-xs text-slate-500 font-medium mt-1">
-              Start patient intake
+              View your schedule
             </p>
           </div>
-        </button>
+        </Link>
 
         {/* Add Notes Card - Soft Baby Lavender */}
-        <button
-          onClick={() => handleOpenQuickAddTab("note")}
-          className="bg-[#FBF7FF] hover:bg-[#F3E8FF] text-left p-5 rounded-3xl transition-colors group cursor-pointer flex flex-col justify-between min-h-[140px] border border-purple-200/30"
+        <Link
+          href="/prescriptions"
+          className="bg-[#FBF7FF] hover:bg-[#F3E8FF] text-left p-5 rounded-xl transition-colors group cursor-pointer flex flex-col justify-between min-h-[140px] border border-purple-200/30 block"
         >
           <div className="mb-4">
             <Image
@@ -107,12 +107,12 @@ export default function Dashboard() {
               Update clinical records
             </p>
           </div>
-        </button>
+        </Link>
 
         {/* Create Plan Card - Soft Baby Fresh Mint */}
-        <button
-          onClick={() => handleOpenQuickAddTab("nutrition")}
-          className="bg-[#F0FDF4] hover:bg-[#DCFCE7] text-left p-5 rounded-3xl transition-colors group cursor-pointer flex flex-col justify-between min-h-[140px] border border-emerald-200/30"
+        <Link
+          href="/nutrition"
+          className="bg-[#F0FDF4] hover:bg-[#DCFCE7] text-left p-5 rounded-xl transition-colors group cursor-pointer flex flex-col justify-between min-h-[140px] border border-emerald-200/30 block"
         >
           <div className="mb-4">
             <Image
@@ -132,15 +132,15 @@ export default function Dashboard() {
               Pediatric diet & nutrition roadmap
             </p>
           </div>
-        </button>
+        </Link>
       </div>
 
       {/* 3. Patient Statistics Grid (Distinct Soft Baby Pastel Themes - Border-Free) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Total Patients - Soft Baby Warm Peach */}
         <Link
           href="/patients"
-          className="bg-[#FFF7ED] hover:bg-[#FFEDD5] rounded-3xl p-5 flex flex-col justify-between cursor-pointer transition-colors group min-h-[160px] border border-orange-200/30"
+          className="bg-[#FFF7ED] hover:bg-[#FFEDD5] rounded-xl p-5 flex flex-col justify-between cursor-pointer transition-colors group min-h-[160px] border border-orange-200/30"
         >
           <div className="flex items-center justify-between mb-4">
             <div>
@@ -168,7 +168,7 @@ export default function Dashboard() {
         {/* Today's Appts - Soft Baby Turquoise / Sky */}
         <Link
           href="/appointments"
-          className="bg-[#F0F9FF] hover:bg-[#E0F2FE] rounded-3xl p-5 flex flex-col justify-between cursor-pointer transition-colors group min-h-[160px] border border-sky-200/30"
+          className="bg-[#F0F9FF] hover:bg-[#E0F2FE] rounded-xl p-5 flex flex-col justify-between cursor-pointer transition-colors group min-h-[160px] border border-sky-200/30"
         >
           <div className="flex items-center justify-between mb-4">
             <div>
@@ -194,40 +194,6 @@ export default function Dashboard() {
               <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded-lg border border-emerald-200">
                 ↑20%
               </span>
-            </div>
-          </div>
-        </Link>
-
-        {/* Growth Score Full Card (Clickable Link to Growth Analysis) */}
-        <Link
-          href="/growth-analysis"
-          className="bg-[#1E4E70] hover:bg-[#163852] text-white rounded-3xl p-5 flex flex-col justify-between cursor-pointer transition-colors group min-h-[160px] border border-[#1E4E70]"
-        >
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <Image
-                src="/icon_growth_score_3d.png"
-                alt="WHO Growth Score"
-                width={56}
-                height={56}
-                className="w-14 h-14 object-contain group-hover:scale-105 transition-transform"
-                unoptimized
-              />
-            </div>
-            <span className="text-[10px] font-bold text-[#A5D8FF] bg-white/10 px-2 py-0.5 rounded-lg border border-white/15">
-              Clinical Index
-            </span>
-          </div>
-          <div>
-            <p className="text-xs text-sky-100/80 font-semibold uppercase tracking-wider">WHO Growth Score</p>
-            <p className="text-2xl font-extrabold text-white tracking-tight mt-1">
-              94%
-            </p>
-            <div className="w-full bg-white/20 rounded-full h-1.5 mt-2.5 overflow-hidden border border-white/5">
-              <div
-                className="bg-[#A5D8FF] h-full rounded-full transition-all duration-1000"
-                style={{ width: "94%" }}
-              ></div>
             </div>
           </div>
         </Link>
@@ -283,7 +249,7 @@ export default function Dashboard() {
           {todayAppointments.map((apt) => (
             <div
               key={apt.id}
-              className="bg-[#F0F7FF] rounded-2xl p-5 border border-[#BEE0FF] hover:border-[#1E4E70]/40 transition-colors flex flex-col justify-between space-y-4"
+              className="bg-[#F0F7FF] rounded-lg p-5 border border-[#BEE0FF] hover:border-[#1E4E70]/40 transition-colors flex flex-col justify-between space-y-4"
             >
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3.5">

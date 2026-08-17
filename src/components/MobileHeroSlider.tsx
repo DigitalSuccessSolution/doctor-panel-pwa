@@ -9,7 +9,7 @@ export default function MobileHeroSlider() {
   return (
     <div className="relative pt-18 sm:pt-22 font-sans">
       {/* 3D Overlapping Card Container (Overflow Visible allows doctor head to pop out top edge) */}
-      <div className="relative bg-gradient-to-br from-[#1E4E70] via-[#153852] to-[#0F293D] rounded-3xl p-4.5 sm:p-6 text-white shadow-xl overflow-visible border border-[#A5D8FF]/30 min-h-[185px] sm:min-h-[205px] flex items-center justify-between">
+      <div className="relative bg-gradient-to-br from-[#1E4E70] via-[#153852] to-[#0F293D] rounded-xl p-4.5 sm:p-6 text-white shadow-xl overflow-visible border border-[#A5D8FF]/30 min-h-[185px] sm:min-h-[205px] flex items-center justify-between">
         {/* Background Decorative Mesh Blur */}
         <div className="absolute -top-6 -left-6 w-32 h-32 bg-[#A5D8FF]/20 rounded-full blur-2xl pointer-events-none" />
         <div className="absolute bottom-0 right-0 w-40 h-40 bg-sky-400/10 rounded-full blur-3xl pointer-events-none" />

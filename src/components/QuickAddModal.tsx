@@ -324,7 +324,7 @@ export default function QuickAddModal() {
               {/* TAB 1: INTAKE / CONSULTATION */}
               {activeTab === "consultation" && (
                 <div className="space-y-3.5">
-                  <div className="bg-[#A5D8FF]/20 border border-[#A5D8FF]/40 rounded-2xl p-3 flex items-center gap-3 text-xs text-[#1E4E70]">
+                  <div className="bg-[#A5D8FF]/20 border border-[#A5D8FF]/40 rounded-lg p-3 flex items-center gap-3 text-xs text-[#1E4E70]">
                     <div className="w-9 h-9 rounded-xl bg-white text-[#1E4E70] flex items-center justify-center shrink-0 shadow-xs">
                       <Stethoscope className="w-4 h-4" />
                     </div>
@@ -341,7 +341,7 @@ export default function QuickAddModal() {
                     <select
                       value={selectedPatientId}
                       onChange={(e) => setSelectedPatientId(e.target.value)}
-                      className="w-full bg-[#F8F9FA] border border-slate-200 rounded-2xl px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#1E4E70] focus:outline-none focus:ring-2 focus:ring-[#A5D8FF]"
+                      className="w-full bg-[#F8F9FA] border border-slate-200 rounded-lg px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#1E4E70] focus:outline-none focus:ring-2 focus:ring-[#A5D8FF]"
                     >
                       {patients.map((p) => (
                         <option key={p.id} value={p.id}>
@@ -359,7 +359,7 @@ export default function QuickAddModal() {
                       <select
                         value={intakeType}
                         onChange={(e) => setIntakeType(e.target.value as any)}
-                        className="w-full bg-[#F8F9FA] border border-slate-200 rounded-2xl px-3 py-2 text-xs text-slate-800 focus:outline-none"
+                        className="w-full bg-[#F8F9FA] border border-slate-200 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none"
                       >
                         <option value="OPD Checkup">OPD Checkup</option>
                         <option value="Vaccination">Vaccination</option>
@@ -377,7 +377,7 @@ export default function QuickAddModal() {
                         value={intakeTime}
                         onChange={(e) => setIntakeTime(e.target.value)}
                         placeholder="e.g. 10:30 AM"
-                        className="w-full bg-[#F8F9FA] border border-slate-200 rounded-2xl px-3.5 py-2 text-xs text-slate-800 focus:outline-none"
+                        className="w-full bg-[#F8F9FA] border border-slate-200 rounded-lg px-3.5 py-2 text-xs text-slate-800 focus:outline-none"
                       />
                     </div>
                   </div>
@@ -391,7 +391,7 @@ export default function QuickAddModal() {
                       value={intakeNotes}
                       onChange={(e) => setIntakeNotes(e.target.value)}
                       placeholder="Enter chief complaint, growth progress, or observations..."
-                      className="w-full bg-[#F8F9FA] border border-slate-200 rounded-2xl p-3 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#A5D8FF]"
+                      className="w-full bg-[#F8F9FA] border border-slate-200 rounded-lg p-3 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#A5D8FF]"
                     ></textarea>
                   </div>
                 </div>
@@ -399,8 +399,8 @@ export default function QuickAddModal() {
 
               {/* TAB 2: ADMIN CONTROLLED PATIENT NOTICE */}
               {activeTab === "patient" && (
-                <div className="p-6 text-center space-y-4 bg-slate-50 rounded-3xl border border-slate-200/80">
-                  <div className="w-16 h-16 rounded-2xl bg-sky-100 text-[#1E4E70] flex items-center justify-center mx-auto border border-sky-200">
+                <div className="p-6 text-center space-y-4 bg-slate-50 rounded-xl border border-slate-200/80">
+                  <div className="w-16 h-16 rounded-lg bg-sky-100 text-[#1E4E70] flex items-center justify-center mx-auto border border-sky-200">
                     <ShieldCheck className="w-8 h-8 text-[#1E4E70]" />
                   </div>
                   <div className="space-y-1">
@@ -415,7 +415,7 @@ export default function QuickAddModal() {
                       setIsOpen(false);
                       window.dispatchEvent(new CustomEvent("open-raise-request"));
                     }}
-                    className="bg-[#1E4E70] hover:bg-[#153852] text-white font-semibold text-xs px-6 py-3 rounded-2xl shadow-md cursor-pointer active:scale-95 transition-all"
+                    className="bg-[#1E4E70] hover:bg-[#153852] text-white font-semibold text-xs px-6 py-3 rounded-lg shadow-md cursor-pointer active:scale-95 transition-all"
                   >
                     Raise Admin Ticket for Baby Assignment
                   </button>
@@ -425,7 +425,7 @@ export default function QuickAddModal() {
               {/* TAB 3: MEDICAL SOAP NOTE */}
               {activeTab === "note" && (
                 <div className="space-y-3.5">
-                  <div className="bg-purple-50 border border-purple-200 rounded-2xl p-3 flex items-center gap-3 text-xs text-purple-900">
+                  <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 flex items-center gap-3 text-xs text-purple-900">
                     <div className="w-9 h-9 rounded-xl bg-white text-purple-600 flex items-center justify-center shrink-0 shadow-xs">
                       <Edit3 className="w-4 h-4" />
                     </div>
@@ -442,7 +442,7 @@ export default function QuickAddModal() {
                     <select
                       value={selectedPatientId}
                       onChange={(e) => setSelectedPatientId(e.target.value)}
-                      className="w-full bg-[#F8F9FA] border border-slate-200 rounded-2xl px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#1E4E70] focus:outline-none"
+                      className="w-full bg-[#F8F9FA] border border-slate-200 rounded-lg px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#1E4E70] focus:outline-none"
                     >
                       {patients.map((p) => (
                         <option key={p.id} value={p.id}>
@@ -462,7 +462,7 @@ export default function QuickAddModal() {
                       placeholder="e.g. Healthy infant, age-appropriate growth velocity"
                       value={assessment}
                       onChange={(e) => setAssessment(e.target.value)}
-                      className="w-full bg-[#F8F9FA] border border-slate-200 rounded-2xl px-3.5 py-2 text-xs focus:outline-none"
+                      className="w-full bg-[#F8F9FA] border border-slate-200 rounded-lg px-3.5 py-2 text-xs focus:outline-none"
                     />
                   </div>
 
@@ -475,7 +475,7 @@ export default function QuickAddModal() {
                       placeholder="e.g. Continue iron fortified cereals. Schedule 6-month checkup."
                       value={planText}
                       onChange={(e) => setPlanText(e.target.value)}
-                      className="w-full bg-[#F8F9FA] border border-slate-200 rounded-2xl p-3 text-xs focus:outline-none"
+                      className="w-full bg-[#F8F9FA] border border-slate-200 rounded-lg p-3 text-xs focus:outline-none"
                     ></textarea>
                   </div>
                 </div>
@@ -484,7 +484,7 @@ export default function QuickAddModal() {
               {/* TAB 4: DIET & NUTRITION */}
               {activeTab === "nutrition" && (
                 <div className="space-y-3.5">
-                  <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3 flex items-center gap-3 text-xs text-amber-900">
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center gap-3 text-xs text-amber-900">
                     <div className="w-9 h-9 rounded-xl bg-white text-amber-600 flex items-center justify-center shrink-0 shadow-xs">
                       <Apple className="w-4 h-4" />
                     </div>
@@ -501,7 +501,7 @@ export default function QuickAddModal() {
                     <select
                       value={selectedPatientId}
                       onChange={(e) => setSelectedPatientId(e.target.value)}
-                      className="w-full bg-[#F8F9FA] border border-slate-200 rounded-2xl px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#1E4E70] focus:outline-none"
+                      className="w-full bg-[#F8F9FA] border border-slate-200 rounded-lg px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#1E4E70] focus:outline-none"
                     >
                       {patients.map((p) => (
                         <option key={p.id} value={p.id}>
@@ -520,7 +520,7 @@ export default function QuickAddModal() {
                         type="number"
                         value={targetCalories}
                         onChange={(e) => setTargetCalories(e.target.value)}
-                        className="w-full bg-[#F8F9FA] border border-slate-200 rounded-2xl px-2.5 py-2 text-xs focus:outline-none"
+                        className="w-full bg-[#F8F9FA] border border-slate-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none"
                       />
                     </div>
                     <div>
@@ -531,7 +531,7 @@ export default function QuickAddModal() {
                         type="number"
                         value={targetProtein}
                         onChange={(e) => setTargetProtein(e.target.value)}
-                        className="w-full bg-[#F8F9FA] border border-slate-200 rounded-2xl px-2.5 py-2 text-xs focus:outline-none"
+                        className="w-full bg-[#F8F9FA] border border-slate-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none"
                       />
                     </div>
                     <div>
@@ -542,7 +542,7 @@ export default function QuickAddModal() {
                         type="number"
                         value={targetIron}
                         onChange={(e) => setTargetIron(e.target.value)}
-                        className="w-full bg-[#F8F9FA] border border-slate-200 rounded-2xl px-2.5 py-2 text-xs focus:outline-none"
+                        className="w-full bg-[#F8F9FA] border border-slate-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none"
                       />
                     </div>
                   </div>
@@ -556,7 +556,7 @@ export default function QuickAddModal() {
                       value={mealTitle}
                       onChange={(e) => setMealTitle(e.target.value)}
                       placeholder="e.g. Fortified cereal + avocado puree"
-                      className="w-full bg-[#F8F9FA] border border-slate-200 rounded-2xl px-3.5 py-2 text-xs focus:outline-none"
+                      className="w-full bg-[#F8F9FA] border border-slate-200 rounded-lg px-3.5 py-2 text-xs focus:outline-none"
                     />
                   </div>
                 </div>
@@ -565,7 +565,7 @@ export default function QuickAddModal() {
               {/* TAB 5: PRESCRIPTION (Rx) */}
               {activeTab === "prescription" && (
                 <div className="space-y-3.5">
-                  <div className="bg-sky-50 border border-sky-200 rounded-2xl p-3 flex items-center gap-3 text-xs text-sky-900">
+                  <div className="bg-sky-50 border border-sky-200 rounded-lg p-3 flex items-center gap-3 text-xs text-sky-900">
                     <div className="w-9 h-9 rounded-xl bg-white text-sky-600 flex items-center justify-center shrink-0 shadow-xs">
                       <Pill className="w-4 h-4" />
                     </div>
@@ -582,7 +582,7 @@ export default function QuickAddModal() {
                     <select
                       value={selectedPatientId}
                       onChange={(e) => setSelectedPatientId(e.target.value)}
-                      className="w-full bg-[#F8F9FA] border border-slate-200 rounded-2xl px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#1E4E70] focus:outline-none"
+                      className="w-full bg-[#F8F9FA] border border-slate-200 rounded-lg px-3.5 py-2 text-xs sm:text-sm font-semibold text-[#1E4E70] focus:outline-none"
                     >
                       {patients.map((p) => (
                         <option key={p.id} value={p.id}>
@@ -602,7 +602,7 @@ export default function QuickAddModal() {
                       placeholder="e.g. Mild upper respiratory congestion"
                       value={diagnosis}
                       onChange={(e) => setDiagnosis(e.target.value)}
-                      className="w-full bg-[#F8F9FA] border border-slate-200 rounded-2xl px-3.5 py-2 text-xs focus:outline-none"
+                      className="w-full bg-[#F8F9FA] border border-slate-200 rounded-lg px-3.5 py-2 text-xs focus:outline-none"
                     />
                   </div>
 
@@ -616,7 +616,7 @@ export default function QuickAddModal() {
                         placeholder="e.g. Syrup Paracetamol"
                         value={medicineName}
                         onChange={(e) => setMedicineName(e.target.value)}
-                        className="w-full bg-[#F8F9FA] border border-slate-200 rounded-2xl px-3 py-2 text-xs focus:outline-none"
+                        className="w-full bg-[#F8F9FA] border border-slate-200 rounded-lg px-3 py-2 text-xs focus:outline-none"
                       />
                     </div>
                     <div>
@@ -628,7 +628,7 @@ export default function QuickAddModal() {
                         placeholder="e.g. 1.5 ml"
                         value={dosage}
                         onChange={(e) => setDosage(e.target.value)}
-                        className="w-full bg-[#F8F9FA] border border-slate-200 rounded-2xl px-3 py-2 text-xs focus:outline-none"
+                        className="w-full bg-[#F8F9FA] border border-slate-200 rounded-lg px-3 py-2 text-xs focus:outline-none"
                       />
                     </div>
                   </div>
@@ -640,13 +640,13 @@ export default function QuickAddModal() {
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-2xl transition-colors"
+                  className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 text-xs font-semibold bg-[#1E4E70] text-white rounded-2xl shadow-sm hover:bg-[#153852] transition-all flex items-center gap-1.5"
+                  className="px-5 py-2 text-xs font-semibold bg-[#1E4E70] text-white rounded-lg shadow-sm hover:bg-[#153852] transition-all flex items-center gap-1.5"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>Save Record</span>

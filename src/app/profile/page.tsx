@@ -56,12 +56,12 @@ export default function ProfilePage() {
       <div className="space-y-6">
         {/* HEADER SECTION: GUEST VS LOGGED IN */}
         {!isAuthenticated ? (
-          <div className="bg-gradient-to-br from-[#1E4E70] via-[#163B54] to-[#0F2A3D] text-white rounded-3xl p-6 sm:p-7 shadow-lg border border-sky-400/20 relative overflow-hidden space-y-5">
+          <div className="bg-gradient-to-br from-[#1E4E70] via-[#163B54] to-[#0F2A3D] text-white rounded-xl p-6 sm:p-7 shadow-lg border border-sky-400/20 relative overflow-hidden space-y-5">
             {/* Ambient Background Glow */}
             <div className="absolute -top-12 -right-12 w-48 h-48 bg-[#A5D8FF]/15 rounded-full blur-3xl pointer-events-none" />
 
             <div className="flex items-start gap-4 relative z-10">
-              <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md text-[#A5D8FF] flex items-center justify-center shrink-0 border border-white/20 shadow-inner">
+              <div className="w-12 h-12 rounded-lg bg-white/10 backdrop-blur-md text-[#A5D8FF] flex items-center justify-center shrink-0 border border-white/20 shadow-inner">
                 <Stethoscope className="w-6 h-6 text-[#A5D8FF]" />
               </div>
               <div className="space-y-1">
@@ -77,7 +77,7 @@ export default function ProfilePage() {
             <div className="pt-1 relative z-10">
               <button
                 onClick={() => setShowLoginModal(true)}
-                className="w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-semibold text-xs sm:text-sm py-3.5 px-5 rounded-2xl shadow-md uppercase tracking-wider cursor-pointer active:scale-95 transition-all flex items-center justify-center gap-2"
+                className="w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white font-semibold text-xs sm:text-sm py-3.5 px-5 rounded-lg shadow-md uppercase tracking-wider cursor-pointer active:scale-95 transition-all flex items-center justify-center gap-2"
               >
                 <LogIn className="w-4 h-4" />
                 <span>LOG IN / SIGN UP</span>
@@ -85,7 +85,7 @@ export default function ProfilePage() {
             </div>
           </div>
         ) : (
-          <div className="bg-gradient-to-r from-slate-900 to-[#1E4E70] text-white rounded-3xl p-6 shadow-md border border-slate-800 space-y-4">
+          <div className="bg-gradient-to-r from-slate-900 to-[#1E4E70] text-white rounded-xl p-6 shadow-md border border-slate-800 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-4 min-w-0">
                 <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#A5D8FF] shadow-xs relative shrink-0 bg-slate-100 flex items-center justify-center">

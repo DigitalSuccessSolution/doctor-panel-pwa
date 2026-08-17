@@ -14,7 +14,7 @@ export default function MilestonesTab({ babyMilestones, milestonesLoading }: Mil
       {/* Developmental Logs */}
       <div className="w-full space-y-6">
         {/* Baby Milestones Logs */}
-        <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs space-y-4">
+        <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-xs space-y-4">
           <h3 className="font-bold text-slate-900 text-sm uppercase tracking-wider font-sans">
             Developmental Achievements Log
           </h3>
@@ -29,7 +29,7 @@ export default function MilestonesTab({ babyMilestones, milestonesLoading }: Mil
           ) : (
             <div className="space-y-2.5">
               {babyMilestones.map((m) => (
-                <div key={m._id || m.id} className="flex items-center justify-between p-3 bg-emerald-50/60 border border-emerald-200 rounded-2xl text-xs font-sans">
+                <div key={m._id || m.id} className="flex items-center justify-between p-3 bg-emerald-50/60 border border-emerald-200 rounded-lg text-xs font-sans">
                   <div className="flex items-center gap-2.5">
                     <CheckCircle2 className="w-4.5 h-4.5 text-emerald-600" />
                     <div>

@@ -8,7 +8,7 @@ export default function HeroSubBanner({ onOpenApk }: { onOpenApk: () => void }) 
   const { setShowLoginModal } = useDoctorData();
 
   return (
-    <div className="relative rounded-2xl overflow-hidden shadow-lg border border-slate-200/80 bg-gradient-to-r from-slate-900 via-[#1E4E70] to-[#0071E3] text-white p-6 xl:p-8 transition-all duration-300">
+    <div className="relative rounded-lg overflow-hidden shadow-lg border border-slate-200/80 bg-gradient-to-r from-slate-900 via-[#1E4E70] to-[#0071E3] text-white p-6 xl:p-8 transition-all duration-300">
       <div className="absolute inset-0 z-0">
         <Image
           src="/opd_banner.png"

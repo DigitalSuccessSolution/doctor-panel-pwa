@@ -209,8 +209,8 @@ export default function EditDoctorProfilePage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="max-w-md mx-auto p-6 bg-white rounded-3xl border border-slate-200 text-center space-y-4 font-sans animate-fadeIn my-12 shadow-sm">
-        <div className="w-12 h-12 rounded-2xl bg-[#A5D8FF]/30 text-[#1E4E70] mx-auto flex items-center justify-center">
+      <div className="max-w-md mx-auto p-6 bg-white rounded-xl border border-slate-200 text-center space-y-4 font-sans animate-fadeIn my-12 shadow-sm">
+        <div className="w-12 h-12 rounded-lg bg-[#A5D8FF]/30 text-[#1E4E70] mx-auto flex items-center justify-center">
           <UserCheck className="w-6 h-6" />
         </div>
         <h2 className="text-lg font-bold text-slate-900">Login Required</h2>
@@ -219,7 +219,7 @@ export default function EditDoctorProfilePage() {
         </p>
         <button
           onClick={() => setShowLoginModal(true)}
-          className="w-full bg-[#1E4E70] hover:bg-[#153852] text-white font-semibold text-xs py-3 rounded-2xl cursor-pointer transition-colors"
+          className="w-full bg-[#1E4E70] hover:bg-[#153852] text-white font-semibold text-xs py-3 rounded-lg cursor-pointer transition-colors"
         >
           Sign In Now
         </button>
@@ -234,7 +234,7 @@ export default function EditDoctorProfilePage() {
       
       {/* FIRST TIME ONBOARDING INCOMPLETE BANNER */}
       {!isProfileComplete && (
-        <div className="bg-amber-50 border border-amber-300 text-amber-900 p-3.5 rounded-2xl flex items-center gap-3 animate-fadeIn shadow-xs">
+        <div className="bg-amber-50 border border-amber-300 text-amber-900 p-3.5 rounded-lg flex items-center gap-3 animate-fadeIn shadow-xs">
           <AlertCircle className="w-5 h-5 text-amber-600 shrink-0" />
           <div>
             <p className="text-xs font-bold">Mandatory Doctor Onboarding</p>
@@ -247,7 +247,7 @@ export default function EditDoctorProfilePage() {
 
       {/* SAVE SUCCESS BANNER TOAST / POPUP */}
       {saveSuccess && (
-        <div className="bg-emerald-50 border border-emerald-300 text-emerald-900 p-4 rounded-2xl flex items-start gap-3 animate-fadeIn shadow-md">
+        <div className="bg-emerald-50 border border-emerald-300 text-emerald-900 p-4 rounded-lg flex items-start gap-3 animate-fadeIn shadow-md">
           <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
           <div className="space-y-0.5">
             <p className="text-xs sm:text-sm font-bold text-emerald-900">
@@ -265,7 +265,7 @@ export default function EditDoctorProfilePage() {
       )}
 
       {/* COMPACT PROGRESS BAR HEADER (WITHOUT NUMBER PILLS) */}
-      <div className="bg-white rounded-3xl p-4 border border-slate-200/80 shadow-xs space-y-2.5">
+      <div className="bg-white rounded-xl p-4 border border-slate-200/80 shadow-xs space-y-2.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-[11px] font-bold text-[#1E4E70] bg-[#1E4E70]/10 px-2.5 py-0.5 rounded-full">
@@ -294,7 +294,7 @@ export default function EditDoctorProfilePage() {
         
         {/* STEP 1: DOCTOR PHOTO & IDENTITY */}
         {currentStep === 1 && (
-          <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-5 animate-fadeIn">
+          <div className="bg-white rounded-xl p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-5 animate-fadeIn">
             <div className="space-y-1 border-b border-slate-100 pb-3">
               <h3 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
                 <Camera className="w-4 h-4 text-[#1E4E70]" />
@@ -306,7 +306,7 @@ export default function EditDoctorProfilePage() {
             </div>
 
             {/* PHOTO UPLOAD CONTAINER CARD */}
-            <div className="bg-[#F8FAFC] p-5 sm:p-6 rounded-2xl border border-slate-200/70 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="bg-[#F8FAFC] p-5 sm:p-6 rounded-lg border border-slate-200/70 flex flex-col md:flex-row items-center justify-between gap-6">
               <input
                 type="file"
                 ref={fileInputRef}
@@ -337,38 +337,7 @@ export default function EditDoctorProfilePage() {
                   </button>
                 </div>
 
-                <div className="space-y-2">
-                  <p className="text-[11px] font-semibold text-slate-600">Doctor Gender Avatar:</p>
-                  <div className="flex items-center gap-3">
-                    {[
-                      { label: "Female", src: "/doctor_female.png" },
-                      { label: "Male", src: "/doctor_male_laptop.png" },
-                    ].map((preset, idx) => {
-                      const isSelected = selectedAvatar === preset.src || formData.avatar === preset.src;
-                      return (
-                        <button
-                          key={idx}
-                          type="button"
-                          onClick={() => {
-                            setSelectedAvatar(preset.src);
-                            setFormData((prev) => ({ ...prev, avatar: preset.src }));
-                          }}
-                          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-2xl border text-xs font-bold transition-all cursor-pointer ${
-                            isSelected
-                              ? "bg-[#1E4E70] text-white border-[#1E4E70] ring-2 ring-[#1E4E70]/30 shadow-md"
-                              : "bg-white text-slate-700 border-slate-200 hover:border-[#1E4E70] hover:bg-slate-50"
-                          }`}
-                        >
-                          <div className="w-5 h-5 rounded-full overflow-hidden relative border border-white shrink-0">
-                            <Image src={preset.src} alt={preset.label} fill className="object-cover" unoptimized />
-                          </div>
-                          <span>{preset.label}</span>
-                          {isSelected && <Check className="w-3.5 h-3.5 text-white ml-0.5 stroke-[3]" />}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+
               </div>
 
               {/* UPLOAD CUSTOM BUTTON */}
@@ -404,7 +373,7 @@ export default function EditDoctorProfilePage() {
                   value={formData.fullName || ""}
                   onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                   placeholder="Dr. Sumit Sahu"
-                  className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
+                  className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
                 />
               </div>
 
@@ -420,7 +389,7 @@ export default function EditDoctorProfilePage() {
                     value={formData.email || ""}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="dr.sumitsahu@moncradel.com"
-                    className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
+                    className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
                   />
                 </div>
 
@@ -435,7 +404,7 @@ export default function EditDoctorProfilePage() {
                     value={formData.phone || ""}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="+91 98765 43211"
-                    className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
+                    className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
                   />
                 </div>
               </div>
@@ -451,7 +420,7 @@ export default function EditDoctorProfilePage() {
                   value={formData.specialization || ""}
                   onChange={(e) => setFormData({ ...formData, specialization: e.target.value })}
                   placeholder="Pediatric Nutrition & Neonatal Care"
-                  className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
+                  className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
                 />
               </div>
             </div>
@@ -460,7 +429,7 @@ export default function EditDoctorProfilePage() {
 
         {/* STEP 2: MEDICAL CREDENTIALS */}
         {currentStep === 2 && (
-          <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-5 animate-fadeIn">
+          <div className="bg-white rounded-xl p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-5 animate-fadeIn">
             <div className="space-y-1 border-b border-slate-100 pb-3">
               <h3 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
                 <Award className="w-4 h-4 text-[#1E4E70]" />
@@ -483,7 +452,7 @@ export default function EditDoctorProfilePage() {
                   value={formData.licenseNumber || ""}
                   onChange={(e) => setFormData({ ...formData, licenseNumber: e.target.value })}
                   placeholder="MCI-123456 / MED-884920"
-                  className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
+                  className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
                 />
               </div>
 
@@ -498,7 +467,7 @@ export default function EditDoctorProfilePage() {
                   value={degreesText}
                   onChange={(e) => setDegreesText(e.target.value)}
                   placeholder="MBBS, MD Pediatrics"
-                  className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
+                  className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
                 />
               </div>
 
@@ -512,7 +481,7 @@ export default function EditDoctorProfilePage() {
                   value={qualificationsText}
                   onChange={(e) => setQualificationsText(e.target.value)}
                   placeholder="Child Nutrition Specialist, Fellowship in Neonatology"
-                  className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
+                  className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
                 />
               </div>
 
@@ -527,7 +496,7 @@ export default function EditDoctorProfilePage() {
                   value={formData.experience || ""}
                   onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
                   placeholder="10"
-                  className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
+                  className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
                 />
               </div>
             </div>
@@ -536,7 +505,7 @@ export default function EditDoctorProfilePage() {
 
         {/* STEP 3: CLINIC & OPD SCHEDULE */}
         {currentStep === 3 && (
-          <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-5 animate-fadeIn">
+          <div className="bg-white rounded-xl p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-5 animate-fadeIn">
             <div className="space-y-1 border-b border-slate-100 pb-3">
               <h3 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
                 <Building className="w-4 h-4 text-[#1E4E70]" />
@@ -559,7 +528,7 @@ export default function EditDoctorProfilePage() {
                   value={formData.hospital || ""}
                   onChange={(e) => setFormData({ ...formData, hospital: e.target.value })}
                   placeholder="Moncradel Pediatric Care Hub"
-                  className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
+                  className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
                 />
               </div>
 
@@ -573,7 +542,7 @@ export default function EditDoctorProfilePage() {
                   value={formData.clinicAddress || ""}
                   onChange={(e) => setFormData({ ...formData, clinicAddress: e.target.value })}
                   placeholder="Suite 402, Care Hub, Bandra West, Mumbai"
-                  className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
+                  className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
                 />
               </div>
 
@@ -588,7 +557,7 @@ export default function EditDoctorProfilePage() {
                     value={languagesText}
                     onChange={(e) => setLanguagesText(e.target.value)}
                     placeholder="Hindi, English"
-                    className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
+                    className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
                   />
                 </div>
 
@@ -602,7 +571,7 @@ export default function EditDoctorProfilePage() {
                     value={consultationFee}
                     onChange={(e) => setConsultationFee(Number(e.target.value))}
                     placeholder="500"
-                    className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
+                    className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
                   />
                 </div>
               </div>
@@ -617,7 +586,7 @@ export default function EditDoctorProfilePage() {
                     type="time"
                     value={timingStart}
                     onChange={(e) => setTimingStart(e.target.value)}
-                    className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
+                    className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
                   />
                 </div>
 
@@ -630,7 +599,7 @@ export default function EditDoctorProfilePage() {
                     type="time"
                     value={timingEnd}
                     onChange={(e) => setTimingEnd(e.target.value)}
-                    className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
+                    className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
                   />
                 </div>
               </div>
@@ -640,7 +609,7 @@ export default function EditDoctorProfilePage() {
 
         {/* STEP 4: BANK ACCOUNT & PAYOUTS */}
         {currentStep === 4 && (
-          <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-5 animate-fadeIn">
+          <div className="bg-white rounded-xl p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-5 animate-fadeIn">
             <div className="space-y-1 border-b border-slate-100 pb-3">
               <h3 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
                 <CreditCard className="w-4 h-4 text-[#1E4E70]" />
@@ -662,7 +631,7 @@ export default function EditDoctorProfilePage() {
                   value={bankAccountName}
                   onChange={(e) => setBankAccountName(e.target.value)}
                   placeholder="Dr. Sarah Chen"
-                  className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
+                  className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
                 />
               </div>
 
@@ -676,7 +645,7 @@ export default function EditDoctorProfilePage() {
                   value={bankAccountNumber}
                   onChange={(e) => setBankAccountNumber(e.target.value)}
                   placeholder="123456789012"
-                  className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
+                  className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
                 />
               </div>
 
@@ -691,7 +660,7 @@ export default function EditDoctorProfilePage() {
                     value={bankIfscCode}
                     onChange={(e) => setBankIfscCode(e.target.value)}
                     placeholder="SBIN0001234"
-                    className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white uppercase text-slate-900"
+                    className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white uppercase text-slate-900"
                   />
                 </div>
 
@@ -705,7 +674,7 @@ export default function EditDoctorProfilePage() {
                     value={bankName}
                     onChange={(e) => setBankName(e.target.value)}
                     placeholder="State Bank of India"
-                    className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
+                    className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
                   />
                 </div>
               </div>
@@ -715,7 +684,7 @@ export default function EditDoctorProfilePage() {
 
         {/* STEP 5: CLINICAL BIO & OVERVIEW SUMMARY */}
         {currentStep === 5 && (
-          <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-5 animate-fadeIn">
+          <div className="bg-white rounded-xl p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-5 animate-fadeIn">
             <div className="space-y-1 border-b border-slate-100 pb-3">
               <h3 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
                 <FileText className="w-4 h-4 text-[#1E4E70]" />
@@ -737,12 +706,12 @@ export default function EditDoctorProfilePage() {
                   value={formData.bio || ""}
                   onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                   placeholder="Specialized in pediatric growth tracking, infant nutrition diets, WHO growth curve evaluation..."
-                  className="w-full text-xs sm:text-sm font-medium p-4 bg-[#F8FAFC] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900 resize-none"
+                  className="w-full text-xs sm:text-sm font-medium p-4 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900 resize-none"
                 />
               </div>
 
               {/* PROFILE SUMMARY OVERVIEW CARD */}
-              <div className="bg-[#F8FAFC] p-4 rounded-2xl border border-slate-200/80 space-y-3">
+              <div className="bg-[#F8FAFC] p-4 rounded-lg border border-slate-200/80 space-y-3">
                 <div className="flex items-center gap-3 border-b border-slate-200 pb-2.5">
                   <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#1E4E70] relative bg-white shrink-0">
                     <Image
@@ -791,8 +760,8 @@ export default function EditDoctorProfilePage() {
           </div>
         )}
 
-        {/* BOTTOM FIXED NAVIGATION CONTROL BAR (PROFESSIONAL APP STYLE) */}
-        <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 p-3.5 z-40 shadow-lg">
+        {/* BOTTOM NAVIGATION CONTROL BAR (STATIC INLINE) */}
+        <div className="w-full bg-white border border-slate-200/80 p-3.5 shadow-xs rounded-2xl mt-6">
           <div className="max-w-xl mx-auto flex items-center justify-between gap-3">
             
             {/* BACK BUTTON */}
@@ -800,7 +769,7 @@ export default function EditDoctorProfilePage() {
               type="button"
               onClick={handlePrevStep}
               disabled={currentStep === 1}
-              className={`px-5 py-3.5 rounded-2xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+              className={`px-5 py-3.5 rounded-lg text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                 currentStep === 1
                   ? "bg-slate-100 text-slate-300 cursor-not-allowed"
                   : "bg-slate-100 hover:bg-slate-200 text-slate-700 active:scale-95"
@@ -815,7 +784,7 @@ export default function EditDoctorProfilePage() {
               <button
                 type="button"
                 onClick={handleNextStep}
-                className="flex-1 bg-[#1E4E70] hover:bg-[#153852] text-white text-xs sm:text-sm font-semibold py-3.5 px-6 rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer"
+                className="flex-1 bg-[#1E4E70] hover:bg-[#153852] text-white text-xs sm:text-sm font-semibold py-3.5 px-6 rounded-lg shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer"
               >
                 <span>Save & Next</span>
                 <ChevronRight className="w-4 h-4" />
@@ -825,7 +794,7 @@ export default function EditDoctorProfilePage() {
                 type="button"
                 onClick={() => handleSubmit()}
                 disabled={isSubmitting}
-                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold py-3.5 px-6 rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer"
+                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold py-3.5 px-6 rounded-lg shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer"
               >
                 <Save className="w-4 h-4" />
                 <span>

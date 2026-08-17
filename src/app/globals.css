@@ -83,6 +83,20 @@ select:disabled {
   background: #94A3B8;
 }
 
+/* Force visible thin scrollbar for specific horizontal containers (like tabs) */
+.thin-scrollbar::-webkit-scrollbar {
+  height: 4px;
+  width: 4px;
+}
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: #F1F5F9; /* Very light gray rail so it's visible */
+  border-radius: 4px;
+}
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background: #94A3B8; /* Darker thumb to be clearly visible */
+  border-radius: 4px;
+}
+
 /* Enlarge small font sizes on mobile screens for clear, crisp readability */
 @media (max-width: 640px) {
   .text-\[10px\] {

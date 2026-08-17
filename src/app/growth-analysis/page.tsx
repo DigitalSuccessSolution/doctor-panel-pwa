@@ -155,17 +155,17 @@ export default function GrowthAnalysisPage() {
       {/* 1. Page Title & Action Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-semibold text-slate-800 tracking-tight">
             WHO Growth Analysis
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
+          <p className="text-xs text-slate-500 font-medium mt-1">
             Evaluate pediatric weight velocity, height percentiles & WHO growth standards
           </p>
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
           {/* Patient Selector */}
-          <div className="bg-white border border-slate-200/80 rounded-2xl px-3.5 py-2 shadow-xs flex items-center gap-2">
+          <div className="bg-white border border-slate-200/80 rounded-lg px-3.5 py-2 shadow-xs flex items-center gap-2">
             <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider">Patient:</span>
             <select
               value={selectedPatientId}
@@ -183,7 +183,7 @@ export default function GrowthAnalysisPage() {
           {/* Log Vitals Button */}
           <button
             onClick={() => setShowLogModal(true)}
-            className="flex items-center justify-center gap-2 bg-[#1E4E70] hover:bg-[#153852] text-white font-semibold text-xs sm:text-sm px-4 py-2.5 rounded-2xl shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+            className="flex items-center justify-center gap-2 bg-[#1E4E70] hover:bg-[#153852] text-white font-semibold text-xs sm:text-sm px-4 py-2.5 rounded-lg shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>Log Vitals</span>
@@ -193,7 +193,7 @@ export default function GrowthAnalysisPage() {
 
       {/* 2. Selected Patient Summary Card */}
       {activePatient && (
-        <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-card flex items-center justify-between gap-4">
+        <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-card flex items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
             <div className="w-12 h-12 rounded-full overflow-hidden border border-slate-200/80 shadow-2xs relative shrink-0 bg-slate-100">
               <Image
@@ -239,7 +239,7 @@ export default function GrowthAnalysisPage() {
       />
 
       {/* 4. AI Clinical Growth Insights Box */}
-      <div className="bg-[#E0F2FE]/40 border border-[#BAE6FD] rounded-3xl p-5 space-y-3">
+      <div className="bg-[#E0F2FE]/40 border border-[#BAE6FD] rounded-xl p-5 space-y-3">
         <div className="flex items-center gap-2 text-[#1E4E70] font-semibold text-base">
           <Sparkles className="w-5 h-5 text-[#1E4E70]" />
           <span>Clinical Growth Insights</span>
@@ -259,7 +259,7 @@ export default function GrowthAnalysisPage() {
       </div>
 
       {/* 5. Recorded Growth Log Table */}
-      <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-4">
+      <div className="bg-white rounded-xl p-6 border border-slate-200/80 shadow-xs space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-semibold text-slate-900 text-base">
@@ -281,7 +281,7 @@ export default function GrowthAnalysisPage() {
         {loading ? (
           <div className="py-8 text-center text-xs text-slate-500">Loading growth data from backend...</div>
         ) : records.length === 0 ? (
-          <div className="py-8 text-center space-y-2 border border-dashed border-slate-200 rounded-2xl">
+          <div className="py-8 text-center space-y-2 border border-dashed border-slate-200 rounded-lg">
             <Scale className="w-8 h-8 text-slate-300 mx-auto" />
             <p className="text-xs font-semibold text-slate-700">No growth records logged yet for {activePatient?.name}</p>
             <p className="text-[11px] text-slate-400">Click &quot;Log Vitals&quot; to save weight and height to backend.</p>
@@ -337,7 +337,7 @@ export default function GrowthAnalysisPage() {
       {/* Log Vitals Modal */}
       {showLogModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-fadeIn">
-          <div className="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl space-y-4 border border-slate-100 font-sans">
+          <div className="bg-white w-full max-w-md rounded-xl p-6 shadow-2xl space-y-4 border border-slate-100 font-sans">
             <div className="flex items-center justify-between border-b pb-3">
               <h3 className="font-semibold text-slate-900 text-base">
                 Log Baby Vitals
@@ -351,7 +351,7 @@ export default function GrowthAnalysisPage() {
             </div>
 
             {successMsg ? (
-              <div className="p-4 bg-emerald-50 text-emerald-800 rounded-2xl text-xs flex items-center gap-2">
+              <div className="p-4 bg-emerald-50 text-emerald-800 rounded-lg text-xs flex items-center gap-2">
                 <Check className="w-4 h-4 text-emerald-600" />
                 <span>{successMsg}</span>
               </div>
@@ -369,7 +369,7 @@ export default function GrowthAnalysisPage() {
                       placeholder="e.g. 7.5"
                       value={weight}
                       onChange={(e) => setWeight(e.target.value)}
-                      className="w-full bg-[#F8F9FA] border border-slate-200 rounded-2xl px-3.5 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#A5D8FF]"
+                      className="w-full bg-[#F8F9FA] border border-slate-200 rounded-lg px-3.5 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#A5D8FF]"
                     />
                   </div>
                   <div>
@@ -383,7 +383,7 @@ export default function GrowthAnalysisPage() {
                       placeholder="e.g. 68.0"
                       value={height}
                       onChange={(e) => setHeight(e.target.value)}
-                      className="w-full bg-[#F8F9FA] border border-slate-200 rounded-2xl px-3.5 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#A5D8FF]"
+                      className="w-full bg-[#F8F9FA] border border-slate-200 rounded-lg px-3.5 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#A5D8FF]"
                     />
                   </div>
                 </div>
@@ -398,7 +398,7 @@ export default function GrowthAnalysisPage() {
                     placeholder="e.g. 42.0 (optional)"
                     value={headCircumference}
                     onChange={(e) => setHeadCircumference(e.target.value)}
-                    className="w-full bg-[#F8F9FA] border border-slate-200 rounded-2xl px-3.5 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#A5D8FF]"
+                    className="w-full bg-[#F8F9FA] border border-slate-200 rounded-lg px-3.5 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#A5D8FF]"
                   />
                 </div>
 
@@ -411,7 +411,7 @@ export default function GrowthAnalysisPage() {
                     placeholder="e.g. Normal development & appetite"
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    className="w-full bg-[#F8F9FA] border border-slate-200 rounded-2xl px-3.5 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#A5D8FF]"
+                    className="w-full bg-[#F8F9FA] border border-slate-200 rounded-lg px-3.5 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#A5D8FF]"
                   />
                 </div>
 
@@ -419,14 +419,14 @@ export default function GrowthAnalysisPage() {
                   <button
                     type="button"
                     onClick={() => setShowLogModal(false)}
-                    className="px-4 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-2xl transition-colors cursor-pointer"
+                    className="px-4 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={submitting || !weight || !height}
-                    className="bg-[#1E4E70] hover:bg-[#153852] text-white font-semibold text-xs px-5 py-2.5 rounded-2xl shadow-xs transition-colors cursor-pointer"
+                    className="bg-[#1E4E70] hover:bg-[#153852] text-white font-semibold text-xs px-5 py-2.5 rounded-lg shadow-xs transition-colors cursor-pointer"
                   >
                     {submitting ? "Saving..." : "Save to Database"}
                   </button>

@@ -49,7 +49,7 @@ export default function GrowthTab({
         />
 
         {/* Table of previous growth logs */}
-        <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs space-y-4">
+        <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-xs space-y-4">
           <h3 className="font-bold text-slate-900 text-sm uppercase tracking-wider">
             Vitals & Growth History List
           </h3>
@@ -59,14 +59,15 @@ export default function GrowthTab({
           ) : growthRecords.length === 0 ? (
             <p className="text-center text-xs text-slate-400 py-6">No previous vitals records logged yet.</p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
+            <div className="overflow-x-auto thin-scrollbar pb-2">
+              <table className="w-full text-left text-xs border-collapse whitespace-nowrap">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200/80 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
                     <th className="py-2.5 px-3">Date</th>
                     <th className="py-2.5 px-3">Weight (kg)</th>
                     <th className="py-2.5 px-3">Height (cm)</th>
-                    <th className="py-2.5 px-3">Notes</th>
+                    <th className="py-2.5 px-3">Head Circ. (cm)</th>
+                    <th className="py-2.5 px-3 min-w-[150px]">Notes</th>
                     <th className="py-2.5 px-3 text-right">Action</th>
                   </tr>
                 </thead>
@@ -78,7 +79,8 @@ export default function GrowthTab({
                       </td>
                       <td className="py-2.5 px-3 text-slate-900">{rec.weight} kg</td>
                       <td className="py-2.5 px-3">{rec.height} cm</td>
-                      <td className="py-2.5 px-3 font-normal text-slate-500 max-w-[150px] truncate">
+                      <td className="py-2.5 px-3">{rec.headCircumference ? `${rec.headCircumference} cm` : "—"}</td>
+                      <td className="py-2.5 px-3 font-normal text-slate-500 max-w-[200px] truncate">
                         {rec.notes || "—"}
                       </td>
                       <td className="py-2.5 px-3 text-right">
@@ -102,7 +104,7 @@ export default function GrowthTab({
       <div className="lg:col-span-5">
         <form
           onSubmit={handleLogVitals}
-          className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-2xs space-y-4"
+          className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-2xs space-y-4"
         >
           <h3 className="font-bold text-slate-800 text-sm tracking-tight border-b border-slate-100 pb-2 flex items-center gap-2">
             <Scale className="w-4 h-4 text-[#1E4E70]" />

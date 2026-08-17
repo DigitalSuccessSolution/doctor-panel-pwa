@@ -32,6 +32,7 @@ import {
   BookOpen,
   Utensils,
   Search,
+  AlertTriangle,
 } from "lucide-react";
 import { useDoctorData } from "@/context/DoctorDataContext";
 import { Patient, maskPhoneNumber } from "@/data/mockData";
@@ -74,6 +75,19 @@ export default function PatientProfilePage() {
   const [logNotes, setLogNotes] = useState("");
   const [savingGrowth, setSavingGrowth] = useState(false);
 
+  // Delete Modal State
+  const [deleteModalConfig, setDeleteModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: "",
+    message: "",
+    onConfirm: () => {},
+  });
+
   // Tab 3: Prescription Composer State
   const [prescriptionList, setPrescriptionList] = useState<any[]>([]);
   const [rxLoading, setRxLoading] = useState(false);
@@ -103,13 +117,13 @@ export default function PatientProfilePage() {
     { day: "Sunday", title: "", desc: "", mealId: "", originalTitle: "", originalDesc: "" },
   ]);
   const [savingNutrition, setSavingNutrition] = useState(false);
-  const [nutritionDayTab, setNutritionDayTab] = useState<string>("All Days");
   const [plannerSelectedDay, setPlannerSelectedDay] = useState<string>("Monday");
   const [plannerSelectedMealId, setPlannerSelectedMealId] = useState<string>("");
   const [allMeals, setAllMeals] = useState<any[]>([]);
   const [mealsLoading, setMealsLoading] = useState(false);
   const [catalogSearchTerm, setCatalogSearchTerm] = useState<string>("");
   const [plannerSuccessMsg, setPlannerSuccessMsg] = useState<string>("");
+  const [plannerErrorMsg, setPlannerErrorMsg] = useState<string>("");
   const [savingGuidelines, setSavingGuidelines] = useState<boolean>(false);
 
   // Tab 5: Milestones State
@@ -287,16 +301,24 @@ export default function PatientProfilePage() {
   };
 
   // Add Vital record delete handler
-  const handleDeleteGrowth = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this vital log?")) return;
-    try {
-      const res = await growthService.deleteGrowthRecord(id);
-      if (res.success) {
-        setGrowthRecords((prev) => prev.filter((r) => r._id !== id && r.id !== id));
+  const handleDeleteGrowth = (id: string) => {
+    setDeleteModalConfig({
+      isOpen: true,
+      title: "Delete Vital Log",
+      message: "Are you sure you want to delete this vital log? This action cannot be undone.",
+      onConfirm: async () => {
+        try {
+          const res = await growthService.deleteGrowthRecord(id);
+          if (res.success) {
+            setGrowthRecords((prev) => prev.filter((r) => r._id !== id && r.id !== id));
+          }
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setDeleteModalConfig(prev => ({ ...prev, isOpen: false }));
+        }
       }
-    } catch (err) {
-      console.error(err);
-    }
+    });
   };
 
   // Medicines Builder Helpers
@@ -350,16 +372,24 @@ export default function PatientProfilePage() {
     setRxMedicines([{ name: "", dosage: "1.25 ml", frequency: "1-0-1", duration: "5 Days", instructions: "After feeding" }]);
   };
 
-  const handleDeletePrescription = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this prescription log?")) return;
-    try {
-      const res = await prescriptionService.deletePrescription(id);
-      if (res.success) {
-        setPrescriptionList((prev) => prev.filter((r) => r.id !== id));
+  const handleDeletePrescription = (id: string) => {
+    setDeleteModalConfig({
+      isOpen: true,
+      title: "Delete Prescription",
+      message: "Are you sure you want to delete this prescription log? This action cannot be undone.",
+      onConfirm: async () => {
+        try {
+          const res = await prescriptionService.deletePrescription(id);
+          if (res.success) {
+            setPrescriptionList((prev) => prev.filter((r) => r.id !== id));
+          }
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setDeleteModalConfig(prev => ({ ...prev, isOpen: false }));
+        }
       }
-    } catch (err) {
-      console.error(err);
-    }
+    });
   };
 
   // Issue / Update Prescription
@@ -433,12 +463,6 @@ export default function PatientProfilePage() {
           });
         }
       }
-      if (scheduleItems.length === 0) {
-        scheduleItems.push({
-          day: "Monday",
-          mealId: "64f719d3f1a2b3c4d5e6f7a8"
-        });
-      }
 
       let res;
       if (nutritionPlan && (nutritionPlan.id || nutritionPlan._id)) {
@@ -457,11 +481,21 @@ export default function PatientProfilePage() {
 
       if (res.success && res.data) {
         setNutritionPlan(res.data);
-        setPlannerSuccessMsg("Guidelines saved successfully!");
+        setPlannerSuccessMsg("Nutrition plan saved successfully!");
+        setPlannerErrorMsg("");
         setTimeout(() => setPlannerSuccessMsg(""), 4000);
+      } else {
+        setPlannerErrorMsg(res.message || "Failed to save nutrition plan");
+        setTimeout(() => setPlannerErrorMsg(""), 5000);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      if (err.message && err.message.includes("weeklySchedule: At least one meal must be scheduled")) {
+         setPlannerErrorMsg("At least one meal must be scheduled. You cannot save an empty plan.");
+      } else {
+         setPlannerErrorMsg(err.message || "An unexpected error occurred");
+      }
+      setTimeout(() => setPlannerErrorMsg(""), 5000);
     } finally {
       setSavingGuidelines(false);
     }
@@ -519,43 +553,10 @@ export default function PatientProfilePage() {
     }
   };
 
-  // Remove a specific meal from the schedule by its index
-  const handleRemoveMealFromDay = async (indexToRemove: number) => {
-    setSavingNutrition(true);
-    setPlannerSuccessMsg("");
-    try {
-      const updatedSchedule = nutritionSchedule.filter((_, idx) => idx !== indexToRemove);
-      const scheduleItems = updatedSchedule
-        .filter(s => s.mealId && s.mealId.trim() !== "")
-        .map(s => ({
-          day: s.day,
-          mealId: s.mealId
-        }));
-
-      // Fallback standard meal to pass validation if empty
-      if (scheduleItems.length === 0) {
-        scheduleItems.push({
-          day: "Monday",
-          mealId: "64f719d3f1a2b3c4d5e6f7a8"
-        });
-      }
-
-      const res = await nutritionService.updateNutritionPlan(nutritionPlan.id || nutritionPlan._id, {
-        babyId: patientId,
-        guidelines: nutritionGuidelines.trim(),
-        weeklySchedule: scheduleItems
-      });
-
-      if (res.success && res.data) {
-        setNutritionPlan(res.data);
-        setPlannerSuccessMsg("Meal removed successfully!");
-        setTimeout(() => setPlannerSuccessMsg(""), 4000);
-      }
-    } catch (err) {
-      console.error("Failed to remove meal:", err);
-    } finally {
-      setSavingNutrition(false);
-    }
+  // Remove a specific meal from the schedule by its index (Local state only, saves when "Save Entire Plan" is clicked)
+  const handleRemoveMealFromDay = (indexToRemove: number) => {
+    const updatedSchedule = nutritionSchedule.filter((_, idx) => idx !== indexToRemove);
+    setNutritionSchedule(updatedSchedule);
   };
 
 
@@ -574,7 +575,7 @@ export default function PatientProfilePage() {
       </div>
 
       {/* 1. Top Patient Header Card */}
-      <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs flex flex-col md:flex-row items-center justify-between text-center md:text-left gap-5 relative overflow-hidden">
+      <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-xs flex flex-col md:flex-row items-center justify-between text-center md:text-left gap-5 relative overflow-hidden">
         <div className="flex flex-col md:flex-row items-center gap-4">
           <div className="relative shrink-0">
             <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#A5D8FF] shadow-2xs relative bg-slate-100">
@@ -603,7 +604,7 @@ export default function PatientProfilePage() {
 
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5 text-xs text-slate-500 font-medium">
               <span className="bg-slate-100 text-slate-700 text-[11px] px-2 py-0.5 rounded-md border border-slate-200/60 font-semibold font-sans">
-                Parent: {patient.parentName || "Parent"} ({patient.parentPhone || "N/A"})
+                Parent: {patient.parentName || "Parent"} ({patient.parentPhone ? patient.parentPhone.slice(0, -4) + "XXXX" : "N/A"})
               </span>
               <span className="text-slate-300">•</span>
               <div className="flex items-center gap-1 font-semibold">
@@ -632,7 +633,7 @@ export default function PatientProfilePage() {
       </div>
 
       {/* 2. Interactive Navigation Tabs */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none border-b border-slate-200/60">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-slate-200/60 thin-scrollbar">
         {[
           { id: "profile", label: "Profile & Contacts", icon: User },
           { id: "growth", label: "Growth Trajectory", icon: Scale },
@@ -725,8 +726,6 @@ export default function PatientProfilePage() {
             setNutritionSchedule={setNutritionSchedule}
             savingNutrition={savingNutrition}
             setSavingNutrition={setSavingNutrition}
-            nutritionDayTab={nutritionDayTab}
-            setNutritionDayTab={setNutritionDayTab}
             plannerSelectedDay={plannerSelectedDay}
             setPlannerSelectedDay={setPlannerSelectedDay}
             allMeals={allMeals}
@@ -735,6 +734,8 @@ export default function PatientProfilePage() {
             setCatalogSearchTerm={setCatalogSearchTerm}
             plannerSuccessMsg={plannerSuccessMsg}
             setPlannerSuccessMsg={setPlannerSuccessMsg}
+            plannerErrorMsg={plannerErrorMsg}
+            setPlannerErrorMsg={setPlannerErrorMsg}
             savingGuidelines={savingGuidelines}
             handleSaveGuidelines={handleSaveGuidelines}
             handleRemoveMealFromDay={handleRemoveMealFromDay}
@@ -755,6 +756,41 @@ export default function PatientProfilePage() {
         onClose={() => setShowPrintModal(false)}
         patient={patient}
       />
+
+      {/* Shared Delete Confirmation Modal */}
+      {deleteModalConfig.isOpen && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-[150] flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-white rounded-xl max-w-sm w-full shadow-2xl border border-slate-200 overflow-hidden font-sans">
+            <div className="p-6 text-center space-y-4">
+              <div className="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto shadow-sm">
+                <AlertTriangle className="w-8 h-8" />
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-900 text-xl">{deleteModalConfig.title}</h3>
+                <p className="text-sm text-slate-500 mt-2 leading-relaxed">
+                  {deleteModalConfig.message}
+                </p>
+              </div>
+            </div>
+            <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setDeleteModalConfig(prev => ({ ...prev, isOpen: false }))}
+                className="flex-1 bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 font-bold py-2.5 rounded-xl transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={deleteModalConfig.onConfirm}
+                className="flex-1 bg-rose-600 text-white hover:bg-rose-700 font-bold py-2.5 rounded-xl transition-colors shadow-xs cursor-pointer"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

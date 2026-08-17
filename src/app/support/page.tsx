@@ -149,30 +149,19 @@ export default function SupportPage() {
 
   return (
     <div className="w-full max-w-5xl mx-auto space-y-6 animate-fadeIn pb-24 font-sans overflow-hidden">
-      {/* Header Banner */}
-      <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-            Doctor Support Desk
+          <h1 className="text-xl sm:text-2xl font-semibold text-slate-800 tracking-tight">
+            Support Desk
           </h1>
           <p className="text-xs text-slate-500 font-medium mt-1">
-            Raise ticket inquiries, account assignment requests & view admin responses
+            Contact Super Admin for account assignments, policy questions, and technical help.
           </p>
         </div>
-
-        <div className="flex items-center gap-2 flex-wrap">
-          <button
-            onClick={() => setActiveTab("new")}
-            className="bg-[#1E4E70] hover:bg-[#153852] text-white font-semibold text-xs px-4 py-2.5 rounded-2xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Raise New Ticket</span>
-          </button>
-        </div>
       </div>
-
       {/* Navigation Segment Tabs */}
-      <div className="bg-slate-200/70 p-1.5 rounded-2xl flex items-center gap-1 max-w-md">
+      <div className="bg-slate-200/70 p-1.5 rounded-lg flex items-center gap-1 max-w-md">
         <button
           onClick={() => setActiveTab("tickets")}
           className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-2 ${
@@ -217,11 +206,11 @@ export default function SupportPage() {
           </div>
 
           {loadingTickets ? (
-            <div className="py-12 text-center text-xs text-slate-500 font-medium bg-white rounded-3xl border border-slate-200">
+            <div className="py-12 text-center text-xs text-slate-500 font-medium bg-white rounded-xl border border-slate-200">
               Loading support tickets...
             </div>
           ) : ticketsList.length === 0 ? (
-            <div className="py-14 text-center space-y-3 border border-dashed border-slate-200 rounded-3xl bg-white p-8">
+            <div className="py-14 text-center space-y-3 border border-dashed border-slate-200 rounded-xl bg-white p-8">
               <MessageSquare className="w-10 h-10 text-slate-300 mx-auto" />
               <div className="space-y-1">
                 <h4 className="text-sm font-bold text-slate-800">No Support Tickets Raised Yet</h4>
@@ -243,13 +232,10 @@ export default function SupportPage() {
               return (
                 <div
                   key={ticketId}
-                  className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-4 font-sans"
+                  className="bg-white rounded-xl p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-4 font-sans"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
                     <div className="flex items-center gap-2.5">
-                      <span className="font-mono text-xs font-bold text-[#1E4E70] bg-[#1E4E70]/10 px-2.5 py-1 rounded-lg">
-                        {ticketId}
-                      </span>
                       <h4 className="font-bold text-slate-900 text-sm">{ticket.subject}</h4>
                     </div>
 
@@ -277,7 +263,7 @@ export default function SupportPage() {
                     </div>
                   </div>
 
-                  <p className="text-xs text-slate-700 font-medium leading-relaxed bg-slate-50 p-3.5 rounded-2xl border border-slate-200/70">
+                  <p className="text-xs text-slate-700 font-medium leading-relaxed bg-slate-50 p-3.5 rounded-lg border border-slate-200/70">
                     {ticket.message}
                   </p>
 
@@ -291,7 +277,7 @@ export default function SupportPage() {
                         {ticket.replies.map((reply, rIdx) => (
                           <div key={rIdx} className="bg-slate-100/70 p-3 rounded-xl space-y-1 text-xs">
                             <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase">
-                              <span>{reply.senderRole || "Admin"}</span>
+                              <span>{reply.sender === "user" ? "Doctor" : "Super Admin"}</span>
                               <span>{reply.createdAt ? new Date(reply.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "Recently"}</span>
                             </div>
                             <p className="text-slate-800 font-medium">{reply.message}</p>
@@ -301,25 +287,7 @@ export default function SupportPage() {
                     </div>
                   )}
 
-                  {/* Reply Input Form */}
-                  <div className="pt-2 flex items-center gap-2">
-                    <input
-                      type="text"
-                      placeholder="Type a follow-up response to support..."
-                      value={replyTextMap[ticketId] || ""}
-                      onChange={(e) => setReplyTextMap({ ...replyTextMap, [ticketId]: e.target.value })}
-                      onKeyDown={(e) => e.key === "Enter" && handleSendReply(ticketId)}
-                      className="flex-1 text-xs font-medium px-4 py-2.5 bg-[#F8FAFC] border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70] text-slate-900"
-                    />
-                    <button
-                      onClick={() => handleSendReply(ticketId)}
-                      disabled={replyingId === ticketId}
-                      className="bg-[#1E4E70] hover:bg-[#153852] text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer shrink-0 disabled:opacity-50"
-                    >
-                      <Send className="w-3.5 h-3.5" />
-                      <span>{replyingId === ticketId ? "Sending..." : "Reply"}</span>
-                    </button>
-                  </div>
+
                 </div>
               );
             })
@@ -329,7 +297,7 @@ export default function SupportPage() {
 
       {/* 2. RAISE NEW TICKET TAB */}
       {activeTab === "new" && (
-        <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-5 animate-fadeIn">
+        <div className="bg-white rounded-xl p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-5 animate-fadeIn">
           {isSubmitted ? (
             <div className="text-center py-8 space-y-4">
               <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 mx-auto flex items-center justify-center border border-emerald-200">
@@ -338,7 +306,7 @@ export default function SupportPage() {
               <div className="space-y-1">
                 <h3 className="text-base font-bold text-slate-900">Support Ticket Created Successfully!</h3>
                 <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                  Ticket ID <span className="font-mono font-bold text-[#1E4E70]">{submittedTicketId}</span> has been dispatched to Super Admin support.
+                  Your ticket has been dispatched to Super Admin support. We will get back to you soon.
                 </p>
               </div>
               <button
@@ -361,7 +329,7 @@ export default function SupportPage() {
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className="w-full text-xs font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70] text-slate-900"
+                    className="w-full text-xs font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] text-slate-900"
                   >
                     <option value="Assign New Parent / Child Patient Account">Assign New Parent / Child Patient Account</option>
                     <option value="Prescription & e-Rx Sync Assistance">Prescription & e-Rx Sync Assistance</option>
@@ -376,7 +344,7 @@ export default function SupportPage() {
                   <select
                     value={priority}
                     onChange={(e) => setPriority(e.target.value as any)}
-                    className="w-full text-xs font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70] text-slate-900"
+                    className="w-full text-xs font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] text-slate-900"
                   >
                     <option value="Low">Low Priority</option>
                     <option value="Medium">Medium Priority</option>
@@ -392,7 +360,7 @@ export default function SupportPage() {
                   value={parentOrChildId}
                   onChange={(e) => setParentOrChildId(e.target.value)}
                   placeholder="e.g. +91 98765 43210 or CHILD-8842"
-                  className="w-full text-xs font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70] text-slate-900"
+                  className="w-full text-xs font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] text-slate-900"
                 />
               </div>
 
@@ -404,14 +372,14 @@ export default function SupportPage() {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Please describe your inquiry or detail the patient assignment request..."
-                  className="w-full text-xs font-medium p-4 bg-[#F8FAFC] border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70] text-slate-900"
+                  className="w-full text-xs font-medium p-4 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] text-slate-900"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-[#1E4E70] hover:bg-[#153852] text-white font-semibold text-xs py-3.5 rounded-2xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 disabled:opacity-50"
+                className="w-full bg-[#1E4E70] hover:bg-[#153852] text-white font-semibold text-xs py-3.5 rounded-lg shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 disabled:opacity-50"
               >
                 <Send className="w-4 h-4" />
                 <span>{isSubmitting ? "Dispatching Ticket..." : "Submit Ticket to Support"}</span>
@@ -423,11 +391,11 @@ export default function SupportPage() {
 
       {/* 3. FAQ HELP TAB */}
       {activeTab === "faq" && (
-        <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-4 animate-fadeIn">
+        <div className="bg-white rounded-xl p-5 sm:p-6 border border-slate-200/80 shadow-xs space-y-4 animate-fadeIn">
           <h3 className="font-bold text-slate-900 text-base">Frequently Asked Questions</h3>
           <div className="space-y-3">
             {faqList.map((item, idx) => (
-              <div key={idx} className="border border-slate-200 rounded-2xl overflow-hidden">
+              <div key={idx} className="border border-slate-200 rounded-lg overflow-hidden">
                 <button
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
                   className="w-full p-4 text-left flex items-center justify-between bg-slate-50 hover:bg-slate-100/70 font-semibold text-xs text-slate-900 cursor-pointer"

@@ -31,7 +31,7 @@ export default function ViewPrescriptionModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/60 backdrop-blur-xs animate-fadeIn font-sans">
       <div
-        className="bg-white w-full max-w-2xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200 animate-scaleUp"
+        className="bg-white w-full max-w-2xl max-h-[90vh] rounded-xl shadow-2xl flex flex-col overflow-hidden border border-slate-200 animate-scaleUp"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Top Action Bar */}
@@ -75,7 +75,7 @@ export default function ViewPrescriptionModal({
           </div>
 
           {/* Patient Details & Vitals Strip */}
-          <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 space-y-3">
+          <div className="bg-slate-50 rounded-lg p-4 border border-slate-200/80 space-y-3">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
               <div>
                 <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider block">Patient Name</span>
@@ -121,11 +121,11 @@ export default function ViewPrescriptionModal({
             </div>
 
             {medicines.length === 0 ? (
-              <div className="p-4 bg-slate-50 rounded-2xl text-center text-xs text-slate-500 italic border border-slate-200">
+              <div className="p-4 bg-slate-50 rounded-lg text-center text-xs text-slate-500 italic border border-slate-200">
                 No medicines listed in this prescription.
               </div>
             ) : (
-              <div className="border border-slate-200 rounded-2xl overflow-hidden text-xs">
+              <div className="border border-slate-200 rounded-lg overflow-hidden text-xs">
                 <table className="w-full text-left">
                   <thead className="bg-slate-100 text-slate-600 font-semibold uppercase text-[10px] tracking-wider border-b border-slate-200">
                     <tr>
@@ -155,7 +155,7 @@ export default function ViewPrescriptionModal({
           {/* Dietary Advice & Follow-Up Date Section */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
             {prescription.nutritionRecommendations && (
-              <div className="bg-amber-50/80 rounded-2xl p-3.5 border border-amber-200/80 space-y-1">
+              <div className="bg-amber-50/80 rounded-lg p-3.5 border border-amber-200/80 space-y-1">
                 <span className="text-[10px] text-amber-800 font-bold uppercase tracking-wider block">Nutrition Advice</span>
                 <p className="text-xs text-amber-950 font-medium leading-relaxed">
                   {prescription.nutritionRecommendations}
@@ -164,7 +164,7 @@ export default function ViewPrescriptionModal({
             )}
 
             {prescription.nextVisitDate && (
-              <div className="bg-sky-50/80 rounded-2xl p-3.5 border border-sky-200/80 space-y-1">
+              <div className="bg-sky-50/80 rounded-lg p-3.5 border border-sky-200/80 space-y-1">
                 <span className="text-[10px] text-[#1E4E70] font-bold uppercase tracking-wider block">Next Follow-Up Visit</span>
                 <p className="text-xs font-bold text-[#1E4E70]">
                   {String(prescription.nextVisitDate).split("T")[0]}

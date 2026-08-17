@@ -45,7 +45,7 @@ export default function PrintableMedicalModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col">
+      <div className="bg-white w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col">
         {/* Modal Action Top Bar */}
         <div className="bg-[#1E4E70] text-white px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 min-w-0">
@@ -76,7 +76,7 @@ export default function PrintableMedicalModal({
           {/* Clinic Letterhead */}
           <div className="flex items-start justify-between border-b-2 border-[#1E4E70] pb-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-[#A5D8FF]/30 text-[#1E4E70] flex items-center justify-center border border-[#A5D8FF]">
+              <div className="w-12 h-12 rounded-lg bg-[#A5D8FF]/30 text-[#1E4E70] flex items-center justify-center border border-[#A5D8FF]">
                 <HeartPulse className="w-7 h-7" />
               </div>
               <div>
@@ -95,7 +95,7 @@ export default function PrintableMedicalModal({
           </div>
 
           {/* Patient Details Table */}
-          <div className="bg-[#F8FAFC] rounded-2xl p-4 border border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+          <div className="bg-[#F8FAFC] rounded-lg p-4 border border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
             <div>
               <span className="text-[#1E4E70] font-semibold block">Patient Name</span>
               <span className="font-semibold text-slate-900 text-sm">{patient.name}</span>

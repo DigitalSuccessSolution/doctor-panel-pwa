@@ -13,10 +13,10 @@ export default function AdminApprovalPendingBanner() {
   }
 
   return (
-    <div className="bg-amber-500/10 border-2 border-amber-400/40 rounded-3xl p-5 sm:p-6 mb-6 font-sans animate-fadeIn relative overflow-hidden shadow-xs">
+    <div className="bg-amber-500/10 border-2 border-amber-400/40 rounded-xl p-5 sm:p-6 mb-6 font-sans animate-fadeIn relative overflow-hidden shadow-xs">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-600 flex items-center justify-center shrink-0 border border-amber-400/30">
+          <div className="w-12 h-12 rounded-lg bg-amber-500/20 text-amber-600 flex items-center justify-center shrink-0 border border-amber-400/30">
             <Clock className="w-6 h-6 animate-pulse" />
           </div>
 

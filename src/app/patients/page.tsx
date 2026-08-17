@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   Search,
   ShieldCheck,
@@ -24,7 +25,8 @@ const PARENT_AVATARS = [
   "/parent_avatar_4.png",
 ];
 
-export default function PatientsPage() {
+export default function PatientDirectory() {
+  const router = useRouter();
   const { patients } = useDoctorData();
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -55,14 +57,6 @@ export default function PatientsPage() {
             Browse and manage pediatric patients, growth records, and parent contacts.
           </p>
         </div>
-
-        <button
-          onClick={() => window.dispatchEvent(new CustomEvent("open-raise-request"))}
-          className="bg-[#1E4E70] hover:bg-[#153852] text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 shrink-0 self-start sm:self-auto"
-        >
-          <ShieldCheck className="w-4 h-4 text-[#A5D8FF]" />
-          <span>Raise Issue / Admin Request</span>
-        </button>
       </div>
 
       {/* 2. Search Input Bar */}
@@ -73,12 +67,12 @@ export default function PatientsPage() {
           placeholder="Search by Baby Name, Parent Name, Phone, or Medical Condition..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full bg-white border border-slate-200/80 rounded-2xl pl-11 pr-4 py-3 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#A5D8FF] shadow-2xs"
+          className="w-full bg-white border border-slate-200/80 rounded-lg pl-11 pr-4 py-3 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#A5D8FF] shadow-2xs"
         />
       </div>
 
       {/* 3. Patient Table Layout (Desktop) & List Card Layout (Mobile) */}
-      <div className="bg-white rounded-3xl border border-slate-200/80 overflow-hidden shadow-2xs">
+      <div className="bg-white rounded-xl border border-slate-200/80 overflow-hidden shadow-2xs">
         
         {/* DESKTOP TABLE VIEW */}
         <div className="hidden md:block overflow-x-auto">
@@ -95,7 +89,11 @@ export default function PatientsPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {filteredPatients.map((child) => (
-                <tr key={child.id} className="hover:bg-slate-50/50 transition-colors text-xs">
+                <tr 
+                  key={child.id} 
+                  onClick={() => router.push(`/patients/${child.id}`)}
+                  className="hover:bg-slate-50/50 transition-colors text-xs cursor-pointer"
+                >
                   {/* Column 1: Patient (Baby) */}
                   <td className="p-4">
                     <div className="flex items-center gap-3">
@@ -110,7 +108,6 @@ export default function PatientsPage() {
                       </div>
                       <div>
                         <span className="font-bold text-slate-800 block text-sm">{child.name}</span>
-                        <span className="text-[10px] text-slate-400 font-mono">ID: {child.id.substring(child.id.length - 6)}</span>
                       </div>
                     </div>
                   </td>
@@ -188,7 +185,11 @@ export default function PatientsPage() {
         {/* MOBILE CARDS LIST VIEW */}
         <div className="block md:hidden divide-y divide-slate-100">
           {filteredPatients.map((child) => (
-            <div key={child.id} className="p-4 space-y-3.5 hover:bg-slate-50/50 transition-colors">
+            <div 
+              key={child.id} 
+              onClick={() => router.push(`/patients/${child.id}`)}
+              className="p-4 space-y-3.5 hover:bg-slate-50/50 transition-colors cursor-pointer"
+            >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div className="w-11 h-11 rounded-full overflow-hidden relative border border-slate-200 bg-slate-50 shrink-0">
@@ -202,7 +203,6 @@ export default function PatientsPage() {
                   </div>
                   <div>
                     <span className="font-bold text-slate-900 text-sm block leading-tight">{child.name}</span>
-                    <span className="text-[10px] text-slate-400 font-mono">ID: {child.id.substring(child.id.length - 6)}</span>
                   </div>
                 </div>
 

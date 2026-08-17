@@ -455,7 +455,7 @@ export default function LoginModal() {
   return (
     <div className="fixed inset-0 z-[110] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/60 backdrop-blur-md animate-fadeIn font-sans">
       {/* Modal Container */}
-      <div className="bg-white w-full max-w-md rounded-t-[32px] sm:rounded-3xl shadow-2xl overflow-hidden border border-white/80 animate-slideUp sm:animate-scaleUp flex flex-col relative max-h-[95vh]">
+      <div className="bg-white w-full max-w-md rounded-t-[32px] sm:rounded-xl shadow-2xl overflow-hidden border border-white/80 animate-slideUp sm:animate-scaleUp flex flex-col relative max-h-[95vh]">
         
         {/* Header with Close Button and Brand Logo */}
         <div className="p-5 pb-3 bg-white border-b border-slate-100 relative">
@@ -484,7 +484,7 @@ export default function LoginModal() {
 
           {/* Global Alert Messages */}
           {errorMessage && (
-            <div className="bg-rose-50 border border-rose-200 text-rose-700 text-xs p-3 rounded-2xl flex items-start gap-2 animate-fadeIn font-medium">
+            <div className="bg-rose-50 border border-rose-200 text-rose-700 text-xs p-3 rounded-lg flex items-start gap-2 animate-fadeIn font-medium">
               <AlertCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
               <div className="flex-1">
                 <p>{errorMessage}</p>
@@ -506,7 +506,7 @@ export default function LoginModal() {
           )}
 
           {successMessage && (
-            <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs p-3 rounded-2xl flex items-center gap-2 animate-fadeIn font-medium">
+            <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs p-3 rounded-lg flex items-center gap-2 animate-fadeIn font-medium">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
               <span>{successMessage}</span>
             </div>
@@ -658,7 +658,7 @@ export default function LoginModal() {
                         value={digit}
                         onChange={(e) => handleOtpChange(e.target.value, idx)}
                         onKeyDown={(e) => handleOtpKeyDown(e, idx)}
-                        className="w-12 h-12 bg-[#F5F5F7] border border-slate-200 rounded-2xl text-center text-lg font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1E4E70]"
+                        className="w-12 h-12 bg-[#F5F5F7] border border-slate-200 rounded-lg text-center text-lg font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1E4E70]"
                         autoFocus={idx === 0}
                       />
                     ))}
@@ -667,7 +667,7 @@ export default function LoginModal() {
                   <button
                     type="submit"
                     disabled={loading || otp.join("").length < 4}
-                    className={`w-full py-3.5 rounded-2xl font-bold text-xs sm:text-sm transition-all shadow-md flex items-center justify-center gap-2 ${
+                    className={`w-full py-3.5 rounded-lg font-bold text-xs sm:text-sm transition-all shadow-md flex items-center justify-center gap-2 ${
                       otp.join("").length === 4
                         ? "bg-[#1E4E70] hover:bg-[#153852] text-white cursor-pointer active:scale-[0.98]"
                         : "bg-[#E2E8F0] text-[#94A3B8] cursor-not-allowed"
@@ -851,7 +851,7 @@ export default function LoginModal() {
                   <button
                     type="submit"
                     disabled={loading || !forgotEmail.trim()}
-                    className={`w-full py-3.5 rounded-2xl font-bold text-xs sm:text-sm transition-all shadow-md flex items-center justify-center gap-2 ${
+                    className={`w-full py-3.5 rounded-lg font-bold text-xs sm:text-sm transition-all shadow-md flex items-center justify-center gap-2 ${
                       forgotEmail.trim()
                         ? "bg-[#1E4E70] hover:bg-[#153852] text-white cursor-pointer active:scale-[0.98]"
                         : "bg-[#E2E8F0] text-[#94A3B8] cursor-not-allowed"
@@ -906,7 +906,7 @@ export default function LoginModal() {
                         value={digit}
                         onChange={(e) => handleResetOtpChange(e.target.value, idx)}
                         onKeyDown={(e) => handleResetOtpKeyDown(e, idx)}
-                        className="w-12 h-12 bg-[#F5F5F7] border border-slate-200 rounded-2xl text-center text-lg font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1E4E70]"
+                        className="w-12 h-12 bg-[#F5F5F7] border border-slate-200 rounded-lg text-center text-lg font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1E4E70]"
                         autoFocus={idx === 0}
                       />
                     ))}
@@ -915,7 +915,7 @@ export default function LoginModal() {
                   <button
                     type="submit"
                     disabled={loading || resetOtp.join("").length < 4}
-                    className={`w-full py-3.5 rounded-2xl font-bold text-xs sm:text-sm transition-all shadow-md flex items-center justify-center gap-2 ${
+                    className={`w-full py-3.5 rounded-lg font-bold text-xs sm:text-sm transition-all shadow-md flex items-center justify-center gap-2 ${
                       resetOtp.join("").length === 4
                         ? "bg-[#1E4E70] hover:bg-[#153852] text-white cursor-pointer active:scale-[0.98]"
                         : "bg-[#E2E8F0] text-[#94A3B8] cursor-not-allowed"
@@ -1024,7 +1024,7 @@ export default function LoginModal() {
                   <button
                     type="submit"
                     disabled={loading || !newPassword.trim()}
-                    className={`w-full py-3.5 rounded-2xl font-bold text-xs sm:text-sm transition-all shadow-md flex items-center justify-center gap-2 ${
+                    className={`w-full py-3.5 rounded-lg font-bold text-xs sm:text-sm transition-all shadow-md flex items-center justify-center gap-2 ${
                       newPassword.trim()
                         ? "bg-[#1E4E70] hover:bg-[#153852] text-white cursor-pointer active:scale-[0.98]"
                         : "bg-[#E2E8F0] text-[#94A3B8] cursor-not-allowed"

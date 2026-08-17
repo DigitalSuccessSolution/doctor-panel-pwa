@@ -12,7 +12,7 @@ export default function DesktopHeroVideo({ onOpenApk }: { onOpenApk: () => void 
   return (
     <div className="relative w-full py-10 xl:py-14 grid grid-cols-12 gap-10 items-center">
       {/* Background Soft Mesh Glow Gradient (Apple Light Aesthetic) */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-tr from-sky-100/60 via-[#F5F5F7] to-indigo-100/50 rounded-3xl blur-3xl" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-tr from-sky-100/60 via-[#F5F5F7] to-indigo-100/50 rounded-xl blur-3xl" />
 
       {/* LEFT COLUMN: Typography & CTAs */}
       <div className="col-span-12 lg:col-span-6 space-y-6">
@@ -55,15 +55,15 @@ export default function DesktopHeroVideo({ onOpenApk }: { onOpenApk: () => void 
 
         {/* Stat Indicators */}
         <div className="pt-6 grid grid-cols-3 gap-4 border-t border-slate-200/80">
-          <div className="bg-white/80 backdrop-blur-md p-3.5 rounded-2xl border border-slate-200/60 shadow-2xs">
+          <div className="bg-white/80 backdrop-blur-md p-3.5 rounded-lg border border-slate-200/60 shadow-2xs">
             <p className="text-2xl font-semibold text-[#1E4E70]">2,500+</p>
             <p className="text-[11px] text-slate-500 font-semibold">Active Doctors</p>
           </div>
-          <div className="bg-white/80 backdrop-blur-md p-3.5 rounded-2xl border border-slate-200/60 shadow-2xs">
+          <div className="bg-white/80 backdrop-blur-md p-3.5 rounded-lg border border-slate-200/60 shadow-2xs">
             <p className="text-2xl font-semibold text-emerald-600">WHO 2026</p>
             <p className="text-[11px] text-slate-500 font-semibold">Z-Score Engine</p>
           </div>
-          <div className="bg-white/80 backdrop-blur-md p-3.5 rounded-2xl border border-slate-200/60 shadow-2xs">
+          <div className="bg-white/80 backdrop-blur-md p-3.5 rounded-lg border border-slate-200/60 shadow-2xs">
             <p className="text-2xl font-semibold text-[#0071E3]">100% Secure</p>
             <p className="text-[11px] text-slate-500 font-semibold">Offline Ready</p>
           </div>
@@ -73,9 +73,9 @@ export default function DesktopHeroVideo({ onOpenApk }: { onOpenApk: () => void 
       {/* RIGHT COLUMN: Interactive Live Video Canvas & Floating Glass Widgets */}
       <div className="col-span-12 lg:col-span-6 relative">
         {/* Device Canvas Frame */}
-        <div className="bg-white/90 backdrop-blur-2xl p-3 rounded-3xl border border-slate-200/80 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.12)] relative group">
+        <div className="bg-white/90 backdrop-blur-2xl p-3 rounded-xl border border-slate-200/80 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.12)] relative group">
           {/* Inner Video / Photography Frame */}
-          <div className="relative h-[430px] rounded-2xl overflow-hidden bg-slate-950">
+          <div className="relative h-[430px] rounded-lg overflow-hidden bg-slate-950">
             <Image
               src="/hero_doctor.png"
               alt="Clinical Pediatric OPD Demonstration Video"
@@ -98,7 +98,7 @@ export default function DesktopHeroVideo({ onOpenApk }: { onOpenApk: () => void 
             </div>
 
             {/* FLOATING GLASS WIDGET 1: Top Left Assigned Patient */}
-            <div className="absolute top-4 left-4 z-20 bg-white/90 backdrop-blur-xl rounded-2xl p-3 border border-white/80 shadow-xl flex items-center gap-3 animate-slideDown">
+            <div className="absolute top-4 left-4 z-20 bg-white/90 backdrop-blur-xl rounded-lg p-3 border border-white/80 shadow-xl flex items-center gap-3 animate-slideDown">
               <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-emerald-400 shrink-0">
                 <Image
                   src="https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&q=80&w=150"
@@ -118,7 +118,7 @@ export default function DesktopHeroVideo({ onOpenApk }: { onOpenApk: () => void 
             </div>
 
             {/* FLOATING GLASS WIDGET 2: Bottom Right Real-Time Z-Score */}
-            <div className="absolute bottom-4 right-4 z-20 bg-slate-900/90 backdrop-blur-xl text-white rounded-2xl p-3.5 border border-white/20 shadow-2xl flex items-center gap-3 animate-slideUp">
+            <div className="absolute bottom-4 right-4 z-20 bg-slate-900/90 backdrop-blur-xl text-white rounded-lg p-3.5 border border-white/20 shadow-2xl flex items-center gap-3 animate-slideUp">
               <div className="w-9 h-9 rounded-xl bg-[#0071E3] flex items-center justify-center shrink-0 shadow-sm">
                 <TrendingUp className="w-5 h-5 text-white" />
               </div>
