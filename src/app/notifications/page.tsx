@@ -14,6 +14,7 @@ import {
   ShieldAlert,
   X,
   RefreshCw,
+  Trash2,
 } from "lucide-react";
 import { playIOSNotificationSound } from "@/utils/audio";
 import { notificationService } from "@/services/notificationService";
@@ -32,8 +33,12 @@ export interface DoctorNotification {
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<DoctorNotification[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [filter, setFilter] = useState<"all" | "growth" | "appointment" | "unread">("all");
+  const [filter, setFilter] = useState<"all" | "read" | "unread">("all");
   const [showLiveBanner, setShowLiveBanner] = useState(false);
+  const [selectedNotification, setSelectedNotification] = useState<DoctorNotification | null>(null);
+  const [isBulkDeleteMode, setIsBulkDeleteMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
   const fetchNotifications = async () => {
     setLoading(true);
@@ -66,6 +71,18 @@ export default function NotificationsPage() {
     fetchNotifications();
   }, []);
 
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (selectedNotification) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [selectedNotification]);
+
   const markAllRead = () => {
     playIOSNotificationSound();
     notifications.forEach((n) => {
@@ -85,10 +102,30 @@ export default function NotificationsPage() {
     setTimeout(() => setShowLiveBanner(false), 4500);
   };
 
+  const handleBulkDeleteModeToggle = () => {
+    if (isBulkDeleteMode) {
+      setIsBulkDeleteMode(false);
+      setSelectedIds([]);
+    } else {
+      setIsBulkDeleteMode(true);
+      setSelectedIds(notifications.map(n => n.id)); // auto select all
+    }
+  };
+
+  const executeBulkDelete = () => {
+    playIOSNotificationSound();
+    selectedIds.forEach((id) => {
+      notificationService.deleteNotification(id).catch(() => {});
+    });
+    setNotifications((prev) => prev.filter(n => !selectedIds.includes(n.id)));
+    setSelectedIds([]);
+    setIsBulkDeleteMode(false);
+    setShowConfirmDelete(false);
+  };
+
   const filteredNotifs = notifications.filter((n) => {
     if (filter === "unread") return !n.read;
-    if (filter === "growth") return n.type === "growth_alert";
-    if (filter === "appointment") return n.type === "appointment";
+    if (filter === "read") return n.read;
     return true;
   });
 
@@ -123,7 +160,7 @@ export default function NotificationsPage() {
       )}
 
       {/* 1. Header Section */}
-      <div className="bg-white rounded-xl p-5 sm:p-6 border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
             <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
@@ -154,6 +191,37 @@ export default function NotificationsPage() {
             <Volume2 className="w-4 h-4 text-emerald-600 animate-pulse shrink-0" />
             <span>Notification Bar</span>
           </button>
+          {notifications.length > 0 && (
+            <div className="flex items-center gap-2">
+              {isBulkDeleteMode ? (
+                <>
+                  <button
+                    onClick={() => setShowConfirmDelete(true)}
+                    disabled={selectedIds.length === 0}
+                    className="bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white font-semibold text-xs px-3.5 py-2.5 rounded-xl shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 whitespace-nowrap"
+                  >
+                    <Trash2 className="w-4 h-4 shrink-0" />
+                    <span>Delete ({selectedIds.length})</span>
+                  </button>
+                  <button
+                    onClick={handleBulkDeleteModeToggle}
+                    className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-semibold text-xs px-3.5 py-2.5 rounded-xl shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 whitespace-nowrap"
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={handleBulkDeleteModeToggle}
+                  className="bg-white hover:bg-rose-50 text-rose-600 border border-slate-200 hover:border-rose-200 font-semibold text-xs px-3.5 py-2.5 rounded-xl shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 whitespace-nowrap"
+                >
+                  <Trash2 className="w-4 h-4 shrink-0" />
+                  <span className="hidden sm:inline">Bulk Delete</span>
+                  <span className="sm:hidden">Select</span>
+                </button>
+              )}
+            </div>
+          )}
           {notifications.some((n) => !n.read) && (
             <button
               onClick={markAllRead}
@@ -171,8 +239,7 @@ export default function NotificationsPage() {
         {[
           { id: "all", label: `All Alerts (${notifications.length})` },
           { id: "unread", label: `Unread (${notifications.filter((n) => !n.read).length})` },
-          { id: "growth", label: "Critical Growth Alerts" },
-          { id: "appointment", label: "Appointments" },
+          { id: "read", label: `Read (${notifications.filter((n) => n.read).length})` },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -218,14 +285,40 @@ export default function NotificationsPage() {
             return (
               <div
                 key={n.id}
-                className={`rounded-lg p-4 sm:p-5 border transition-all duration-300 flex items-start gap-3.5 w-full max-w-full min-w-0 overflow-hidden ${
+                onClick={(e) => {
+                  if ((e.target as HTMLElement).closest("button, a, input[type='checkbox']")) return;
+                  if (isBulkDeleteMode) {
+                    setSelectedIds(prev => prev.includes(n.id) ? prev.filter(id => id !== n.id) : [...prev, n.id]);
+                    return;
+                  }
+                  if (!n.read && n.id) {
+                    notificationService.markAsRead(n.id).catch(() => {});
+                    setNotifications((prev) => prev.map((item) => item.id === n.id ? { ...item, read: true } : item));
+                  }
+                  setSelectedNotification(n);
+                }}
+                className={`rounded-lg p-4 sm:p-5 border transition-all duration-300 flex items-start gap-3.5 w-full max-w-full min-w-0 overflow-hidden cursor-pointer ${
                   isHigh
-                    ? "bg-rose-50/90 border-rose-200/80 shadow-xs"
+                    ? "bg-rose-50/90 border-rose-200/80 shadow-xs hover:bg-rose-100"
                     : !n.read
-                    ? "bg-white border-[#A5D8FF] shadow-xs ring-1 ring-[#A5D8FF]/40"
-                    : "bg-white border-slate-200/80 opacity-85"
+                    ? "bg-white border-[#A5D8FF] shadow-xs ring-1 ring-[#A5D8FF]/40 hover:bg-sky-50/30"
+                    : "bg-white border-slate-200/80 opacity-85 hover:bg-slate-50"
                 }`}
               >
+                {isBulkDeleteMode && (
+                  <div className="flex items-center justify-center h-10 shrink-0">
+                    <input 
+                      type="checkbox" 
+                      checked={selectedIds.includes(n.id)}
+                      onChange={(e) => {
+                        if (e.target.checked) setSelectedIds(prev => [...prev, n.id]);
+                        else setSelectedIds(prev => prev.filter(id => id !== n.id));
+                      }}
+                      className="w-5 h-5 rounded border-slate-300 text-rose-600 focus:ring-rose-500 cursor-pointer"
+                    />
+                  </div>
+                )}
+                
                 <div
                   className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 shadow-2xs ${
                     isHigh
@@ -252,18 +345,23 @@ export default function NotificationsPage() {
                       <span className="text-[11px] font-medium text-slate-400 shrink-0 whitespace-nowrap">
                         {n.timestamp}
                       </span>
-                      <button
-                        onClick={() => n.id && handleDeleteNotification(n.id)}
-                        className="p-1 rounded-lg text-slate-300 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                        title="Delete Notification"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
+                      {!isBulkDeleteMode && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (n.id) handleDeleteNotification(n.id);
+                          }}
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                          title="Delete Notification"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
                   </div>
 
                   <p
-                    className={`text-xs font-medium leading-relaxed ${
+                    className={`text-xs font-medium leading-relaxed line-clamp-2 ${
                       isHigh ? "text-rose-700" : "text-slate-600"
                     }`}
                   >
@@ -274,7 +372,7 @@ export default function NotificationsPage() {
                     <div className="pt-2 flex items-center gap-2">
                       <Link
                         href="/patients/2"
-                        onClick={() => playIOSNotificationSound()}
+                        onClick={(e) => e.stopPropagation()}
                         className="inline-flex items-center gap-1.5 bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs px-3.5 py-2 rounded-xl shadow-2xs transition-all cursor-pointer active:scale-95 whitespace-nowrap"
                       >
                         <span>Review Patient Chart</span>
@@ -288,6 +386,98 @@ export default function NotificationsPage() {
           })
         )}
       </div>
+
+      {/* 4. DETAILS BOTTOM SHEET / MODAL */}
+      {selectedNotification && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center animate-fadeIn sm:p-4">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setSelectedNotification(null)} />
+          <div className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden relative z-10 animate-slideUp transform transition-transform max-h-[85vh] flex flex-col font-sans">
+            <div className="w-full flex justify-center pt-3 pb-1 sm:hidden">
+              <div className="w-12 h-1.5 bg-slate-200 rounded-full" />
+            </div>
+
+            <div className="flex items-center justify-between p-5 border-b border-slate-100">
+              <h2 className="text-lg font-bold text-slate-800">Notification Details</h2>
+              <button
+                onClick={() => setSelectedNotification(null)}
+                className="p-2 text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 rounded-full transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-5 overflow-y-auto space-y-5">
+              <div className="flex items-start gap-4">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm ${
+                  selectedNotification.priority === 'high' ? 'bg-rose-100 text-rose-600' : 'bg-[#1E4E70]/10 text-[#1E4E70]'
+                }`}>
+                  {selectedNotification.type === 'growth_alert' ? <AlertTriangle className="w-6 h-6" /> : 
+                   selectedNotification.type === 'appointment' ? <Calendar className="w-6 h-6" /> : 
+                   <FileText className="w-6 h-6" />}
+                </div>
+                <div className="space-y-1">
+                  <h3 className="font-bold text-slate-900 text-base">{selectedNotification.title || selectedNotification.patientName}</h3>
+                  <p className="text-xs text-slate-500 font-medium">{selectedNotification.timestamp}</p>
+                </div>
+              </div>
+
+              <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
+                {selectedNotification.message}
+              </div>
+            </div>
+
+            <div className="p-5 border-t border-slate-100 bg-white grid grid-cols-2 gap-3">
+              <button
+                onClick={() => {
+                  if (selectedNotification.id) handleDeleteNotification(selectedNotification.id);
+                  setSelectedNotification(null);
+                }}
+                className="bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold text-sm py-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-colors"
+              >
+                <Trash2 className="w-4 h-4" /> Delete
+              </button>
+              <button
+                onClick={() => setSelectedNotification(null)}
+                className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm py-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 5. BULK DELETE CONFIRMATION MODAL */}
+      {showConfirmDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center animate-fadeIn p-4">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setShowConfirmDelete(false)} />
+          <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden relative z-10 animate-slideUp p-6 flex flex-col font-sans space-y-4 text-center">
+            <div className="w-14 h-14 bg-rose-100 rounded-full flex items-center justify-center mx-auto text-rose-600">
+              <Trash2 className="w-7 h-7" />
+            </div>
+            <div>
+              <h3 className="font-bold text-slate-900 text-lg">Delete Notifications</h3>
+              <p className="text-slate-500 text-sm mt-1">
+                Are you sure you want to permanently delete {selectedIds.length} selected notification(s)? This action cannot be undone.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-3 pt-2">
+              <button
+                onClick={() => setShowConfirmDelete(false)}
+                className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm py-3 rounded-xl transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={executeBulkDelete}
+                className="bg-rose-600 hover:bg-rose-700 text-white font-semibold text-sm py-3 rounded-xl shadow-xs transition-colors cursor-pointer"
+              >
+                Yes, Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

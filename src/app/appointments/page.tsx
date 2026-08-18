@@ -30,7 +30,7 @@ import { babyService } from "@/services/babyService";
 export default function AppointmentsPage() {
   const { appointments, setAppointments, patients } = useDoctorData();
 
-  const [selectedStatus, setSelectedStatus] = useState<string>("all");
+
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -47,6 +47,10 @@ export default function AppointmentsPage() {
   const [editNotes, setEditNotes] = useState<string>("");
   const [editMeetingLink, setEditMeetingLink] = useState<string>("");
   const [isSubmittingEdit, setIsSubmittingEdit] = useState<boolean>(false);
+
+  // Mobile Bottom Sheet Modal state
+  const [selectedMobileApt, setSelectedMobileApt] = useState<any | null>(null);
+  const [timeFilter, setTimeFilter] = useState<"upcoming" | "past">("upcoming");
 
   const fetchLiveAppointments = async () => {
     setLoading(true);
@@ -81,22 +85,20 @@ export default function AppointmentsPage() {
     fetchLiveAppointments();
   }, []);
 
+  // Lock body scroll when any modal/drawer is open
+  useEffect(() => {
+    if (selectedMobileApt || selectedPatientModal || cancelModalApt || editModalApt) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [selectedMobileApt, selectedPatientModal, cancelModalApt, editModalApt]);
+
   const handleOpenQuickAdd = () => {
     window.dispatchEvent(new CustomEvent("open-quick-add", { detail: { tab: "consultation" } }));
-  };
-
-  // Confirm / Accept Appointment
-  const handleConfirmAppointment = async (aptId: string) => {
-    try {
-      const res = await appointmentService.updateStatus(aptId, "scheduled");
-      if (res.success || res.data) {
-        setAppointments((prev) =>
-          prev.map((a) => (a.id === aptId ? { ...a, status: "scheduled" as any } : a))
-        );
-      }
-    } catch (err) {
-      console.error("Failed to confirm appointment:", err);
-    }
   };
 
   // Submit Rejection / Cancellation with reason
@@ -138,7 +140,6 @@ export default function AppointmentsPage() {
     setIsSubmittingEdit(true);
     try {
       const res = await appointmentService.updateAppointment(editModalApt.id, {
-        notes: editNotes.trim(),
         doctorNotes: editNotes.trim(),
         meetingLink: editMeetingLink.trim(),
       });
@@ -147,7 +148,7 @@ export default function AppointmentsPage() {
         setAppointments((prev) =>
           prev.map((a) =>
             a.id === editModalApt.id
-              ? { ...a, notes: editNotes.trim(), doctorNotes: editNotes.trim(), meetingLink: editMeetingLink.trim() }
+              ? { ...a, doctorNotes: editNotes.trim(), meetingLink: editMeetingLink.trim() }
               : a
           )
         );
@@ -176,12 +177,14 @@ export default function AppointmentsPage() {
 
   // Filter appointments
   const filteredAppointments = [...appointments].filter((apt) => {
-    const statusMatch =
-      selectedStatus === "all" ||
-      (selectedStatus === "active" && (apt.status === "scheduled" || apt.status === "Upcoming" || apt.status === "confirmed")) ||
-      (selectedStatus === "pending" && apt.status === "pending") ||
-      (selectedStatus === "completed" && (apt.status === "completed" || apt.status === "Completed")) ||
-      (selectedStatus === "cancelled" && (apt.status === "cancelled" || apt.status === "Cancelled"));
+    const rawStatus = (apt.status || "scheduled").toLowerCase();
+    
+    // Time filter logic based on status
+    const isPastStatus = rawStatus === "completed" || rawStatus === "cancelled";
+    const isUpcomingStatus = !isPastStatus;
+    
+    if (timeFilter === "upcoming" && !isUpcomingStatus) return false;
+    if (timeFilter === "past" && !isPastStatus) return false;
 
     const query = searchQuery.toLowerCase().trim();
     const searchMatch =
@@ -190,13 +193,13 @@ export default function AppointmentsPage() {
       apt.parentName?.toLowerCase().includes(query) ||
       apt.parentPhone?.toLowerCase().includes(query);
 
-    return statusMatch && searchMatch;
+    return searchMatch;
   });
 
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-6 animate-fadeIn pb-24 font-sans overflow-hidden">
+    <div className="space-y-6 animate-fadeIn pb-24 font-sans">
       {/* 1. Page Header & Booking Trigger */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-semibold text-slate-800 tracking-tight">
             Appointments
@@ -218,28 +221,21 @@ export default function AppointmentsPage() {
       </div>
 
       {/* 2. Top Filter Controls & Search Bar */}
-      <div className="bg-white rounded-xl p-4 border border-slate-200/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-        {/* Status Filter Tabs */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        {/* Time Filter Toggle (Upcoming / Past) */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
-          {[
-            { id: "all", label: `All (${appointments.length})` },
-            { id: "active", label: "Active / Confirmed" },
-            { id: "pending", label: "Pending Approval" },
-            { id: "completed", label: "Completed" },
-            { id: "cancelled", label: "Cancelled" },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setSelectedStatus(tab.id)}
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
-                selectedStatus === tab.id
-                  ? "bg-[#1E4E70] text-white shadow-xs"
-                  : "bg-slate-50 text-slate-600 border border-slate-200/80 hover:bg-slate-100"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+          <button
+            onClick={() => setTimeFilter("upcoming")}
+            className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${timeFilter === "upcoming" ? "bg-[#1E4E70] text-white shadow-xs" : "bg-slate-50 text-slate-600 border border-slate-200/80 hover:bg-slate-100"}`}
+          >
+            Upcoming
+          </button>
+          <button
+            onClick={() => setTimeFilter("past")}
+            className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${timeFilter === "past" ? "bg-[#1E4E70] text-white shadow-xs" : "bg-slate-50 text-slate-600 border border-slate-200/80 hover:bg-slate-100"}`}
+          >
+            Past
+          </button>
         </div>
 
         {/* Search Input Box */}
@@ -250,7 +246,7 @@ export default function AppointmentsPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search patient or parent..."
-            className="w-full bg-[#F8FAFC] border border-slate-200/80 text-xs font-medium text-slate-900 pl-10 pr-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70]"
+            className="w-full bg-[#F8FAFC] border border-slate-200/80 text-xs font-medium text-slate-900 pl-10 pr-4 py-2 rounded-xl focus:outline-none focus:border-[#1E4E70] transition-colors"
           />
         </div>
       </div>
@@ -271,7 +267,9 @@ export default function AppointmentsPage() {
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <>
+          {/* Desktop Table View */}
+          <div className="overflow-x-auto hidden md:block">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="bg-[#F8FAFC] border-b border-slate-200/80 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
@@ -289,10 +287,7 @@ export default function AppointmentsPage() {
                   let statusBadgeClass = "bg-sky-50 text-[#1E4E70] border-sky-200";
                   let statusText = "Active";
 
-                  if (rawStatus === "pending") {
-                    statusBadgeClass = "bg-amber-50 text-amber-800 border-amber-200";
-                    statusText = "Pending";
-                  } else if (rawStatus === "completed") {
+                  if (rawStatus === "completed") {
                     statusBadgeClass = "bg-emerald-50 text-emerald-800 border-emerald-200";
                     statusText = "Completed";
                   } else if (rawStatus === "cancelled") {
@@ -358,16 +353,6 @@ export default function AppointmentsPage() {
                       {/* Actions */}
                       <td className="py-3.5 px-5 text-right">
                         <div className="flex items-center justify-end gap-2">
-                          {rawStatus === "pending" && (
-                            <button
-                              onClick={() => handleConfirmAppointment(apt.id)}
-                              className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-xs cursor-pointer transition-all active:scale-95"
-                              title="Accept & Confirm Appointment"
-                            >
-                              Confirm
-                            </button>
-                          )}
-
                           {rawStatus !== "cancelled" && (
                             <button
                               onClick={() => {
@@ -384,11 +369,11 @@ export default function AppointmentsPage() {
                           <button
                             onClick={() => {
                               setEditModalApt(apt);
-                              setEditNotes(apt.notes || "");
+                              setEditNotes(apt.doctorNotes || "");
                               setEditMeetingLink(apt.meetingLink || "");
                             }}
                             className="p-2 text-slate-600 hover:text-[#1E4E70] hover:bg-slate-100 rounded-xl transition-colors cursor-pointer border border-slate-200/80"
-                            title="Edit Notes or Tele-Consult Link"
+                            title="Edit Doctor Notes or Tele-Consult Link"
                           >
                             <Edit3 className="w-3.5 h-3.5" />
                           </button>
@@ -400,6 +385,72 @@ export default function AppointmentsPage() {
               </tbody>
             </table>
           </div>
+
+          {/* Mobile Cards View */}
+          <div className="md:hidden flex flex-col divide-y divide-slate-100">
+            {filteredAppointments.map((apt) => {
+              const rawStatus = (apt.status || "scheduled").toLowerCase();
+              let statusBadgeClass = "bg-sky-50 text-[#1E4E70] border-sky-200";
+              let statusText = "Active";
+
+              if (rawStatus === "completed") {
+                statusBadgeClass = "bg-emerald-50 text-emerald-800 border-emerald-200";
+                statusText = "Completed";
+              } else if (rawStatus === "cancelled") {
+                statusBadgeClass = "bg-rose-50 text-rose-700 border-rose-200";
+                statusText = "Cancelled";
+              }
+
+              return (
+                <div key={apt.id} className="p-4 space-y-4 hover:bg-slate-50 transition-colors">
+                  {/* Top: Profile Info & Status */}
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200/80 relative shrink-0 bg-slate-100">
+                        <Image
+                          src={apt.patientAvatar || "/child_avatar_1.png"}
+                          alt={apt.patientName}
+                          fill
+                          className="object-cover"
+                          unoptimized
+                        />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-slate-900 text-sm truncate max-w-[150px]">{apt.patientName}</h3>
+                        <p className="text-[11px] text-slate-500 font-medium">Parent: {apt.parentName}</p>
+                      </div>
+                    </div>
+                    <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border shrink-0 ${statusBadgeClass}`}>
+                      {statusText}
+                    </span>
+                  </div>
+
+                  {/* Date, Time & Quick Info */}
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="flex items-center gap-1.5 text-slate-700 font-semibold bg-slate-50 p-2 rounded-lg border border-slate-100">
+                      <Clock className="w-3.5 h-3.5 text-[#1E4E70] shrink-0" />
+                      <span className="truncate">{apt.date} • {apt.time}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-slate-700 font-semibold bg-slate-50 p-2 rounded-lg border border-slate-100">
+                      <IndianRupee className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                      <span>₹{(apt as any).fee || 500}</span>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="pt-2 flex items-center justify-between gap-3 border-t border-slate-100">
+                    <button
+                      onClick={() => setSelectedMobileApt(apt)}
+                      className="text-[#1E4E70] font-semibold text-xs py-2 px-3 rounded-xl border border-[#1E4E70]/20 hover:bg-[#1E4E70]/5 transition-colors cursor-pointer w-full text-center"
+                    >
+                      View Details
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          </>
         )}
       </div>
 
@@ -558,6 +609,13 @@ export default function AppointmentsPage() {
             </div>
 
             <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-700">Patient's Booking Notes</label>
+              <div className="w-full bg-slate-50 border border-slate-100 rounded-lg p-3 text-xs text-slate-500 italic">
+                {editModalApt.notes || "No notes provided by patient."}
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
               <label className="text-xs font-semibold text-slate-700">Doctor Notes</label>
               <textarea
                 rows={3}
@@ -596,6 +654,121 @@ export default function AppointmentsPage() {
               </button>
             </div>
           </form>
+        </div>
+      )}
+
+      {/* 7. MOBILE BOTTOM SHEET FOR APPOINTMENT DETAILS */}
+      {selectedMobileApt && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center animate-fadeIn sm:p-4">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setSelectedMobileApt(null)} />
+          <div className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden relative z-10 animate-slideUp transform transition-transform max-h-[85vh] flex flex-col font-sans">
+            {/* Grab handle for bottom sheet effect */}
+            <div className="w-full flex justify-center pt-3 pb-1 sm:hidden">
+              <div className="w-12 h-1.5 bg-slate-200 rounded-full" />
+            </div>
+
+            <div className="flex items-center justify-between p-5 border-b border-slate-100">
+              <h2 className="text-lg font-bold text-slate-800">Appointment Details</h2>
+              <button
+                onClick={() => setSelectedMobileApt(null)}
+                className="p-2 text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 rounded-full transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-5 overflow-y-auto space-y-5">
+              {/* Patient Banner */}
+              <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-xs relative shrink-0">
+                  <Image
+                    src={selectedMobileApt.patientAvatar || "/child_avatar_1.png"}
+                    alt={selectedMobileApt.patientName}
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="font-bold text-slate-900 truncate text-base">{selectedMobileApt.patientName}</h3>
+                  <Link
+                    href={`/patients/${selectedMobileApt.patientId}?tab=profile`}
+                    className="text-xs text-[#1E4E70] font-semibold hover:underline flex items-center gap-1 mt-0.5"
+                  >
+                    View Full File <ChevronRight className="w-3 h-3" />
+                  </Link>
+                </div>
+              </div>
+
+              {/* Details List */}
+              <div className="space-y-3">
+                <div className="flex justify-between items-center py-2 border-b border-slate-100/60">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Date & Time</span>
+                  <span className="text-sm font-bold text-slate-800">{selectedMobileApt.date} • {selectedMobileApt.time}</span>
+                </div>
+                <div className="flex justify-between items-center py-2 border-b border-slate-100/60">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Parent</span>
+                  <span className="text-sm font-bold text-slate-800">{selectedMobileApt.parentName}</span>
+                </div>
+                <div className="flex justify-between items-center py-2 border-b border-slate-100/60">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Phone</span>
+                  <a href={`tel:${selectedMobileApt.parentPhone}`} className="text-sm font-bold text-[#1E4E70] flex items-center gap-1.5 bg-[#A5D8FF]/20 px-3 py-1 rounded-lg">
+                    <Phone className="w-3.5 h-3.5" />
+                    {selectedMobileApt.parentPhone ? selectedMobileApt.parentPhone.slice(0, -4) + "XXXX" : "N/A"}
+                  </a>
+                </div>
+                <div className="flex justify-between items-center py-2 border-b border-slate-100/60">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</span>
+                  <span className="text-sm font-bold text-slate-800 capitalize">{selectedMobileApt.status}</span>
+                </div>
+                <div className="flex justify-between items-center py-2 border-b border-slate-100/60">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Consultation Fee</span>
+                  <span className="text-sm font-bold text-slate-800">₹{selectedMobileApt.fee || 500}</span>
+                </div>
+                
+                {selectedMobileApt.status?.toLowerCase() === "cancelled" && selectedMobileApt.cancellationReason && (
+                  <div className="flex justify-between items-start py-2 border-b border-slate-100/60">
+                    <span className="text-xs font-semibold text-rose-500 uppercase tracking-wider mt-0.5">Reason</span>
+                    <span className="text-sm font-bold text-rose-600 text-right max-w-[200px]">{selectedMobileApt.cancellationReason}</span>
+                  </div>
+                )}
+                
+                {selectedMobileApt.notes && (
+                  <div className="flex flex-col py-2 border-b border-slate-100/60 gap-1">
+                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Patient's Notes</span>
+                    <span className="text-xs italic text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-100">{selectedMobileApt.notes}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Action Buttons inside Bottom Sheet */}
+              <div className="pt-4 grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => {
+                    setSelectedMobileApt(null);
+                    setEditModalApt(selectedMobileApt);
+                    setEditNotes(selectedMobileApt.doctorNotes || "");
+                    setEditMeetingLink(selectedMobileApt.meetingLink || "");
+                  }}
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs py-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-colors"
+                >
+                  <Edit3 className="w-4 h-4" /> Doctor Notes
+                </button>
+                {(!selectedMobileApt.status || selectedMobileApt.status.toLowerCase() !== "cancelled") && (
+                  <button
+                    onClick={() => {
+                      setSelectedMobileApt(null);
+                      setCancelModalApt(selectedMobileApt);
+                      setCancellationReason("");
+                    }}
+                    className="bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold text-xs py-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-colors border border-rose-200"
+                  >
+                    Reject
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -148,9 +148,9 @@ export default function SupportPage() {
   ];
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-6 animate-fadeIn pb-24 font-sans overflow-hidden">
+    <div className="space-y-6 animate-fadeIn pb-24 font-sans overflow-hidden">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-semibold text-slate-800 tracking-tight">
             Support Desk
@@ -161,11 +161,11 @@ export default function SupportPage() {
         </div>
       </div>
       {/* Navigation Segment Tabs */}
-      <div className="bg-slate-200/70 p-1.5 rounded-lg flex items-center gap-1 max-w-md">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none w-full">
         <button
           onClick={() => setActiveTab("tickets")}
-          className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-2 ${
-            activeTab === "tickets" ? "bg-white text-[#1E4E70] shadow-xs" : "text-slate-600 hover:text-slate-900"
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer ${
+            activeTab === "tickets" ? "bg-[#1E4E70] text-white shadow-xs" : "bg-slate-50 text-slate-600 border border-slate-200/80 hover:bg-slate-100"
           }`}
         >
           <MessageSquare className="w-4 h-4" />
@@ -173,8 +173,8 @@ export default function SupportPage() {
         </button>
         <button
           onClick={() => setActiveTab("new")}
-          className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-2 ${
-            activeTab === "new" ? "bg-white text-[#1E4E70] shadow-xs" : "text-slate-600 hover:text-slate-900"
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer ${
+            activeTab === "new" ? "bg-[#1E4E70] text-white shadow-xs" : "bg-slate-50 text-slate-600 border border-slate-200/80 hover:bg-slate-100"
           }`}
         >
           <Plus className="w-4 h-4" />
@@ -182,8 +182,8 @@ export default function SupportPage() {
         </button>
         <button
           onClick={() => setActiveTab("faq")}
-          className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-2 ${
-            activeTab === "faq" ? "bg-white text-[#1E4E70] shadow-xs" : "text-slate-600 hover:text-slate-900"
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer ${
+            activeTab === "faq" ? "bg-[#1E4E70] text-white shadow-xs" : "bg-slate-50 text-slate-600 border border-slate-200/80 hover:bg-slate-100"
           }`}
         >
           <HelpCircle className="w-4 h-4" />

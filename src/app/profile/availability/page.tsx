@@ -15,7 +15,7 @@ import {
   ToggleLeft,
   ToggleRight,
   Info,
-  DollarSign,
+  IndianRupee,
   Coffee
 } from "lucide-react";
 import { useDoctorData } from "@/context/DoctorDataContext";
@@ -106,6 +106,21 @@ export default function AvailabilityManagerPage() {
     );
   }
 
+  // Generate time options based on slot duration
+  const generateTimeOptions = (interval: number) => {
+    const options = [];
+    for (let h = 0; h < 24; h++) {
+      for (let m = 0; m < 60; m += interval) {
+        const hh = h.toString().padStart(2, "0");
+        const mm = m.toString().padStart(2, "0");
+        options.push(`${hh}:${mm}`);
+      }
+    }
+    return options;
+  };
+
+  const timeOptions = generateTimeOptions(slotDuration);
+
   // Toggles day availability
   const handleToggleDay = (index: number) => {
     setWeeklyAvailability((prev) =>
@@ -156,9 +171,26 @@ export default function AvailabilityManagerPage() {
     setWeeklyAvailability((prev) =>
       prev.map((day, i) => {
         if (i === dayIndex) {
-          const updatedShifts = day.shifts.map((shift, sIdx) =>
-            sIdx === shiftIndex ? { ...shift, [field]: value } : shift
-          );
+          const updatedShifts = day.shifts.map((shift, sIdx) => {
+            if (sIdx !== shiftIndex) return shift;
+            
+            const newShift = { ...shift, [field]: value };
+            
+            if (field === "startTime") {
+              const startMins = parseInt(value.split(":")[0]) * 60 + parseInt(value.split(":")[1]);
+              const endMins = parseInt(shift.endTime.split(":")[0]) * 60 + parseInt(shift.endTime.split(":")[1]);
+              
+              if (endMins <= startMins || endMins % slotDuration !== 0) {
+                const newEnd = startMins + slotDuration;
+                if (newEnd < 24 * 60) {
+                  const hh = Math.floor(newEnd / 60).toString().padStart(2, "0");
+                  const mm = (newEnd % 60).toString().padStart(2, "0");
+                  newShift.endTime = `${hh}:${mm}`;
+                }
+              }
+            }
+            return newShift;
+          });
           return { ...day, shifts: updatedShifts };
         }
         return day;
@@ -166,7 +198,39 @@ export default function AvailabilityManagerPage() {
     );
   };
 
+  // Handles Slot Duration changes and auto-aligns all shifts
+  const handleSlotDurationChange = (newDuration: number) => {
+    setSlotDuration(newDuration);
+    setWeeklyAvailability((prev) => 
+      prev.map(day => ({
+        ...day,
+        shifts: day.shifts.map(shift => {
+          let newStart = shift.startTime;
+          let newEnd = shift.endTime;
+          
+          const startMins = parseInt(newStart.split(":")[0]) * 60 + parseInt(newStart.split(":")[1]);
+          if (startMins % newDuration !== 0) {
+             const snappedStart = Math.floor(startMins / newDuration) * newDuration;
+             newStart = `${Math.floor(snappedStart / 60).toString().padStart(2, "0")}:${(snappedStart % 60).toString().padStart(2, "0")}`;
+          }
 
+          const endMins = parseInt(newEnd.split(":")[0]) * 60 + parseInt(newEnd.split(":")[1]);
+          const newStartMins = parseInt(newStart.split(":")[0]) * 60 + parseInt(newStart.split(":")[1]);
+
+          if (endMins <= newStartMins || endMins % newDuration !== 0) {
+             const snappedEnd = newStartMins + newDuration;
+             if (snappedEnd >= 24 * 60) {
+               newEnd = "23:59";
+             } else {
+               newEnd = `${Math.floor(snappedEnd / 60).toString().padStart(2, "0")}:${(snappedEnd % 60).toString().padStart(2, "0")}`;
+             }
+          }
+          
+          return { ...shift, startTime: newStart, endTime: newEnd };
+        })
+      }))
+    );
+  };
 
   // Save timing data to backend & local context
   const handleSave = async () => {
@@ -227,22 +291,15 @@ export default function AvailabilityManagerPage() {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto animate-fadeIn pb-24 font-sans space-y-6">
+    <div className="space-y-6 animate-fadeIn pb-24 font-sans">
       
       {/* HEADER SECTION */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
-          <Link
-            href="/profile"
-            className="inline-flex items-center gap-1 text-xs font-bold text-slate-500 hover:text-slate-800 transition-colors"
-          >
-            <ChevronLeft className="w-3.5 h-3.5" />
-            <span>Back to Profile</span>
-          </Link>
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-semibold text-slate-800 tracking-tight">
             OPD Availability & Slot Manager
           </h1>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-500 font-medium">
             Set weekly timings, slot duration, and date exceptions.
           </p>
         </div>
@@ -291,9 +348,9 @@ export default function AvailabilityManagerPage() {
               </h3>
             </div>
 
-            <div className="divide-y divide-slate-100 space-y-4">
+            <div className="space-y-4">
               {weeklyAvailability.map((day, dIdx) => (
-                <div key={day.dayOfWeek} className="pt-4 first:pt-0 space-y-3">
+                <div key={day.dayOfWeek} className="border-b border-slate-100 pb-5 last:border-0 last:pb-0 space-y-4">
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2.5">
                       <button
@@ -341,15 +398,23 @@ export default function AvailabilityManagerPage() {
                             <span className="sm:hidden text-[9px] font-bold text-slate-500 uppercase shrink-0">
                               St
                             </span>
-                            <input
-                              type="time"
+                            <select
                               required
                               value={shift.startTime}
                               onChange={(e) =>
                                 handleUpdateShiftTime(dIdx, sIdx, "startTime", e.target.value)
                               }
-                              className="text-[11px] sm:text-sm font-bold text-slate-800 focus:outline-none w-full bg-transparent"
-                            />
+                              className="text-[11px] sm:text-sm font-bold text-slate-800 focus:outline-none w-full bg-transparent cursor-pointer appearance-none"
+                            >
+                              {!timeOptions.includes(shift.startTime) && (
+                                <option value={shift.startTime}>{shift.startTime}</option>
+                              )}
+                              {timeOptions.map((time) => (
+                                <option key={time} value={time}>
+                                  {time}
+                                </option>
+                              ))}
+                            </select>
                           </div>
 
                           <div className="flex items-center gap-1.5 sm:gap-2 bg-white px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl border border-slate-200 flex-1 min-w-0">
@@ -359,15 +424,23 @@ export default function AvailabilityManagerPage() {
                             <span className="sm:hidden text-[9px] font-bold text-slate-500 uppercase shrink-0">
                               En
                             </span>
-                            <input
-                              type="time"
+                            <select
                               required
                               value={shift.endTime}
                               onChange={(e) =>
                                 handleUpdateShiftTime(dIdx, sIdx, "endTime", e.target.value)
                               }
-                              className="text-[11px] sm:text-sm font-bold text-slate-800 focus:outline-none w-full bg-transparent"
-                            />
+                              className="text-[11px] sm:text-sm font-bold text-slate-800 focus:outline-none w-full bg-transparent cursor-pointer appearance-none"
+                            >
+                              {!timeOptions.includes(shift.endTime) && (
+                                <option value={shift.endTime}>{shift.endTime}</option>
+                              )}
+                              {timeOptions.map((time) => (
+                                <option key={time} value={time}>
+                                  {time}
+                                </option>
+                              ))}
+                            </select>
                           </div>
 
                           <button
@@ -411,7 +484,7 @@ export default function AvailabilityManagerPage() {
                     <button
                       key={mins}
                       type="button"
-                      onClick={() => setSlotDuration(mins)}
+                      onClick={() => handleSlotDurationChange(mins)}
                       className={`text-xs py-2.5 rounded-xl border font-bold transition-all text-center cursor-pointer ${
                         slotDuration === mins
                           ? "bg-[#1E4E70] text-white border-[#1E4E70] shadow-2xs"
@@ -430,7 +503,7 @@ export default function AvailabilityManagerPage() {
                   Consultation Fee (₹)*
                 </label>
                 <div className="flex items-center gap-2 bg-[#F8FAFC] border border-slate-200 px-3.5 py-3 rounded-lg focus-within:ring-2 focus-within:ring-[#1E4E70] focus-within:bg-white transition-all">
-                  <DollarSign className="w-4 h-4 text-slate-400 shrink-0" />
+                  <IndianRupee className="w-4 h-4 text-slate-400 shrink-0" />
                   <input
                     type="number"
                     required

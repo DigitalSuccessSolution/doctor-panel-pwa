@@ -53,8 +53,7 @@ export default function Navigation({ mode }: NavigationProps) {
     { name: "Prescriptions", href: "/prescriptions", icon: FileText },
     { name: "Reports", href: "/reports", icon: BarChart3 },
     { name: "Support Desk", href: "/support", icon: Headphones },
-    { name: "Policies & Legal", href: "/policies", icon: ShieldCheck },
-    { name: "Profile", href: mode === "desktop" ? "/profile/edit" : "/profile", icon: User },
+    { name: "Profile", href: "/profile", icon: User },
   ];
 
   const mobileNavItems: NavItem[] = [
@@ -77,7 +76,6 @@ export default function Navigation({ mode }: NavigationProps) {
   const unauthDesktopNavItems: NavItem[] = [
     { name: "Home", href: "/", icon: Home },
     { name: "Support Desk", href: "/support", icon: Headphones },
-    { name: "Policies & Legal", href: "/policies", icon: ShieldCheck },
     { name: "Profile / Account", href: "/profile", icon: User },
   ];
 
@@ -123,7 +121,7 @@ export default function Navigation({ mode }: NavigationProps) {
             </div>
           </div>
 
-          <div className="space-y-3 pt-4 border-t border-slate-100">
+          <div className="space-y-3 pt-4 border-t border-slate-100 mt-auto">
             <button
               onClick={() => setShowLoginModal(true)}
               className="w-full bg-[#1E4E70] hover:bg-[#153852] text-white font-semibold text-xs py-3 rounded-lg shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
@@ -131,6 +129,8 @@ export default function Navigation({ mode }: NavigationProps) {
               <LogIn className="w-4 h-4" />
               <span>LOG IN / SIGN UP</span>
             </button>
+
+
           </div>
         </aside>
       );
@@ -197,6 +197,8 @@ export default function Navigation({ mode }: NavigationProps) {
             );
           })}
         </div>
+
+
       </aside>
     );
   }

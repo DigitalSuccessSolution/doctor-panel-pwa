@@ -45,12 +45,6 @@ export default function ProfilePage() {
   const [ratingInfo, setRatingInfo] = useState({ average: 5.0, count: 0 });
   const router = useRouter();
 
-  // Redirect to edit profile automatically on desktop
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.innerWidth >= 1024) {
-      router.push("/profile/edit");
-    }
-  }, [router]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -268,19 +262,6 @@ export default function ProfilePage() {
                   </div>
                   <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#1E4E70] shrink-0" />
                 </Link>
-
-                <Link
-                  href="/policies"
-                  className="p-3.5 flex items-center justify-between text-xs font-semibold text-slate-800 hover:text-[#1E4E70] hover:bg-slate-50 transition-colors group"
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-8 h-8 rounded-[9px] bg-[#8E8E93] flex items-center justify-center shrink-0 shadow-2xs">
-                      <Shield className="w-4.5 h-4.5 text-white stroke-[2.2]" />
-                    </div>
-                    <span className="truncate font-semibold text-slate-800">Policies</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#1E4E70] shrink-0" />
-                </Link>
               </>
             ) : (
               [
@@ -288,8 +269,7 @@ export default function ProfilePage() {
                 { title: "Prescriptions", icon: FileText, bg: "bg-[#AF52DE]" },
                 { title: "Reports", icon: BarChart3, bg: "bg-[#30B0C7]" },
                 { title: "OPD Availability", icon: Calendar, bg: "bg-amber-500" },
-                { title: "Support", icon: Contact, bg: "bg-[#007AFF]" },
-                { title: "Policies", icon: Shield, bg: "bg-[#8E8E93]" },
+                { title: "Support", icon: Contact, bg: "bg-[#007AFF]" }
               ].map((item, i) => {
                 const IconComponent = item.icon;
                 return (
@@ -314,6 +294,17 @@ export default function ProfilePage() {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Footer Links */}
+      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 pt-12 pb-8 text-[11px] font-medium text-slate-400">
+        <Link href="/privacy-policy" className="hover:text-slate-600 transition-colors">Privacy Policy</Link>
+        <span className="text-slate-300">•</span>
+        <Link href="/terms-of-service" className="hover:text-slate-600 transition-colors">Terms of Service</Link>
+        <span className="text-slate-300">•</span>
+        <Link href="/partner-program" className="hover:text-slate-600 transition-colors">Doctor Partner Program</Link>
+        <span className="text-slate-300">•</span>
+        <Link href="/faqs" className="hover:text-slate-600 transition-colors">Clinical FAQs</Link>
       </div>
     </div>
   );

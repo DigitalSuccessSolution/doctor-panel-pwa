@@ -146,8 +146,9 @@ export default function PrescriptionsTab({
 
             <div className="space-y-3">
               {rxMedicines.map((med, index) => (
-                <div key={index} className="grid grid-cols-1 sm:grid-cols-12 gap-2 p-3 bg-slate-50 border border-slate-200/60 rounded-lg relative text-xs items-end">
-                  <div className="sm:col-span-3 space-y-1">
+                <div key={index} className="grid grid-cols-1 sm:grid-cols-12 gap-3 p-3 bg-slate-50 border border-slate-200/60 rounded-lg relative text-xs items-end">
+                  {/* Row 1 equivalent on desktop */}
+                  <div className="sm:col-span-4 space-y-1">
                     <label className="font-semibold text-slate-500">Name</label>
                     <input
                       type="text"
@@ -158,17 +159,18 @@ export default function PrescriptionsTab({
                       className="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#1E4E70]"
                     />
                   </div>
-                  <div className="sm:col-span-2 space-y-1">
+                  <div className="sm:col-span-3 space-y-1">
                     <label className="font-semibold text-slate-500">Dose</label>
                     <input
                       type="text"
                       value={med.dosage}
                       onChange={(e) => handleMedicineChange(index, "dosage", e.target.value)}
+                      placeholder="e.g. 2.5 ml"
                       className="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#1E4E70]"
                     />
                   </div>
-                  <div className="sm:col-span-2 space-y-1">
-                    <label className="font-semibold text-slate-500">Freq</label>
+                  <div className="sm:col-span-5 space-y-1">
+                    <label className="font-semibold text-slate-500">Frequency</label>
                     <select
                       value={med.frequency}
                       onChange={(e) => handleMedicineChange(index, "frequency", e.target.value)}
@@ -182,7 +184,9 @@ export default function PrescriptionsTab({
                       <option value="SOS">As Needed (SOS)</option>
                     </select>
                   </div>
-                  <div className="sm:col-span-2 space-y-1">
+
+                  {/* Row 2 equivalent on desktop */}
+                  <div className="sm:col-span-3 space-y-1">
                     <label className="font-semibold text-slate-500">Duration</label>
                     <select
                       value={med.duration}
@@ -199,25 +203,25 @@ export default function PrescriptionsTab({
                       <option value="Ongoing">Ongoing</option>
                     </select>
                   </div>
-                  <div className="sm:col-span-2 space-y-1">
+                  <div className="sm:col-span-8 space-y-1">
                     <label className="font-semibold text-slate-500">Instructions</label>
                     <input
                       type="text"
                       value={med.instructions}
                       onChange={(e) => handleMedicineChange(index, "instructions", e.target.value)}
-                      placeholder="e.g. After meal"
+                      placeholder="e.g. After feeding"
                       className="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#1E4E70]"
                     />
                   </div>
-                  <div className="sm:col-span-1 flex items-end justify-center pb-0.5">
+                  <div className="sm:col-span-1 flex items-end justify-end pb-0.5">
                     <button
                       type="button"
                       disabled={rxMedicines.length === 1}
                       onClick={() => handleRemoveMedicineRow(index)}
-                      className="text-rose-600 hover:bg-rose-50 p-2 rounded-xl border border-rose-200 disabled:opacity-40 cursor-pointer"
+                      className="text-rose-600 hover:bg-rose-50 p-2 rounded-xl border border-rose-200 disabled:opacity-40 cursor-pointer w-full flex justify-center"
                       title="Remove Medicine"
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>

@@ -93,13 +93,13 @@ export default function Header() {
     <header className="sticky top-0 z-30 bg-white border-b border-slate-200/60 px-3 sm:px-6 lg:px-8 py-2.5 transition-all">
       {/* Mobile Sub-Page Native Top Header Bar */}
       {isSubPage ? (
-        <div className="md:hidden flex items-center justify-between py-1">
+        <div className="md:hidden flex items-center justify-between py-2.5">
           <button
             onClick={handleBack}
-            className="flex items-center gap-2 text-slate-800 font-semibold text-sm hover:text-[#1E4E70] cursor-pointer"
+            className="flex items-center gap-2 text-slate-800 font-bold text-base hover:text-[#1E4E70] cursor-pointer"
           >
-            <ChevronLeft className="w-5 h-5 text-slate-800 stroke-[2.5]" />
-            <span className="truncate max-w-[180px]">{getSubPageTitle()}</span>
+            <ChevronLeft className="w-6 h-6 text-slate-800 stroke-[2.5]" />
+            <span className="truncate max-w-[200px]">{getSubPageTitle()}</span>
           </button>
 
           {!isAuthenticated && (
