@@ -48,11 +48,13 @@ export default function Navigation({ mode }: NavigationProps) {
   ];
 
   const secondaryNavItems: NavItem[] = [
-    { name: "Prescriptions & Notes", href: "/prescriptions", icon: FileText },
+    { name: "Notifications", href: "/notifications", icon: Bell },
+    { name: "OPD Availability", href: "/profile/availability", icon: Calendar },
+    { name: "Prescriptions", href: "/prescriptions", icon: FileText },
     { name: "Reports", href: "/reports", icon: BarChart3 },
     { name: "Support Desk", href: "/support", icon: Headphones },
     { name: "Policies & Legal", href: "/policies", icon: ShieldCheck },
-    { name: "Profile", href: "/profile", icon: User },
+    { name: "Profile", href: mode === "desktop" ? "/profile/edit" : "/profile", icon: User },
   ];
 
   const mobileNavItems: NavItem[] = [
@@ -178,7 +180,7 @@ export default function Navigation({ mode }: NavigationProps) {
           </p>
           {secondaryNavItems.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href;
+            const isActive = pathname === item.href || (item.name === "Profile" && (pathname === "/profile" || pathname === "/profile/edit"));
             return (
               <Link
                 key={item.href}

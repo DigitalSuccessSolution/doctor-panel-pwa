@@ -28,7 +28,11 @@ export default function Header() {
   const getSubPageTitle = () => {
     if (pathname === "/profile") return "My Profile";
     if (pathname === "/support") return "Support Desk";
-    if (pathname === "/policies") return "Policies & Terms";
+    if (pathname === "/policies") return "Policies";
+    if (pathname === "/policies/privacy") return "Privacy & Data Security";
+    if (pathname === "/policies/terms") return "Terms of Service";
+    if (pathname === "/policies/partner") return "Doctor Partner Program";
+    if (pathname === "/policies/faq") return "Clinical FAQs";
     if (pathname === "/patients") return "Patients Directory";
     if (pathname.startsWith("/patients/")) return "Pediatric Patient File";
     if (pathname === "/appointments") return "Appointments";
@@ -72,10 +76,16 @@ export default function Header() {
   };
 
   const handleBack = () => {
-    if (typeof window !== "undefined" && window.history.length > 1) {
-      router.back();
-    } else {
+    if (pathname.startsWith("/profile/")) {
       router.push("/profile");
+    } else if (pathname.startsWith("/patients/")) {
+      router.push("/patients");
+    } else if (pathname.startsWith("/policies/")) {
+      router.push("/policies");
+    } else if (pathname === "/policies") {
+      router.push("/profile");
+    } else {
+      router.push("/");
     }
   };
 

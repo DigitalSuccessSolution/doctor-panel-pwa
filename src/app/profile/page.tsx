@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ShieldCheck,
   TrendingUp,
@@ -29,13 +30,27 @@ import {
   Award,
   Star,
   Calendar,
+  LayoutDashboard,
+  Users,
+  CalendarDays,
+  Bell,
+  CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
 import { reviewService } from "@/services/reviewService";
 import { useDoctorData } from "@/context/DoctorDataContext";
 
 export default function ProfilePage() {
-  const { isAuthenticated, logout, setShowLoginModal, login, doctorProfile } = useDoctorData();
+  const { isAuthenticated, logout, setShowLoginModal, login, doctorProfile, isProfileComplete } = useDoctorData();
   const [ratingInfo, setRatingInfo] = useState({ average: 5.0, count: 0 });
+  const router = useRouter();
+
+  // Redirect to edit profile automatically on desktop
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth >= 1024) {
+      router.push("/profile/edit");
+    }
+  }, [router]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -157,94 +172,131 @@ export default function ProfilePage() {
                 <span className="truncate">{doctorProfile.phone} • {doctorProfile.availableHours}</span>
               </div>
             </div>
+            
+            {/* Profile Completion Bar */}
+            <div className="pt-3 border-t border-white/10">
+              {isProfileComplete ? (
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center justify-between text-[11px] font-semibold">
+                    <span className="text-[#34C759] flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5"/> Profile Complete</span>
+                    <span className="text-white">100%</span>
+                  </div>
+                  <div className="w-full bg-white/10 rounded-full h-1.5">
+                    <div className="bg-[#34C759] h-1.5 rounded-full w-full"></div>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center justify-between text-[11px] font-semibold">
+                    <span className="text-amber-400 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5"/> Profile Incomplete</span>
+                    <span className="text-white">Action Required</span>
+                  </div>
+                  <div className="w-full bg-white/10 rounded-full h-1.5">
+                    <div className="bg-amber-400 h-1.5 rounded-full w-1/2"></div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
-        {/* CLINICAL MODULES SECTION - APPLE IPHONE SETTINGS STYLE SQUIRCLE BADGES */}
-        <div className="space-y-3 pt-2">
-          <div className="flex items-center justify-between gap-2">
-            <h3 className="font-semibold text-slate-900 text-sm sm:text-base tracking-tight">
-              Clinical Modules & OPD Suite
-            </h3>
-            {!isAuthenticated && (
-              <span className="text-xs font-semibold text-[#1E4E70] bg-[#A5D8FF]/30 px-3 py-1 rounded-full border border-[#A5D8FF]/60 flex items-center gap-1.5 shrink-0 whitespace-nowrap">
-                <Lock className="w-3.5 h-3.5 text-[#1E4E70]" />
-                <span>Auth Required</span>
-              </span>
-            )}
-          </div>
-
-          <div className="divide-y divide-slate-100">
+        {/* UNIFIED MENU LIST */}
+        <div className="pt-2">
+          <div className="divide-y divide-slate-200/60">
             {isAuthenticated ? (
               <>
                 <Link
-                  href="/growth-analysis"
-                  className="py-3 flex items-center justify-between text-xs sm:text-sm font-medium text-slate-700 hover:text-[#1E4E70] transition-colors group"
+                  href="/notifications"
+                  className="p-3.5 flex items-center justify-between text-xs sm:text-sm font-medium text-slate-700 hover:text-[#1E4E70] hover:bg-slate-50 transition-colors group"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-8 h-8 rounded-[9px] bg-[#34C759] flex items-center justify-center shrink-0 shadow-2xs">
-                      <TrendingUp className="w-4.5 h-4.5 text-white stroke-[2.2]" />
+                    <div className="w-8 h-8 rounded-[9px] bg-[#FF3B30] flex items-center justify-center shrink-0 shadow-2xs">
+                      <Bell className="w-4.5 h-4.5 text-white stroke-[2.2]" />
                     </div>
-                    <span className="truncate font-semibold text-slate-800">WHO Growth Analytics</span>
+                    <span className="truncate font-semibold text-slate-800">Notifications</span>
                   </div>
                   <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#1E4E70] shrink-0" />
                 </Link>
-
-                <Link
-                  href="/nutrition"
-                  className="py-3 flex items-center justify-between text-xs sm:text-sm font-medium text-slate-700 hover:text-[#1E4E70] transition-colors group"
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-8 h-8 rounded-[9px] bg-[#FF2D55] flex items-center justify-center shrink-0 shadow-2xs">
-                      <Utensils className="w-4.5 h-4.5 text-white stroke-[2.2]" />
-                    </div>
-                    <span className="truncate font-semibold text-slate-800">Pediatric Nutrition</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#1E4E70] shrink-0" />
-                </Link>
-
-
 
                 <Link
                   href="/prescriptions"
-                  className="py-3 flex items-center justify-between text-xs sm:text-sm font-medium text-slate-700 hover:text-[#1E4E70] transition-colors group"
+                  className="p-3.5 flex items-center justify-between text-xs sm:text-sm font-medium text-slate-700 hover:text-[#1E4E70] hover:bg-slate-50 transition-colors group"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-8 h-8 rounded-[9px] bg-[#5856D6] flex items-center justify-center shrink-0 shadow-2xs">
+                    <div className="w-8 h-8 rounded-[9px] bg-[#AF52DE] flex items-center justify-center shrink-0 shadow-2xs">
                       <FileText className="w-4.5 h-4.5 text-white stroke-[2.2]" />
                     </div>
-                    <span className="truncate font-semibold text-slate-800">Digital e-Prescriptions</span>
+                    <span className="truncate font-semibold text-slate-800">Prescriptions</span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#1E4E70] shrink-0" />
+                </Link>
+                <Link
+                  href="/reports"
+                  className="p-3.5 flex items-center justify-between text-xs sm:text-sm font-medium text-slate-700 hover:text-[#1E4E70] hover:bg-slate-50 transition-colors group"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-8 h-8 rounded-[9px] bg-[#30B0C7] flex items-center justify-center shrink-0 shadow-2xs">
+                      <BarChart3 className="w-4.5 h-4.5 text-white stroke-[2.2]" />
+                    </div>
+                    <span className="truncate font-semibold text-slate-800">Reports</span>
                   </div>
                   <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#1E4E70] shrink-0" />
                 </Link>
 
                 <Link
-                  href="/medical-notes"
-                  className="py-3 flex items-center justify-between text-xs sm:text-sm font-medium text-slate-700 hover:text-[#1E4E70] transition-colors group"
+                  href="/profile/availability"
+                  className="p-3.5 flex items-center justify-between text-xs sm:text-sm font-medium text-slate-700 hover:text-[#1E4E70] hover:bg-slate-50 rounded-lg transition-colors group"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-8 h-8 rounded-[9px] bg-[#AF52DE] flex items-center justify-center shrink-0 shadow-2xs">
-                      <Edit3 className="w-4.5 h-4.5 text-white stroke-[2.2]" />
+                    <div className="w-8 h-8 rounded-[9px] bg-amber-500 flex items-center justify-center shrink-0 shadow-2xs">
+                      <Calendar className="w-4.5 h-4.5 text-white stroke-[2.2]" />
                     </div>
-                    <span className="truncate font-semibold text-slate-800">SOAP Medical Notes</span>
+                    <span className="truncate font-semibold text-slate-800">OPD Availability</span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#1E4E70] shrink-0" />
+                </Link>
+
+                <Link
+                  href="/support"
+                  className="p-3.5 flex items-center justify-between text-xs font-semibold text-slate-800 hover:text-[#1E4E70] hover:bg-slate-50 transition-colors group"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-8 h-8 rounded-[9px] bg-[#007AFF] flex items-center justify-center shrink-0 shadow-2xs">
+                      <Contact className="w-4.5 h-4.5 text-white stroke-[2.2]" />
+                    </div>
+                    <span className="truncate font-semibold text-slate-800">Support</span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#1E4E70] shrink-0" />
+                </Link>
+
+                <Link
+                  href="/policies"
+                  className="p-3.5 flex items-center justify-between text-xs font-semibold text-slate-800 hover:text-[#1E4E70] hover:bg-slate-50 transition-colors group"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-8 h-8 rounded-[9px] bg-[#8E8E93] flex items-center justify-center shrink-0 shadow-2xs">
+                      <Shield className="w-4.5 h-4.5 text-white stroke-[2.2]" />
+                    </div>
+                    <span className="truncate font-semibold text-slate-800">Policies</span>
                   </div>
                   <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#1E4E70] shrink-0" />
                 </Link>
               </>
             ) : (
-              /* Unauthenticated Feature Teaser: Clicking opens Login Modal */
               [
-                { title: "WHO Growth Analytics", icon: TrendingUp, bg: "bg-[#34C759]" },
-                { title: "Pediatric Nutrition", icon: Utensils, bg: "bg-[#FF2D55]" },
-                { title: "Digital e-Prescriptions", icon: FileText, bg: "bg-[#5856D6]" },
-                { title: "SOAP Medical Notes", icon: Edit3, bg: "bg-[#AF52DE]" },
+                { title: "Notifications", icon: Bell, bg: "bg-[#FF3B30]" },
+                { title: "Prescriptions", icon: FileText, bg: "bg-[#AF52DE]" },
+                { title: "Reports", icon: BarChart3, bg: "bg-[#30B0C7]" },
+                { title: "OPD Availability", icon: Calendar, bg: "bg-amber-500" },
+                { title: "Support", icon: Contact, bg: "bg-[#007AFF]" },
+                { title: "Policies", icon: Shield, bg: "bg-[#8E8E93]" },
               ].map((item, i) => {
                 const IconComponent = item.icon;
                 return (
                   <button
                     key={i}
                     onClick={() => setShowLoginModal(true)}
-                    className="w-full py-3 flex items-center justify-between text-xs sm:text-sm font-medium text-slate-700 hover:text-[#1E4E70] transition-colors cursor-pointer text-left group"
+                    className="w-full p-3.5 flex items-center justify-between text-xs sm:text-sm font-medium text-slate-700 hover:text-[#1E4E70] hover:bg-slate-50 rounded-lg transition-colors cursor-pointer text-left group"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div className={`w-8 h-8 rounded-[9px] ${item.bg} flex items-center justify-center shrink-0 shadow-2xs`}>
@@ -260,152 +312,6 @@ export default function ProfilePage() {
                 );
               })
             )}
-          </div>
-        </div>
-
-        {/* ACCOUNT & PRACTICE SETTINGS SECTION */}
-        <div className="space-y-3 pt-3 border-t border-slate-100">
-          <h3 className="font-semibold text-slate-900 text-sm sm:text-base">
-            Doctor Profile & Practice Settings
-          </h3>
-
-          <div className="divide-y divide-slate-100">
-            {isAuthenticated ? (
-              <>
-                <Link
-                  href="/profile/edit"
-                  className="py-3 flex items-center justify-between text-xs sm:text-sm font-medium text-slate-700 hover:text-[#1E4E70] transition-colors group"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-[9px] bg-[#1E4E70] flex items-center justify-center shrink-0 shadow-2xs">
-                      <Pencil className="w-4.5 h-4.5 text-white stroke-[2.2]" />
-                    </div>
-                    <div>
-                      <span className="font-semibold text-slate-800 block">Edit Doctor Profile & Credentials</span>
-                      <span className="text-[11px] text-slate-500 font-normal block">Manage license no, hospital, OPD hours & bio</span>
-                    </div>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#1E4E70]" />
-                </Link>
-
-                <Link
-                  href="/profile/availability"
-                  className="py-3 flex items-center justify-between text-xs sm:text-sm font-medium text-slate-700 hover:text-[#1E4E70] transition-colors group border-t border-slate-100"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-[9px] bg-amber-500 flex items-center justify-center shrink-0 shadow-2xs">
-                      <Calendar className="w-4.5 h-4.5 text-white stroke-[2.2]" />
-                    </div>
-                    <div>
-                      <span className="font-semibold text-slate-800 block">OPD Availability & Slot Manager</span>
-                      <span className="text-[11px] text-slate-500 font-normal block">Configure weekly shifts, slot duration & holidays</span>
-                    </div>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#1E4E70]" />
-                </Link>
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={() => setShowLoginModal(true)}
-                  className="w-full py-3 flex items-center justify-between text-xs sm:text-sm font-medium text-slate-700 hover:text-[#1E4E70] transition-colors cursor-pointer text-left group"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-[9px] bg-[#1E4E70] flex items-center justify-center shrink-0 shadow-2xs">
-                      <Pencil className="w-4.5 h-4.5 text-white stroke-[2.2]" />
-                    </div>
-                    <div>
-                      <span className="font-semibold text-slate-800 block">Edit Doctor Profile & Credentials</span>
-                      <span className="text-[11px] text-slate-500 font-normal block">Manage license no, hospital, OPD hours & bio</span>
-                    </div>
-                  </div>
-                  <span className="text-[11px] font-semibold text-[#1E4E70] bg-[#A5D8FF]/30 px-2.5 py-0.5 rounded-full border border-[#A5D8FF]/60 flex items-center gap-1 shrink-0 whitespace-nowrap">
-                    <Lock className="w-3.5 h-3.5 text-[#1E4E70]" />
-                    <span>Unlock</span>
-                  </span>
-                </button>
-
-                <button
-                  onClick={() => setShowLoginModal(true)}
-                  className="w-full py-3 flex items-center justify-between text-xs sm:text-sm font-medium text-slate-700 hover:text-[#1E4E70] transition-colors cursor-pointer text-left group border-t border-slate-100"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-[9px] bg-amber-500 flex items-center justify-center shrink-0 shadow-2xs">
-                      <Calendar className="w-4.5 h-4.5 text-white stroke-[2.2]" />
-                    </div>
-                    <div>
-                      <span className="font-semibold text-slate-800 block">OPD Availability & Slot Manager</span>
-                      <span className="text-[11px] text-slate-500 font-normal block">Configure weekly shifts, slot duration & holidays</span>
-                    </div>
-                  </div>
-                  <span className="text-[11px] font-semibold text-[#1E4E70] bg-[#A5D8FF]/30 px-2.5 py-0.5 rounded-full border border-[#A5D8FF]/60 flex items-center gap-1 shrink-0 whitespace-nowrap">
-                    <Lock className="w-3.5 h-3.5 text-[#1E4E70]" />
-                    <span>Unlock</span>
-                  </span>
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* SUPPORT & LEGAL POLICIES SECTION */}
-        <div className="space-y-3 pt-3 border-t border-slate-100">
-          <h3 className="font-semibold text-slate-900 text-sm sm:text-base">
-            Support & Policies
-          </h3>
-
-          <div className="divide-y divide-slate-100">
-            <Link
-              href="/support"
-              className="py-3 flex items-center justify-between text-xs font-semibold text-slate-800 hover:text-[#1E4E70] transition-colors group"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-[9px] bg-[#AF52DE] flex items-center justify-center shrink-0 shadow-2xs">
-                  <Contact className="w-4.5 h-4.5 text-white stroke-[2.2]" />
-                </div>
-                <span className="font-semibold text-slate-800">Contact Support Desk</span>
-              </div>
-              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#1E4E70]" />
-            </Link>
-
-            <Link
-              href="/policies/privacy"
-              className="py-3 flex items-center justify-between text-xs font-semibold text-slate-800 hover:text-[#1E4E70] transition-colors group"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-[9px] bg-[#8E8E93] flex items-center justify-center shrink-0 shadow-2xs">
-                  <Shield className="w-4.5 h-4.5 text-white stroke-[2.2]" />
-                </div>
-                <span className="font-semibold text-slate-800">Privacy & Data Security Policy</span>
-              </div>
-              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#1E4E70]" />
-            </Link>
-
-            <Link
-              href="/policies/terms"
-              className="py-3 flex items-center justify-between text-xs font-semibold text-slate-800 hover:text-[#1E4E70] transition-colors group"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-[9px] bg-[#FF9500] flex items-center justify-center shrink-0 shadow-2xs">
-                  <FileCode className="w-4.5 h-4.5 text-white stroke-[2.2]" />
-                </div>
-                <span className="font-semibold text-slate-800">Terms of Service & Clinical Terms</span>
-              </div>
-              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#1E4E70]" />
-            </Link>
-
-            <Link
-              href="/policies/faq"
-              className="py-3 flex items-center justify-between text-xs font-semibold text-slate-800 hover:text-[#1E4E70] transition-colors group"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-[9px] bg-[#30B0C7] flex items-center justify-center shrink-0 shadow-2xs">
-                  <HelpCircle className="w-4.5 h-4.5 text-white stroke-[2.2]" />
-                </div>
-                <span className="font-semibold text-slate-800">Clinical FAQs & Help Guidance</span>
-              </div>
-              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#1E4E70]" />
-            </Link>
           </div>
         </div>
       </div>
