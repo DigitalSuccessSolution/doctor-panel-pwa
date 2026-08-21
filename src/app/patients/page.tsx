@@ -42,8 +42,8 @@ export default function PatientDirectory() {
 
   return (
     <div className="space-y-6 animate-fadeIn pb-16 font-sans">
-      {/* 1. Simplified Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* 1. Header */}
+      <div className="flex flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
             <h1 className="text-xl sm:text-2xl font-semibold text-slate-800 tracking-tight">
@@ -67,13 +67,13 @@ export default function PatientDirectory() {
           placeholder="Search by Baby Name, Parent Name, Phone, or Medical Condition..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full bg-white border border-slate-200/80 rounded-lg pl-11 pr-4 py-3 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#A5D8FF] shadow-2xs"
+          className="w-full bg-white border border-slate-200/80 rounded-xl pl-11 pr-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1E4E70] transition-colors"
         />
       </div>
 
       {/* 3. Patient Table Layout (Desktop) & List Card Layout (Mobile) */}
       <div className="bg-white rounded-xl border border-slate-200/80 overflow-hidden shadow-2xs">
-        
+
         {/* DESKTOP TABLE VIEW */}
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left border-collapse">
@@ -89,8 +89,8 @@ export default function PatientDirectory() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {filteredPatients.map((child) => (
-                <tr 
-                  key={child.id} 
+                <tr
+                  key={child.id}
                   onClick={() => router.push(`/patients/${child.id}`)}
                   className="hover:bg-slate-50/50 transition-colors text-xs cursor-pointer"
                 >
@@ -118,11 +118,10 @@ export default function PatientDirectory() {
                       <span className="font-semibold text-slate-700 block">
                         {child.ageInMonths ? `${child.ageInMonths} Months` : child.age || "N/A"}
                       </span>
-                      <span className={`inline-block text-[9px] font-extrabold px-1.5 py-0.5 rounded-md capitalize ${
-                        child.gender?.toLowerCase() === "female"
-                          ? "bg-rose-50 text-rose-600 border border-rose-100"
-                          : "bg-sky-50 text-[#1E4E70] border border-sky-100"
-                      }`}>
+                      <span className={`inline-block text-[9px] font-extrabold px-1.5 py-0.5 rounded-md capitalize ${child.gender?.toLowerCase() === "female"
+                        ? "bg-rose-50 text-rose-600 border border-rose-100"
+                        : "bg-sky-50 text-[#1E4E70] border border-sky-100"
+                        }`}>
                         {child.gender}
                       </span>
                     </div>
@@ -150,11 +149,10 @@ export default function PatientDirectory() {
                   {/* Column 5: Health Status */}
                   <td className="p-4">
                     <div className="space-y-1">
-                      <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md border ${
-                        child.status === "Attention"
-                          ? "bg-rose-50 text-rose-700 border-rose-200"
-                          : "bg-emerald-50 text-emerald-700 border-emerald-200"
-                      }`}>
+                      <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-md border ${child.status === "Attention"
+                        ? "bg-rose-50 text-rose-700 border-rose-200"
+                        : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                        }`}>
                         <span className={`w-1.5 h-1.5 rounded-full ${child.status === "Attention" ? "bg-rose-500 animate-pulse" : "bg-emerald-500"}`}></span>
                         {child.status === "Attention" ? "Growth Review Required" : "Normal Growth"}
                       </span>
@@ -172,7 +170,7 @@ export default function PatientDirectory() {
                       href={`/patients/${child.id}`}
                       className="inline-flex items-center gap-1 text-xs font-bold text-[#1E4E70] bg-[#F0F7FF] hover:bg-[#E0F0FF] border border-[#BEE0FF] px-3.5 py-2 rounded-xl transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
                     >
-                      <span>Open Chart</span>
+                      <span>View Profile</span>
                       <ChevronRight className="w-3.5 h-3.5" />
                     </Link>
                   </td>
@@ -185,8 +183,8 @@ export default function PatientDirectory() {
         {/* MOBILE CARDS LIST VIEW */}
         <div className="block md:hidden divide-y divide-slate-100">
           {filteredPatients.map((child) => (
-            <div 
-              key={child.id} 
+            <div
+              key={child.id}
               onClick={() => router.push(`/patients/${child.id}`)}
               className="p-4 space-y-3.5 hover:bg-slate-50/50 transition-colors cursor-pointer"
             >
@@ -206,11 +204,10 @@ export default function PatientDirectory() {
                   </div>
                 </div>
 
-                <span className={`inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-md border ${
-                  child.status === "Attention"
-                    ? "bg-rose-50 text-rose-700 border-rose-200"
-                    : "bg-emerald-50 text-emerald-700 border-emerald-200"
-                }`}>
+                <span className={`inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-md border ${child.status === "Attention"
+                  ? "bg-rose-50 text-rose-700 border-rose-200"
+                  : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                  }`}>
                   {child.status}
                 </span>
               </div>
@@ -239,12 +236,12 @@ export default function PatientDirectory() {
                 ) : (
                   <span></span>
                 )}
-                
+
                 <Link
                   href={`/patients/${child.id}`}
                   className="bg-[#1E4E70] text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-1 shadow-2xs active:scale-95 transition-all"
                 >
-                  <span>Open Chart</span>
+                  <span>View Profile</span>
                   <ChevronRight className="w-3.5 h-3.5" />
                 </Link>
               </div>

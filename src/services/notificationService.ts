@@ -16,7 +16,7 @@ export const notificationService = {
   getNotifications: async (): Promise<{ success: boolean; data: NotificationItem[] }> => {
     try {
       const token = getStoredToken();
-      const res = await fetch(`${API_URL}/notification`, {
+      const res = await fetch(`${API_URL}/notifications`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -36,7 +36,7 @@ export const notificationService = {
   markAsRead: async (id: string): Promise<{ success: boolean }> => {
     try {
       const token = getStoredToken();
-      const res = await fetch(`${API_URL}/notification/${id}/read`, {
+      const res = await fetch(`${API_URL}/notifications/${id}/read`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -54,7 +54,7 @@ export const notificationService = {
   deleteNotification: async (id: string): Promise<{ success: boolean }> => {
     try {
       const token = getStoredToken();
-      const res = await fetch(`${API_URL}/notification/${id}`, {
+      const res = await fetch(`${API_URL}/notifications/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

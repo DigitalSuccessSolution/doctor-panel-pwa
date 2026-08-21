@@ -534,7 +534,7 @@ export default function LoginModal() {
                         placeholder="e.g. Dr. Sumit Sahu"
                         value={doctorName}
                         onChange={(e) => setDoctorName(e.target.value)}
-                        className="w-full bg-[#F8FAFC] focus:bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#1E4E70] focus:border-[#1E4E70] transition-colors"
+                        className="w-full bg-[#F8FAFC] focus:bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-3.5 sm:py-4 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#1E4E70] focus:border-[#1E4E70] transition-colors"
                         required
                         autoFocus
                       />
@@ -551,7 +551,7 @@ export default function LoginModal() {
                         placeholder="dr.sumitsahu@moncradel.com"
                         value={doctorEmail}
                         onChange={(e) => setDoctorEmail(e.target.value)}
-                        className="w-full bg-[#F8FAFC] focus:bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#1E4E70] focus:border-[#1E4E70] transition-colors"
+                        className="w-full bg-[#F8FAFC] focus:bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-3.5 sm:py-4 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#1E4E70] focus:border-[#1E4E70] transition-colors"
                         required
                       />
                     </div>
@@ -568,7 +568,7 @@ export default function LoginModal() {
                         placeholder="98765 43210"
                         value={mobileNumber}
                         onChange={(e) => handleMobileChange(e.target.value)}
-                        className="w-full bg-[#F8FAFC] focus:bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#1E4E70] focus:border-[#1E4E70] transition-colors"
+                        className="w-full bg-[#F8FAFC] focus:bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-3.5 sm:py-4 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#1E4E70] focus:border-[#1E4E70] transition-colors"
                         required
                       />
                     </div>
@@ -584,7 +584,7 @@ export default function LoginModal() {
                         placeholder="••••••••"
                         value={doctorPassword}
                         onChange={(e) => setDoctorPassword(e.target.value)}
-                        className="w-full bg-[#F8FAFC] focus:bg-white border border-slate-200 rounded-xl pl-10 pr-10 py-2.5 sm:py-3 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#1E4E70] focus:border-[#1E4E70] transition-colors"
+                        className="w-full bg-[#F8FAFC] focus:bg-white border border-slate-200 rounded-xl pl-10 pr-10 py-3.5 sm:py-4 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#1E4E70] focus:border-[#1E4E70] transition-colors"
                         required
                       />
                       <button
@@ -603,7 +603,7 @@ export default function LoginModal() {
                     <button
                       type="submit"
                       disabled={loading || !doctorName.trim() || !doctorEmail.trim()}
-                      className={`w-full py-2.5 sm:py-3 rounded-xl font-semibold text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 ${
+                      className={`w-full py-3.5 sm:py-4 rounded-xl font-semibold text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 ${
                         doctorName.trim() && doctorEmail.trim()
                           ? "bg-[#1E4E70] hover:bg-[#153852] text-white cursor-pointer active:scale-[0.98]"
                           : "bg-slate-100 text-slate-400 border border-slate-200/60 cursor-not-allowed"
@@ -728,7 +728,7 @@ export default function LoginModal() {
                     placeholder="dr.sumitsahu@moncradel.com"
                     value={signInEmail}
                     onChange={(e) => setSignInEmail(e.target.value)}
-                    className="w-full bg-[#F8FAFC] focus:bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#1E4E70] focus:border-[#1E4E70] transition-colors"
+                    className="w-full bg-[#F8FAFC] focus:bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-3.5 sm:py-4 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#1E4E70] focus:border-[#1E4E70] transition-colors"
                     required
                     autoFocus
                   />
@@ -744,7 +744,7 @@ export default function LoginModal() {
                     placeholder="••••••••"
                     value={signInPassword}
                     onChange={(e) => setSignInPassword(e.target.value)}
-                    className="w-full bg-[#F8FAFC] focus:bg-white border border-slate-200 rounded-xl pl-10 pr-10 py-2.5 sm:py-3 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#1E4E70] focus:border-[#1E4E70] transition-colors"
+                    className="w-full bg-[#F8FAFC] focus:bg-white border border-slate-200 rounded-xl pl-10 pr-10 py-3.5 sm:py-4 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#1E4E70] focus:border-[#1E4E70] transition-colors"
                     required
                   />
                   <button
@@ -779,7 +779,7 @@ export default function LoginModal() {
               <button
                 type="submit"
                 disabled={loading || !signInEmail.trim() || !signInPassword.trim()}
-                className={`w-full py-2.5 sm:py-3 rounded-xl font-semibold text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 ${
+                className={`w-full py-3.5 sm:py-4 rounded-xl font-semibold text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 ${
                   signInEmail.trim() && signInPassword.trim()
                     ? "bg-[#1E4E70] hover:bg-[#153852] text-white cursor-pointer active:scale-[0.98]"
                     : "bg-slate-100 text-slate-400 border border-slate-200/60 cursor-not-allowed"
@@ -841,7 +841,7 @@ export default function LoginModal() {
                         placeholder="dr.sumitsahu@moncradel.com"
                         value={forgotEmail}
                         onChange={(e) => setForgotEmail(e.target.value)}
-                        className="w-full bg-[#F8FAFC] focus:bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#1E4E70] focus:border-[#1E4E70] transition-colors"
+                        className="w-full bg-[#F8FAFC] focus:bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-3.5 sm:py-4 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#1E4E70] focus:border-[#1E4E70] transition-colors"
                         required
                         autoFocus
                       />
@@ -979,7 +979,7 @@ export default function LoginModal() {
                           setNewPassword(e.target.value);
                           if (errorMessage) setErrorMessage(null);
                         }}
-                        className="w-full bg-[#F8FAFC] focus:bg-white border border-slate-200 rounded-xl pl-10 pr-10 py-2.5 sm:py-3 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#1E4E70] focus:border-[#1E4E70] transition-colors"
+                        className="w-full bg-[#F8FAFC] focus:bg-white border border-slate-200 rounded-xl pl-10 pr-10 py-3.5 sm:py-4 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#1E4E70] focus:border-[#1E4E70] transition-colors"
                         required
                         autoFocus
                       />
@@ -1007,7 +1007,7 @@ export default function LoginModal() {
                           setConfirmPassword(e.target.value);
                           if (errorMessage) setErrorMessage(null);
                         }}
-                        className="w-full bg-[#F8FAFC] focus:bg-white border border-slate-200 rounded-xl pl-10 pr-10 py-2.5 sm:py-3 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#1E4E70] focus:border-[#1E4E70] transition-colors"
+                        className="w-full bg-[#F8FAFC] focus:bg-white border border-slate-200 rounded-xl pl-10 pr-10 py-3.5 sm:py-4 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#1E4E70] focus:border-[#1E4E70] transition-colors"
                         required
                       />
                       <button

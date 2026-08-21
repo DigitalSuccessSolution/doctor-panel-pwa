@@ -29,7 +29,7 @@ export default function NutritionPage() {
 
   return (
     <div className="space-y-6 animate-fadeIn pb-16 font-sans">
-      {/* 1. Simplified Header */}
+      {/* 1. Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-semibold text-slate-800 tracking-tight">
@@ -49,7 +49,7 @@ export default function NutritionPage() {
           placeholder="Search by Baby Name, Parent Name, Phone, or Medical Condition..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full bg-white border border-slate-200/80 rounded-lg pl-11 pr-4 py-3 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-200 shadow-2xs"
+          className="w-full bg-white border border-slate-200/80 rounded-xl pl-11 pr-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1E4E70] transition-colors"
         />
       </div>
 

@@ -29,6 +29,8 @@ import {
   Stethoscope,
   Briefcase,
   Calendar,
+  Loader2,
+  X,
 } from "lucide-react";
 import { useDoctorData } from "@/context/DoctorDataContext";
 import { authService } from "@/services/authService";
@@ -62,6 +64,7 @@ export default function EditDoctorProfilePage() {
   const [bankName, setBankName] = useState("");
 
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [selectedAvatar, setSelectedAvatar] = useState(doctorProfile?.avatar || "/doctor_female.png");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -90,6 +93,18 @@ export default function EditDoctorProfilePage() {
     }
   }, [doctorProfile]);
 
+  // Prevent background scrolling when error modal is open
+  useEffect(() => {
+    if (Object.keys(fieldErrors).length > 0) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [fieldErrors]);
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -99,11 +114,32 @@ export default function EditDoctorProfilePage() {
       }
       const reader = new FileReader();
       reader.onload = (event) => {
-        const dataUrl = event.target?.result as string;
-        if (dataUrl) {
-          setSelectedAvatar(dataUrl);
-          setFormData((prev) => ({ ...prev, avatar: dataUrl }));
-        }
+        const img = document.createElement("img");
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let width = img.width;
+          let height = img.height;
+          const MAX_SIZE = 800;
+          if (width > height) {
+            if (width > MAX_SIZE) {
+              height *= MAX_SIZE / width;
+              width = MAX_SIZE;
+            }
+          } else {
+            if (height > MAX_SIZE) {
+              width *= MAX_SIZE / height;
+              height = MAX_SIZE;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx?.drawImage(img, 0, 0, width, height);
+          const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.7);
+          setSelectedAvatar(compressedDataUrl);
+          setFormData((prev) => ({ ...prev, avatar: compressedDataUrl }));
+        };
+        img.src = event.target?.result as string;
       };
       reader.readAsDataURL(file);
     }
@@ -123,9 +159,10 @@ export default function EditDoctorProfilePage() {
     }
   };
 
-  const handleSubmit = async (e?: React.FormEvent) => {
+  const handleSubmit = async (e?: React.FormEvent, shouldRedirect: boolean = true) => {
     if (e) e.preventDefault();
     setIsSubmitting(true);
+    setFieldErrors({});
 
     const degreesArr = degreesText.split(",").map((s) => s.trim()).filter(Boolean);
     const qualificationsArr = qualificationsText.split(",").map((s) => s.trim()).filter(Boolean);
@@ -133,6 +170,8 @@ export default function EditDoctorProfilePage() {
 
     const postmanPayload = {
       name: formData.fullName || "",
+      email: formData.email || "",
+      phone: formData.phone || "",
       avatar: selectedAvatar || formData.avatar,
       specialization: formData.specialization || "",
       experienceYears: parseInt(formData.experience) || 0,
@@ -186,25 +225,42 @@ export default function EditDoctorProfilePage() {
         updateDoctorProfile(updatedProfileObj, true);
         setApprovalStatus("approved");
       }
-    } catch (err) {
-      console.warn("Backend update API fallback:", err);
-      if (isFirstTimeSubmission) {
-        updateDoctorProfile(updatedProfileObj, true);
-        setApprovalStatus("pending");
-      } else {
-        updateDoctorProfile(updatedProfileObj, true);
-        setApprovalStatus("approved");
+      
+      setSaveSuccess(true);
+
+      setTimeout(() => {
+        setSaveSuccess(false);
+        if (shouldRedirect) {
+          router.push("/profile");
+        }
+      }, 1500);
+
+    } catch (err: any) {
+      console.warn("Backend update API failed:", err);
+      let newFieldErrors: Record<string, string> = {};
+      
+      if (err.response?.data) {
+        if (Array.isArray(err.response.data.errors) && err.response.data.errors.length > 0) {
+          err.response.data.errors.forEach((e: any) => {
+            if (e.path && e.path[0]) {
+              newFieldErrors[e.path[0]] = e.message;
+            }
+          });
+        } else if (err.response.data.message) {
+          newFieldErrors["general"] = err.response.data.message;
+        }
+      } else if (err.message) {
+        newFieldErrors["general"] = err.message;
       }
+      
+      if (Object.keys(newFieldErrors).length === 0) {
+        newFieldErrors["general"] = "Failed to update profile. Please try again.";
+      }
+      
+      setFieldErrors(newFieldErrors);
     } finally {
       setIsSubmitting(false);
     }
-
-    setSaveSuccess(true);
-
-    setTimeout(() => {
-      setSaveSuccess(false);
-      router.push("/profile");
-    }, 1500);
   };
 
   if (!isAuthenticated) {
@@ -227,10 +283,10 @@ export default function EditDoctorProfilePage() {
     );
   }
 
-  const progressPercent = (currentStep / STEPS.length) * 100;
+  const progressPercent = isProfileComplete ? 100 : (currentStep / STEPS.length) * 100;
 
   return (
-    <div className="w-full max-w-5xl mx-auto animate-fadeIn pb-16 sm:pb-20 font-sans space-y-4">
+    <div className="space-y-4 animate-fadeIn pb-16 sm:pb-20 font-sans">
       
       {/* FIRST TIME ONBOARDING INCOMPLETE BANNER */}
       {!isProfileComplete && (
@@ -264,33 +320,102 @@ export default function EditDoctorProfilePage() {
         </div>
       )}
 
-      {/* COMPACT PROGRESS BAR HEADER (WITHOUT NUMBER PILLS) */}
-      <div className="bg-white rounded-xl p-4 border border-slate-200/80 shadow-xs space-y-2.5">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] font-bold text-[#1E4E70] bg-[#1E4E70]/10 px-2.5 py-0.5 rounded-full">
-              Step {currentStep} of {STEPS.length}
-            </span>
-            <span className="text-xs font-semibold text-slate-700 truncate max-w-[200px] sm:max-w-none">
-              {STEPS[currentStep - 1].subtitle}
-            </span>
+      {/* ERROR MODAL / POPUP */}
+      {Object.keys(fieldErrors).length > 0 && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white rounded-2xl w-full max-w-sm shadow-xl border border-red-100 overflow-hidden">
+            <div className="bg-red-50 border-b border-red-100 p-4 flex items-start justify-between">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
+                <h3 className="text-sm font-bold text-red-900">Action Required</h3>
+              </div>
+              <button 
+                onClick={() => setFieldErrors({})}
+                className="text-red-400 hover:text-red-700 transition-colors p-1"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            
+            <div className="p-5 bg-white space-y-3">
+              <p className="text-xs sm:text-sm font-medium text-slate-700">
+                Please fix the following errors to save your profile:
+              </p>
+              <ul className="list-disc pl-5 space-y-1.5 text-xs text-red-600 font-medium">
+                {Object.entries(fieldErrors).map(([field, msg], idx) => {
+                  const displayField = field === "general" ? "" : field.charAt(0).toUpperCase() + field.slice(1) + ": ";
+                  return <li key={idx}>{displayField}{msg}</li>;
+                })}
+              </ul>
+              
+              <div className="pt-4">
+                <button
+                  type="button"
+                  onClick={() => setFieldErrors({})}
+                  className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold text-sm py-2.5 rounded-lg transition-all shadow-sm active:scale-95"
+                >
+                  Got it
+                </button>
+              </div>
+            </div>
           </div>
-          <span className="text-xs font-bold text-[#1E4E70]">
-            {Math.round(progressPercent)}%
-          </span>
+        </div>
+      )}
+
+      <div className="flex flex-col lg:flex-row gap-6 items-start mt-2">
+        {/* LEFT SIDEBAR (Desktop Tabs / Mobile Horizontal Scroll) */}
+        <div className="w-full lg:w-72 shrink-0 space-y-3 lg:sticky lg:top-24 z-10">
+          <h2 className="hidden lg:block text-lg font-bold text-slate-800 mb-4 px-1">Edit Profile</h2>
+          
+          <div className="flex lg:flex-col gap-2 sm:gap-3 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 thin-scrollbar w-full">
+            {STEPS.map((step) => {
+              const Icon = step.icon;
+              const isActive = currentStep === step.id;
+              const isPast = currentStep > step.id || isProfileComplete;
+              return (
+                <button
+                  key={step.id}
+                  onClick={() => setCurrentStep(step.id)}
+                  disabled={!isProfileComplete && currentStep < step.id}
+                  className={`flex items-center gap-3 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-xl text-left transition-all shrink-0 lg:w-full border cursor-pointer ${
+                    isActive
+                      ? "bg-[#1E4E70] text-white border-[#1E4E70] shadow-md"
+                      : isPast
+                      ? "bg-white text-slate-700 hover:bg-slate-50 border-slate-200/80 shadow-xs"
+                      : "bg-slate-50 text-slate-400 border-slate-100 opacity-60"
+                  }`}
+                >
+                  <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                    isActive ? "bg-white/20 text-white" : isPast ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-400"
+                  }`}>
+                    {isPast && !isActive ? <CheckCircle2 className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
+                  </div>
+                  <div className="hidden lg:block min-w-0">
+                    <p className={`text-xs font-bold truncate ${isActive ? "text-white" : "text-slate-900"}`}>{step.title}</p>
+                    <p className={`text-[10px] truncate ${isActive ? "text-sky-100" : "text-slate-500"}`}>{step.subtitle}</p>
+                  </div>
+                  <div className="lg:hidden">
+                    <p className="text-xs font-bold">{step.title}</p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* MOBILE ONLY PROGRESS BAR */}
+          <div className="lg:hidden bg-white rounded-xl p-3 sm:p-4 border border-slate-200/80 shadow-xs space-y-2">
+            <div className="flex items-center justify-between text-[11px] font-bold">
+               <span className="text-slate-500">Step {currentStep} of {STEPS.length}</span>
+               <span className="text-[#1E4E70]">{Math.round(progressPercent)}%</span>
+            </div>
+            <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+              <div className="bg-[#1E4E70] h-full rounded-full transition-all duration-300 ease-out" style={{ width: `${progressPercent}%` }} />
+            </div>
+          </div>
         </div>
 
-        {/* THIN PROGRESS LINE */}
-        <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-          <div
-            className="bg-[#1E4E70] h-full rounded-full transition-all duration-300 ease-out"
-            style={{ width: `${progressPercent}%` }}
-          />
-        </div>
-      </div>
-
-      {/* MAIN DETAILS CONTAINER */}
-      <div className="space-y-4">
+        {/* MAIN DETAILS CONTAINER (RIGHT COLUMN) */}
+      <div className="flex-1 w-full min-w-0 space-y-4">
         
         {/* STEP 1: DOCTOR PHOTO & IDENTITY */}
         {currentStep === 1 && (
@@ -386,10 +511,10 @@ export default function EditDoctorProfilePage() {
                   <input
                     type="email"
                     required
+                    readOnly
                     value={formData.email || ""}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="dr.sumitsahu@moncradel.com"
-                    className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
+                    className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-slate-100 border border-slate-200 rounded-lg focus:outline-none text-slate-500 cursor-not-allowed opacity-90"
                   />
                 </div>
 
@@ -401,11 +526,17 @@ export default function EditDoctorProfilePage() {
                   <input
                     type="tel"
                     required
+                    readOnly
                     value={formData.phone || ""}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="+91 98765 43211"
-                    className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
+                    className={`w-full text-xs sm:text-sm font-medium px-4 py-3 bg-slate-100 border ${fieldErrors.phone ? 'border-red-400' : 'border-slate-200'} rounded-lg focus:outline-none text-slate-500 cursor-not-allowed opacity-90`}
                   />
+                  {fieldErrors.phone && (
+                    <p className="text-[10px] text-red-500 font-semibold mt-1 flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />
+                      {fieldErrors.phone}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -776,8 +907,26 @@ export default function EditDoctorProfilePage() {
               }`}
             >
               <ChevronLeft className="w-4 h-4" />
-              <span>Back</span>
+              <span className="hidden sm:inline">Back</span>
             </button>
+
+            {/* SAVE CHANGES BUTTON (Available on all steps if profile is already complete) */}
+            {isProfileComplete && approvalStatus === "approved" && (
+              <button
+                type="button"
+                onClick={() => handleSubmit(undefined, false)}
+                disabled={isSubmitting}
+                className="flex-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs sm:text-sm font-semibold py-3.5 px-3 rounded-lg transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Save className="w-4 h-4" />
+                )}
+                <span className="hidden sm:inline">{isSubmitting ? "Saving..." : "Save Changes"}</span>
+                <span className="sm:hidden">{isSubmitting ? "..." : "Save"}</span>
+              </button>
+            )}
 
             {/* NEXT STEP / SUBMIT BUTTON */}
             {currentStep < 5 ? (
@@ -786,29 +935,34 @@ export default function EditDoctorProfilePage() {
                 onClick={handleNextStep}
                 className="flex-1 bg-[#1E4E70] hover:bg-[#153852] text-white text-xs sm:text-sm font-semibold py-3.5 px-6 rounded-lg shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer"
               >
-                <span>Save & Next</span>
+                <span>Next</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             ) : (
               <button
                 type="button"
-                onClick={() => handleSubmit()}
+                onClick={() => handleSubmit(undefined, true)}
                 disabled={isSubmitting}
-                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold py-3.5 px-6 rounded-lg shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer"
+                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold py-3.5 px-6 rounded-lg shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                <Save className="w-4 h-4" />
+                {isSubmitting ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Save className="w-4 h-4" />
+                )}
                 <span>
                   {isSubmitting
                     ? "Submitting..."
                     : !isProfileComplete || approvalStatus !== "approved"
-                    ? "Submit Profile for Verification"
-                    : "Update Profile Details"}
+                    ? "Submit Profile"
+                    : "Save & Exit"}
                 </span>
               </button>
             )}
           </div>
         </div>
 
+      </div>
       </div>
     </div>
   );

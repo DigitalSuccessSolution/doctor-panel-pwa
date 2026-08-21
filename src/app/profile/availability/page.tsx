@@ -15,7 +15,7 @@ import {
   ToggleLeft,
   ToggleRight,
   Info,
-  DollarSign,
+  IndianRupee,
   Coffee
 } from "lucide-react";
 import { useDoctorData } from "@/context/DoctorDataContext";
@@ -58,28 +58,6 @@ export default function AvailabilityManagerPage() {
   const [weeklyAvailability, setWeeklyAvailability] = useState<DayAvailability[]>([]);
   const [slotDuration, setSlotDuration] = useState<number>(30);
   const [consultationFee, setConsultationFee] = useState<number>(500);
-  
-  // Date exceptions state
-  const [dateExceptions, setDateExceptions] = useState<DateException[]>([
-    {
-      date: "2026-08-25",
-      status: "Leave",
-      shifts: [],
-      reason: "Pediatric Conference Summit"
-    },
-    {
-      date: "2026-08-28",
-      status: "Custom Shifts",
-      shifts: [{ startTime: "10:00", endTime: "13:00" }],
-      reason: "Half-day OPD"
-    }
-  ]);
-
-  // Form states for adding exceptions
-  const [newExceptionDate, setNewExceptionDate] = useState("");
-  const [newExceptionStatus, setNewExceptionStatus] = useState<"Leave" | "Custom Shifts">("Leave");
-  const [newExceptionReason, setNewExceptionReason] = useState("");
-  const [newExceptionShifts, setNewExceptionShifts] = useState<Shift[]>([{ startTime: "09:00", endTime: "13:00" }]);
 
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -127,6 +105,21 @@ export default function AvailabilityManagerPage() {
       </div>
     );
   }
+
+  // Generate time options based on slot duration
+  const generateTimeOptions = (interval: number) => {
+    const options = [];
+    for (let h = 0; h < 24; h++) {
+      for (let m = 0; m < 60; m += interval) {
+        const hh = h.toString().padStart(2, "0");
+        const mm = m.toString().padStart(2, "0");
+        options.push(`${hh}:${mm}`);
+      }
+    }
+    return options;
+  };
+
+  const timeOptions = generateTimeOptions(slotDuration);
 
   // Toggles day availability
   const handleToggleDay = (index: number) => {
@@ -178,9 +171,26 @@ export default function AvailabilityManagerPage() {
     setWeeklyAvailability((prev) =>
       prev.map((day, i) => {
         if (i === dayIndex) {
-          const updatedShifts = day.shifts.map((shift, sIdx) =>
-            sIdx === shiftIndex ? { ...shift, [field]: value } : shift
-          );
+          const updatedShifts = day.shifts.map((shift, sIdx) => {
+            if (sIdx !== shiftIndex) return shift;
+            
+            const newShift = { ...shift, [field]: value };
+            
+            if (field === "startTime") {
+              const startMins = parseInt(value.split(":")[0]) * 60 + parseInt(value.split(":")[1]);
+              const endMins = parseInt(shift.endTime.split(":")[0]) * 60 + parseInt(shift.endTime.split(":")[1]);
+              
+              if (endMins <= startMins || endMins % slotDuration !== 0) {
+                const newEnd = startMins + slotDuration;
+                if (newEnd < 24 * 60) {
+                  const hh = Math.floor(newEnd / 60).toString().padStart(2, "0");
+                  const mm = (newEnd % 60).toString().padStart(2, "0");
+                  newShift.endTime = `${hh}:${mm}`;
+                }
+              }
+            }
+            return newShift;
+          });
           return { ...day, shifts: updatedShifts };
         }
         return day;
@@ -188,57 +198,38 @@ export default function AvailabilityManagerPage() {
     );
   };
 
-  // Exception specific shifts helpers
-  const handleAddExceptionShift = () => {
-    setNewExceptionShifts((prev) => [...prev, { startTime: "09:00", endTime: "17:00" }]);
-  };
+  // Handles Slot Duration changes and auto-aligns all shifts
+  const handleSlotDurationChange = (newDuration: number) => {
+    setSlotDuration(newDuration);
+    setWeeklyAvailability((prev) => 
+      prev.map(day => ({
+        ...day,
+        shifts: day.shifts.map(shift => {
+          let newStart = shift.startTime;
+          let newEnd = shift.endTime;
+          
+          const startMins = parseInt(newStart.split(":")[0]) * 60 + parseInt(newStart.split(":")[1]);
+          if (startMins % newDuration !== 0) {
+             const snappedStart = Math.floor(startMins / newDuration) * newDuration;
+             newStart = `${Math.floor(snappedStart / 60).toString().padStart(2, "0")}:${(snappedStart % 60).toString().padStart(2, "0")}`;
+          }
 
-  const handleRemoveExceptionShift = (shiftIndex: number) => {
-    setNewExceptionShifts((prev) => prev.filter((_, sIdx) => sIdx !== shiftIndex));
-  };
+          const endMins = parseInt(newEnd.split(":")[0]) * 60 + parseInt(newEnd.split(":")[1]);
+          const newStartMins = parseInt(newStart.split(":")[0]) * 60 + parseInt(newStart.split(":")[1]);
 
-  const handleUpdateExceptionShiftTime = (
-    shiftIndex: number,
-    field: "startTime" | "endTime",
-    value: string
-  ) => {
-    setNewExceptionShifts((prev) =>
-      prev.map((shift, sIdx) =>
-        sIdx === shiftIndex ? { ...shift, [field]: value } : shift
-      )
+          if (endMins <= newStartMins || endMins % newDuration !== 0) {
+             const snappedEnd = newStartMins + newDuration;
+             if (snappedEnd >= 24 * 60) {
+               newEnd = "23:59";
+             } else {
+               newEnd = `${Math.floor(snappedEnd / 60).toString().padStart(2, "0")}:${(snappedEnd % 60).toString().padStart(2, "0")}`;
+             }
+          }
+          
+          return { ...shift, startTime: newStart, endTime: newEnd };
+        })
+      }))
     );
-  };
-
-  // Adds a leave/custom exception rule
-  const handleAddException = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newExceptionDate) {
-      setErrorMsg("Please select a valid exception date");
-      return;
-    }
-    
-    // Check duplication
-    if (dateExceptions.some((exc) => exc.date === newExceptionDate)) {
-      setErrorMsg("An availability rule already exists for this date.");
-      return;
-    }
-
-    const newRule: DateException = {
-      date: newExceptionDate,
-      status: newExceptionStatus,
-      shifts: newExceptionStatus === "Leave" ? [] : newExceptionShifts,
-      reason: newExceptionReason || (newExceptionStatus === "Leave" ? "Holiday/Off-duty" : "Custom Schedule")
-    };
-
-    setDateExceptions((prev) => [...prev, newRule].sort((a, b) => a.date.localeCompare(b.date)));
-    setNewExceptionDate("");
-    setNewExceptionReason("");
-    setErrorMsg("");
-  };
-
-  // Removes a leave/exception rule
-  const handleRemoveException = (date: string) => {
-    setDateExceptions((prev) => prev.filter((exc) => exc.date !== date));
   };
 
   // Save timing data to backend & local context
@@ -300,22 +291,15 @@ export default function AvailabilityManagerPage() {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto animate-fadeIn pb-24 font-sans space-y-6">
+    <div className="space-y-6 animate-fadeIn pb-24 font-sans">
       
       {/* HEADER SECTION */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
-          <Link
-            href="/profile"
-            className="inline-flex items-center gap-1 text-xs font-bold text-slate-500 hover:text-slate-800 transition-colors"
-          >
-            <ChevronLeft className="w-3.5 h-3.5" />
-            <span>Back to Profile</span>
-          </Link>
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-semibold text-slate-800 tracking-tight">
             OPD Availability & Slot Manager
           </h1>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-500 font-medium">
             Set weekly timings, slot duration, and date exceptions.
           </p>
         </div>
@@ -364,9 +348,9 @@ export default function AvailabilityManagerPage() {
               </h3>
             </div>
 
-            <div className="divide-y divide-slate-100 space-y-4">
+            <div className="space-y-4">
               {weeklyAvailability.map((day, dIdx) => (
-                <div key={day.dayOfWeek} className="pt-4 first:pt-0 space-y-3">
+                <div key={day.dayOfWeek} className="border-b border-slate-100 pb-5 last:border-0 last:pb-0 space-y-4">
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2.5">
                       <button
@@ -406,41 +390,63 @@ export default function AvailabilityManagerPage() {
                   {day.isAvailable && (
                     <div className="bg-[#F8FAFC] p-3.5 rounded-lg border border-slate-200/60 space-y-2">
                       {day.shifts.map((shift, sIdx) => (
-                        <div key={sIdx} className="flex items-center gap-3">
-                          <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-xl border border-slate-200 flex-1">
-                            <span className="text-[10px] font-bold text-slate-500 uppercase shrink-0">
+                        <div key={sIdx} className="flex items-center gap-1.5 sm:gap-3">
+                          <div className="flex items-center gap-1.5 sm:gap-2 bg-white px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl border border-slate-200 flex-1 min-w-0">
+                            <span className="hidden sm:inline-block text-[10px] font-bold text-slate-500 uppercase shrink-0">
                               Start
                             </span>
-                            <input
-                              type="time"
+                            <span className="sm:hidden text-[9px] font-bold text-slate-500 uppercase shrink-0">
+                              St
+                            </span>
+                            <select
                               required
                               value={shift.startTime}
                               onChange={(e) =>
                                 handleUpdateShiftTime(dIdx, sIdx, "startTime", e.target.value)
                               }
-                              className="text-xs sm:text-sm font-bold text-slate-800 focus:outline-none w-full bg-transparent"
-                            />
+                              className="text-[11px] sm:text-sm font-bold text-slate-800 focus:outline-none w-full bg-transparent cursor-pointer appearance-none"
+                            >
+                              {!timeOptions.includes(shift.startTime) && (
+                                <option value={shift.startTime}>{shift.startTime}</option>
+                              )}
+                              {timeOptions.map((time) => (
+                                <option key={time} value={time}>
+                                  {time}
+                                </option>
+                              ))}
+                            </select>
                           </div>
 
-                          <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-xl border border-slate-200 flex-1">
-                            <span className="text-[10px] font-bold text-slate-500 uppercase shrink-0">
+                          <div className="flex items-center gap-1.5 sm:gap-2 bg-white px-2 py-1.5 sm:px-3 sm:py-2 rounded-xl border border-slate-200 flex-1 min-w-0">
+                            <span className="hidden sm:inline-block text-[10px] font-bold text-slate-500 uppercase shrink-0">
                               End
                             </span>
-                            <input
-                              type="time"
+                            <span className="sm:hidden text-[9px] font-bold text-slate-500 uppercase shrink-0">
+                              En
+                            </span>
+                            <select
                               required
                               value={shift.endTime}
                               onChange={(e) =>
                                 handleUpdateShiftTime(dIdx, sIdx, "endTime", e.target.value)
                               }
-                              className="text-xs sm:text-sm font-bold text-slate-800 focus:outline-none w-full bg-transparent"
-                            />
+                              className="text-[11px] sm:text-sm font-bold text-slate-800 focus:outline-none w-full bg-transparent cursor-pointer appearance-none"
+                            >
+                              {!timeOptions.includes(shift.endTime) && (
+                                <option value={shift.endTime}>{shift.endTime}</option>
+                              )}
+                              {timeOptions.map((time) => (
+                                <option key={time} value={time}>
+                                  {time}
+                                </option>
+                              ))}
+                            </select>
                           </div>
 
                           <button
                             type="button"
                             onClick={() => handleRemoveShift(dIdx, sIdx)}
-                            className="p-2.5 bg-rose-50 border border-rose-200 text-rose-600 rounded-xl hover:bg-rose-100 transition-colors shrink-0"
+                            className="p-2 sm:p-2.5 bg-rose-50 border border-rose-200 text-rose-600 rounded-xl hover:bg-rose-100 transition-colors shrink-0"
                             title="Remove Shift"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -478,7 +484,7 @@ export default function AvailabilityManagerPage() {
                     <button
                       key={mins}
                       type="button"
-                      onClick={() => setSlotDuration(mins)}
+                      onClick={() => handleSlotDurationChange(mins)}
                       className={`text-xs py-2.5 rounded-xl border font-bold transition-all text-center cursor-pointer ${
                         slotDuration === mins
                           ? "bg-[#1E4E70] text-white border-[#1E4E70] shadow-2xs"
@@ -497,7 +503,7 @@ export default function AvailabilityManagerPage() {
                   Consultation Fee (₹)*
                 </label>
                 <div className="flex items-center gap-2 bg-[#F8FAFC] border border-slate-200 px-3.5 py-3 rounded-lg focus-within:ring-2 focus-within:ring-[#1E4E70] focus-within:bg-white transition-all">
-                  <DollarSign className="w-4 h-4 text-slate-400 shrink-0" />
+                  <IndianRupee className="w-4 h-4 text-slate-400 shrink-0" />
                   <input
                     type="number"
                     required
@@ -511,187 +517,7 @@ export default function AvailabilityManagerPage() {
             </div>
           </div>
 
-          {/* DATE-WISE HOLIDAYS & SPECIAL RULES (CALENDAR RULES) */}
-          <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-2xs space-y-4">
-            <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-              <Calendar className="w-4.5 h-4.5 text-[#1E4E70]" />
-              <h3 className="text-sm sm:text-base font-bold text-slate-800">
-                Date-Wise Availability / Leaves
-              </h3>
-            </div>
 
-            {/* ADD SPECIAL EXCEPTION FORM */}
-            <form onSubmit={handleAddException} className="space-y-3 bg-[#F8FAFC] p-4 rounded-lg border border-slate-200/60">
-              <span className="block text-[11px] font-bold text-[#1E4E70] uppercase tracking-wider">
-                Add Date Custom Rule
-              </span>
-
-              {/* Choose Date */}
-              <div className="space-y-1">
-                <input
-                  type="date"
-                  required
-                  value={newExceptionDate}
-                  onChange={(e) => setNewExceptionDate(e.target.value)}
-                  className="w-full text-xs font-semibold p-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70]"
-                />
-              </div>
-
-              {/* Choose Status */}
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { id: "Leave", label: "Holiday / Leave", icon: Coffee },
-                  { id: "Custom Shifts", label: "Custom Timings", icon: Clock }
-                ].map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => setNewExceptionStatus(item.id as any)}
-                    className={`text-xs py-2 rounded-lg border font-bold flex items-center justify-center gap-1.5 transition-all ${
-                      newExceptionStatus === item.id
-                        ? "bg-[#1E4E70] text-white border-[#1E4E70]"
-                        : "bg-white text-slate-600 border-slate-200"
-                    }`}
-                  >
-                    <item.icon className="w-3.5 h-3.5" />
-                    <span>{item.label}</span>
-                  </button>
-                ))}
-              </div>
-
-              {/* Custom Shifts configuration for exceptions */}
-              {newExceptionStatus === "Custom Shifts" && (
-                <div className="space-y-2 bg-white p-2.5 rounded-xl border border-slate-200">
-                  <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-1.5 mb-1.5">
-                    <span className="text-[10px] font-bold text-slate-500">Shifts for selected date</span>
-                    <button
-                      type="button"
-                      onClick={handleAddExceptionShift}
-                      className="text-[10px] font-bold text-[#1E4E70] flex items-center gap-0.5"
-                    >
-                      <Plus className="w-3 h-3 stroke-[2.5]" />
-                      <span>Add</span>
-                    </button>
-                  </div>
-
-                  {newExceptionShifts.map((shift, sIdx) => (
-                    <div key={sIdx} className="flex items-center gap-2">
-                      <input
-                        type="time"
-                        required
-                        value={shift.startTime}
-                        onChange={(e) => handleUpdateExceptionShiftTime(sIdx, "startTime", e.target.value)}
-                        className="text-[11px] font-bold p-1 border border-slate-200 rounded-md w-full"
-                      />
-                      <span className="text-slate-400 text-xs">-</span>
-                      <input
-                        type="time"
-                        required
-                        value={shift.endTime}
-                        onChange={(e) => handleUpdateExceptionShiftTime(sIdx, "endTime", e.target.value)}
-                        className="text-[11px] font-bold p-1 border border-slate-200 rounded-md w-full"
-                      />
-                      {newExceptionShifts.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveExceptionShift(sIdx)}
-                          className="p-1 text-rose-600 bg-rose-50 rounded-md"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Exception Reason */}
-              <div className="space-y-1">
-                <input
-                  type="text"
-                  placeholder="Reason (e.g. Vacation, Seminar, Half-day)"
-                  value={newExceptionReason}
-                  onChange={(e) => setNewExceptionReason(e.target.value)}
-                  className="w-full text-xs font-semibold p-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1E4E70]"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-[#1E4E70] text-white text-xs font-bold py-2.5 rounded-xl hover:bg-[#153852] transition-colors"
-              >
-                Add Rule Exception
-              </button>
-            </form>
-
-            {/* LIST OF CURRENT EXCEPTIONS */}
-            <div className="space-y-2 pt-1">
-              <span className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                Configured Date Rules
-              </span>
-
-              {dateExceptions.length === 0 ? (
-                <p className="text-xs text-slate-400 italic text-center py-4">
-                  No custom date exceptions or leaves added.
-                </p>
-              ) : (
-                <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1">
-                  {dateExceptions.map((exc) => (
-                    <div
-                      key={exc.date}
-                      className={`p-3 rounded-lg border flex items-center justify-between gap-3 text-xs ${
-                        exc.status === "Leave"
-                          ? "bg-rose-50/50 border-rose-200/60"
-                          : "bg-amber-50/50 border-amber-200/60"
-                      }`}
-                    >
-                      <div className="space-y-0.5">
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-bold text-slate-800">
-                            {new Date(exc.date).toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric"
-                            })}
-                          </span>
-                          <span
-                            className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-md ${
-                              exc.status === "Leave"
-                                ? "bg-rose-100 text-rose-700 border border-rose-200"
-                                : "bg-amber-100 text-amber-700 border border-amber-200"
-                            }`}
-                          >
-                            {exc.status === "Leave" ? "LEAVE / OFF" : "CUSTOM SHIFT"}
-                          </span>
-                        </div>
-                        <p className="text-[10px] text-slate-500 font-medium italic">
-                          Reason: {exc.reason}
-                        </p>
-                        {exc.status === "Custom Shifts" && exc.shifts.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mt-1">
-                            {exc.shifts.map((s, idx) => (
-                              <span key={idx} className="text-[9px] font-bold bg-white text-slate-600 border border-slate-200 px-1.5 py-0.5 rounded-md">
-                                {s.startTime} - {s.endTime}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveException(exc.date)}
-                        className="p-1.5 text-slate-400 hover:text-rose-600 transition-colors shrink-0"
-                        title="Delete Rule"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
 
         </div>
       </div>
