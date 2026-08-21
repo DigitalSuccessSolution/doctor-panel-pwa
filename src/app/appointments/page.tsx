@@ -51,6 +51,7 @@ export default function AppointmentsPage() {
   // Mobile Bottom Sheet Modal state
   const [selectedMobileApt, setSelectedMobileApt] = useState<any | null>(null);
   const [timeFilter, setTimeFilter] = useState<"upcoming" | "past">("upcoming");
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   const fetchLiveAppointments = async () => {
     setLoading(true);
@@ -195,6 +196,13 @@ export default function AppointmentsPage() {
     return searchMatch;
   });
 
+  const ITEMS_PER_PAGE = 10;
+  const totalPages = Math.max(1, Math.ceil(filteredAppointments.length / ITEMS_PER_PAGE));
+  const paginatedAppointments = filteredAppointments.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
   return (
     <div className="space-y-6 animate-fadeIn pb-24 font-sans">
       {/* 1. Page Header & Booking Trigger */}
@@ -281,7 +289,7 @@ export default function AppointmentsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
-                {filteredAppointments.map((apt) => {
+                {paginatedAppointments.map((apt) => {
                   const rawStatus = (apt.status || "scheduled").toLowerCase();
                   let statusBadgeClass = "bg-sky-50 text-[#1E4E70] border-sky-200";
                   let statusText = "Active";
@@ -385,8 +393,8 @@ export default function AppointmentsPage() {
           </div>
 
           {/* Mobile Cards View */}
-          <div className="md:hidden flex flex-col divide-y divide-slate-100">
-            {filteredAppointments.map((apt) => {
+          <div className="md:hidden flex flex-col gap-4">
+            {paginatedAppointments.map((apt) => {
               const rawStatus = (apt.status || "scheduled").toLowerCase();
               let statusBadgeClass = "bg-sky-50 text-[#1E4E70] border-sky-200";
               let statusText = "Active";
@@ -400,7 +408,7 @@ export default function AppointmentsPage() {
               }
 
               return (
-                <div key={apt.id} className="p-4 space-y-4 hover:bg-slate-50 transition-colors">
+                <div key={apt.id} className="bg-white border border-slate-200/80 rounded-xl p-4 space-y-4 hover:border-slate-300 transition-colors">
                   {/* Top: Profile Info & Status */}
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-3">
@@ -425,13 +433,16 @@ export default function AppointmentsPage() {
 
                   {/* Date, Time & Quick Info */}
                   <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="flex items-center gap-1.5 text-slate-700 font-semibold bg-slate-50 p-2 rounded-lg border border-slate-100">
+                    <div className="flex items-center gap-2 text-slate-700 font-semibold bg-slate-50 p-2 rounded-lg border border-slate-100">
                       <Clock className="w-3.5 h-3.5 text-[#1E4E70] shrink-0" />
-                      <span className="truncate">{apt.date} • {apt.time}</span>
+                      <div className="flex flex-col">
+                        <span className="text-[10px] leading-tight text-slate-500 font-medium">{apt.date}</span>
+                        <span className="text-xs leading-tight">{apt.time}</span>
+                      </div>
                     </div>
                     <div className="flex items-center gap-1.5 text-slate-700 font-semibold bg-slate-50 p-2 rounded-lg border border-slate-100">
                       <IndianRupee className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                      <span>₹{(apt as any).fee || 500}</span>
+                      <span>{(apt as any).fee || 500}</span>
                     </div>
                   </div>
 
@@ -439,7 +450,7 @@ export default function AppointmentsPage() {
                   <div className="pt-2 flex items-center justify-between gap-2 border-t border-slate-100">
                     <button
                       onClick={() => setSelectedMobileApt(apt)}
-                      className="text-[#1E4E70] font-semibold text-xs py-2 px-3 rounded-xl border border-[#1E4E70]/20 hover:bg-[#1E4E70]/5 transition-colors cursor-pointer flex-1 text-center"
+                      className="bg-[#1E4E70] text-white hover:bg-[#153852] font-semibold text-xs py-2 px-3 rounded-xl transition-colors cursor-pointer flex-1 text-center shadow-xs"
                     >
                       Details
                     </button>
@@ -459,6 +470,29 @@ export default function AppointmentsPage() {
               );
             })}
           </div>
+          
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between p-4 border-t border-slate-200/80 bg-slate-50/50 mt-4 rounded-b-xl">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-lg disabled:opacity-50 hover:bg-slate-50 transition-colors cursor-pointer"
+              >
+                Previous
+              </button>
+              <span className="text-xs font-medium text-slate-600">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-lg disabled:opacity-50 hover:bg-slate-50 transition-colors cursor-pointer"
+              >
+                Next
+              </button>
+            </div>
+          )}
           </>
         )}
       </div>

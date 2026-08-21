@@ -19,6 +19,7 @@ import {
   Phone,
   X,
   XCircle,
+  IndianRupee,
 } from "lucide-react";
 import { useDoctorData } from "@/context/DoctorDataContext";
 import { appointmentService } from "@/services/appointmentService";
@@ -362,70 +363,66 @@ export default function Dashboard() {
               <p className="text-xs text-slate-500 mt-1 max-w-xs">You have no scheduled consultations for today. Enjoy your day or review patient files.</p>
             </div>
           ) : (
-            todayAppointments.map((apt) => (
-              <div
-                key={apt.id}
-                className="bg-[#F0F7FF] rounded-lg p-5 border border-[#BEE0FF] hover:border-[#1E4E70]/40 transition-colors flex flex-col justify-between space-y-4"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3.5">
-                    <div className="w-12 h-12 rounded-full overflow-hidden border border-[#BEE0FF] relative shrink-0 bg-white">
-                      <Image
-                        src={
-                          apt.patientAvatar ||
-                          `/child_avatar_${(parseInt(apt.id.replace(/\D/g, "") || "1") % 5) + 1
-                          }.png`
-                        }
-                        alt={apt.patientName}
-                        fill
-                        className="object-cover object-center"
-                        unoptimized
-                      />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-slate-900 text-base leading-tight">
-                        {apt.patientName}
-                      </h3>
-                      <p className="text-xs text-slate-600 font-medium mt-0.5">
-                        Parent:{" "}
-                        <span className="text-slate-800 font-semibold">
-                          {apt.parentName}
-                        </span>
-                      </p>
-                    </div>
-                  </div>
+            todayAppointments.slice(0, 2).map((apt) => {
+              const rawStatus = (apt.status || "scheduled").toLowerCase();
+              let statusBadgeClass = "bg-sky-50 text-[#1E4E70] border-sky-200";
+              let statusText = "Active";
 
-                  <div className="bg-white border border-[#BEE0FF] text-[#1E4E70] font-semibold text-xs px-3 py-1.5 rounded-xl flex items-center gap-1.5 shrink-0 shadow-2xs">
-                    <Clock className="w-3.5 h-3.5 text-[#1E4E70]" />
-                    <span>{apt.time}</span>
-                  </div>
-                </div>
+              if (rawStatus === "completed") {
+                statusBadgeClass = "bg-emerald-50 text-emerald-800 border-emerald-200";
+                statusText = "Completed";
+              } else if (rawStatus === "cancelled") {
+                statusBadgeClass = "bg-rose-50 text-rose-700 border-rose-200";
+                statusText = "Cancelled";
+              }
 
-                <div className="pt-3 border-t border-[#BEE0FF]/80 flex items-center justify-between gap-2.5">
-                  <span
-                    className={`text-xs font-semibold px-3 py-1.5 rounded-xl border inline-flex items-center gap-1.5 whitespace-nowrap shrink-0 ${apt.type === "Vaccination"
-                      ? "bg-[#E0F2FE] text-[#1E4E70] border-[#BAE6FD]"
-                      : apt.type === "Diet Plan"
-                        ? "bg-amber-50 text-amber-800 border-amber-200"
-                        : apt.type === "Follow-up"
-                          ? "bg-sky-50 text-sky-800 border-sky-200"
-                          : "bg-slate-100 text-slate-800 border-slate-200"
-                      }`}
-                  >
-                    <Activity className="w-3.5 h-3.5 shrink-0" />
-                    <span className="whitespace-nowrap">
-                      {apt.type === ("General Checkup" as any)
-                        ? "OPD Checkup"
-                        : apt.type === ("Nutrition Consultation" as any)
-                          ? "Diet Plan"
-                          : apt.type}
+              return (
+                <div key={apt.id} className="bg-white border border-slate-200/80 rounded-xl p-5 space-y-4 hover:border-slate-300 transition-colors">
+                  {/* Top: Profile Info & Status */}
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-full overflow-hidden border border-slate-200/80 relative shrink-0 bg-slate-100">
+                        <Image
+                          src={
+                            apt.patientAvatar ||
+                            `/child_avatar_${(parseInt(apt.id.replace(/\D/g, "") || "1") % 5) + 1}.png`
+                          }
+                          alt={apt.patientName}
+                          fill
+                          className="object-cover object-center"
+                          unoptimized
+                        />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-slate-900 text-sm truncate max-w-[150px]">{apt.patientName}</h3>
+                        <p className="text-[11px] text-slate-500 font-medium">Parent: {apt.parentName}</p>
+                      </div>
+                    </div>
+                    <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border shrink-0 ${statusBadgeClass}`}>
+                      {statusText}
                     </span>
-                  </span>
+                  </div>
 
-                  <div className="flex items-center gap-1.5 sm:gap-2 ml-auto shrink-0">
+                  {/* Date, Time & Quick Info */}
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="flex items-center gap-2 text-slate-700 font-semibold bg-slate-50 p-2 rounded-lg border border-slate-100">
+                      <Clock className="w-3.5 h-3.5 text-[#1E4E70] shrink-0" />
+                      <div className="flex flex-col">
+                        <span className="text-[10px] leading-tight text-slate-500 font-medium">{apt.date || "Today"}</span>
+                        <span className="text-xs leading-tight">{apt.time}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-slate-700 font-semibold bg-slate-50 p-2 rounded-lg border border-slate-100">
+                      <IndianRupee className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                      <span>{(apt as any).fee || 500}</span>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="pt-2 flex items-center justify-between gap-2 border-t border-slate-100">
                     <button
                       onClick={() => setSelectedMobileApt(apt)}
-                      className="bg-[#1E4E70] text-white hover:bg-[#153852] font-semibold text-[11px] sm:text-xs px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl transition-colors cursor-pointer whitespace-nowrap shadow-xs"
+                      className="bg-[#1E4E70] text-white hover:bg-[#153852] font-semibold text-xs py-2 px-3 rounded-xl transition-colors cursor-pointer flex-1 text-center shadow-xs"
                     >
                       Details
                     </button>
@@ -435,17 +432,29 @@ export default function Dashboard() {
                           setCancelModalApt(apt);
                           setCancellationReason("");
                         }}
-                        className="text-rose-600 bg-white border border-rose-200 hover:bg-rose-50 font-semibold text-[11px] sm:text-xs px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl transition-colors cursor-pointer whitespace-nowrap shadow-xs"
+                        className="text-rose-600 font-semibold text-xs py-2 px-3 rounded-xl border border-rose-200 hover:bg-rose-50 transition-colors cursor-pointer shrink-0 text-center"
                       >
                         Reject
                       </button>
                     )}
                   </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
+        
+        {todayAppointments.length > 2 && (
+          <div className="mt-4 text-center">
+            <Link 
+              href="/appointments"
+              className="inline-flex items-center justify-center gap-2 bg-white border border-slate-200/80 text-[#1E4E70] hover:bg-slate-50 font-semibold text-xs sm:text-sm px-6 py-2.5 rounded-xl transition-colors cursor-pointer shadow-sm"
+            >
+              View All {todayAppointments.length} Appointments
+              <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* REJECTION / CANCELLATION MODAL */}
