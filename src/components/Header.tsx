@@ -5,19 +5,17 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { Search, Plus, Bell, X, AlertTriangle, Calendar, FileText, CheckCircle2, ChevronRight, ChevronLeft, ShieldAlert, LogIn, User } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
-import { INITIAL_PATIENTS, INITIAL_NOTIFICATIONS, Patient, NotificationItem } from "@/data/mockData";
 import { useDoctorData } from "@/context/DoctorDataContext";
 
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
-  const { isAuthenticated, setShowLoginModal } = useDoctorData();
+  const { isAuthenticated, setShowLoginModal, patients, notifications, setNotifications } = useDoctorData();
 
   const [showSearchInput, setShowSearchInput] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
-  const [notifications, setNotifications] = useState<NotificationItem[]>(INITIAL_NOTIFICATIONS);
 
   const searchRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
@@ -47,7 +45,7 @@ export default function Header() {
   };
 
   const filteredPatients = searchQuery.trim()
-    ? INITIAL_PATIENTS.filter(
+    ? patients.filter(
         (p) =>
           p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           (p.parentName && p.parentName.toLowerCase().includes(searchQuery.toLowerCase()))

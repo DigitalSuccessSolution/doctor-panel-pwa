@@ -27,24 +27,26 @@ export default function OfflineIndicator() {
   if (!isOffline) return null;
 
   return (
-    <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#F8F9FA]/95 backdrop-blur-sm px-6 text-center">
-      <div className="bg-white p-8 rounded-3xl shadow-xl flex flex-col items-center justify-center max-w-sm w-full border border-slate-100 animate-in fade-in zoom-in duration-300">
-        <div className="relative w-24 h-24 mb-6">
-          {/* Using standard img tag to ensure it loads even if Next Image Optimization is blocked offline */}
+    <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-white/95 backdrop-blur-md px-6 text-center animate-fadeIn">
+      <div className="bg-white p-8 sm:p-10 rounded-[2rem] shadow-2xl flex flex-col items-center justify-center max-w-sm w-full border border-slate-100 animate-slideUp">
+        <div className="relative w-40 h-12 mb-8 opacity-60 grayscale hover:grayscale-0 transition-all">
           <img
-            src="/moncradle-icon.png"
+            src="/complete-logo.png"
             alt="Moncradel Logo"
-            className="w-full h-full object-contain drop-shadow-md"
+            className="w-full h-full object-contain"
           />
         </div>
         
-        <div className="bg-rose-50 p-4 rounded-full mb-4 animate-pulse">
-          <WifiOff className="w-8 h-8 text-rose-500" />
+        <div className="relative mb-6">
+          <div className="absolute inset-0 bg-rose-200 rounded-full animate-ping opacity-60"></div>
+          <div className="bg-rose-100 p-5 rounded-full relative z-10 border-4 border-white shadow-xl">
+            <WifiOff className="w-10 h-10 text-rose-600" />
+          </div>
         </div>
         
-        <h2 className="text-2xl font-bold text-slate-800 mb-2">You are offline</h2>
-        <p className="text-slate-500">
-          Please check your internet connection. We'll automatically reconnect when you're back online.
+        <h2 className="text-2xl font-black text-slate-800 mb-3 tracking-tight">You are offline</h2>
+        <p className="text-slate-500 text-sm leading-relaxed font-medium">
+          Please check your internet connection. The application will automatically reconnect when the network is restored.
         </p>
       </div>
     </div>

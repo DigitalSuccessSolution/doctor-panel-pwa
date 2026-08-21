@@ -38,6 +38,7 @@ interface DoctorDataContextType {
   prescriptions: Prescription[];
   nutritionPlans: Record<string, NutritionPlan>;
   notifications: NotificationItem[];
+  setNotifications: React.Dispatch<React.SetStateAction<NotificationItem[]>>;
   selectedPatientId: string;
   setSelectedPatientId: (id: string) => void;
   addPatient: (data: Partial<Patient> & { name: string }) => Patient;
@@ -63,6 +64,7 @@ interface DoctorDataContextType {
   showWelcomeScreen: boolean;
   setShowWelcomeScreen: (show: boolean) => void;
   isHydrated: boolean;
+  isDataLoading: boolean;
 }
 
 const DEFAULT_PRESCRIPTIONS: Prescription[] = [
@@ -119,11 +121,11 @@ const DEFAULT_PRESCRIPTIONS: Prescription[] = [
 const DoctorDataContext = createContext<DoctorDataContextType | undefined>(undefined);
 
 export function DoctorDataProvider({ children }: { children: React.ReactNode }) {
-  const [patients, setPatients] = useState<Patient[]>(INITIAL_PATIENTS);
-  const [appointments, setAppointments] = useState<Appointment[]>(INITIAL_APPOINTMENTS);
-  const [notes, setNotes] = useState<MedicalNote[]>(INITIAL_NOTES);
-  const [prescriptions, setPrescriptions] = useState<Prescription[]>(DEFAULT_PRESCRIPTIONS);
-  const [notifications, setNotifications] = useState<NotificationItem[]>(INITIAL_NOTIFICATIONS);
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [notes, setNotes] = useState<MedicalNote[]>([]);
+  const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [selectedPatientId, setSelectedPatientId] = useState<string>("1");
   const [doctorProfile, setDoctorProfile] = useState<DoctorProfile>(DEFAULT_DOCTOR_PROFILE);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -134,6 +136,7 @@ export function DoctorDataProvider({ children }: { children: React.ReactNode }) 
   const [activePolicy, setActivePolicy] = useState<string | null>(null);
   const [showWelcomeScreen, setShowWelcomeScreen] = useState<boolean>(true);
   const [isHydrated, setIsHydrated] = useState<boolean>(false);
+  const [isDataLoading, setIsDataLoading] = useState<boolean>(true);
   
   const router = useRouter();
 
@@ -389,6 +392,8 @@ export function DoctorDataProvider({ children }: { children: React.ReactNode }) 
       console.error("Failed to load local storage state", e);
     } finally {
       setIsHydrated(true);
+      // Give a slight delay to ensure all async fetches are initialized before hiding loader
+      setTimeout(() => setIsDataLoading(false), 1500);
     }
   }, []);
 
@@ -688,6 +693,7 @@ export function DoctorDataProvider({ children }: { children: React.ReactNode }) 
         prescriptions,
         nutritionPlans,
         notifications,
+        setNotifications,
         selectedPatientId,
         setSelectedPatientId,
         addPatient,
@@ -713,6 +719,7 @@ export function DoctorDataProvider({ children }: { children: React.ReactNode }) 
         showWelcomeScreen,
         setShowWelcomeScreen,
         isHydrated,
+        isDataLoading,
       }}
     >
       {children}

@@ -327,7 +327,7 @@ export default function LandingPage() {
             <div className="bg-white rounded-xl border border-slate-200/70 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden group">
               <div className="relative h-44 w-full bg-slate-100 overflow-hidden">
                 <Image
-                  src="/child_care.png"
+                  src="https://plus.unsplash.com/premium_photo-1682089159103-d09b46d1cce8?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8UGF0aWVudCUyME1hbmFnZW1lbnQlMjBtZWRpY2FsfGVufDB8fDB8fHww"
                   alt="Patient Management"
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -349,7 +349,7 @@ export default function LandingPage() {
             <div className="bg-white rounded-xl border border-slate-200/70 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden group">
               <div className="relative h-44 w-full bg-slate-100 overflow-hidden">
                 <Image
-                  src="/growth_preview.png"
+                  src="https://media.istockphoto.com/id/1806607482/photo/child-at-doctors-appointment-measuring-height.webp?a=1&b=1&s=612x612&w=0&k=20&c=CnZiAVc-22IvLxhWz4z1DEj7frYKc2itmH5NXPXfRJ4="
                   alt="Growth Analytics"
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -393,7 +393,7 @@ export default function LandingPage() {
             <div className="bg-white rounded-xl border border-slate-200/70 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden group">
               <div className="relative h-44 w-full bg-slate-100 overflow-hidden">
                 <Image
-                  src="/3.png"
+                  src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8RGlnaXRhbCUyMGUtUHJlc2NyaXB0aW9ucyUyMG1lZGljYWx8ZW58MHx8MHx8fDA%3D"
                   alt="Prescriptions"
                   fill
                   className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
@@ -415,7 +415,7 @@ export default function LandingPage() {
             <div className="bg-white rounded-xl border border-slate-200/70 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden group">
               <div className="relative h-44 w-full bg-slate-100 overflow-hidden">
                 <Image
-                  src="/opd_banner.png"
+                  src="https://plus.unsplash.com/premium_photo-1673953510197-0950d951c6d9?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8T1BEJTIwQXBwb2ludG1lbnRzJTIwbWVkaWNhbHxlbnwwfHwwfHx8MA%3D%3D"
                   alt="Appointments OPD"
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -437,7 +437,7 @@ export default function LandingPage() {
             <div className="bg-white rounded-xl border border-slate-200/70 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden group">
               <div className="relative h-44 w-full bg-slate-100 overflow-hidden">
                 <Image
-                  src="/4.png"
+                  src="https://plus.unsplash.com/premium_photo-1726769176212-1ab1fd60f42a?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTN8fFNPQVAlMjBNZWRpY2FsJTIwTm90ZXMlMjBtZWRpY2FsfGVufDB8fDB8fHww"
                   alt="Medical Notes"
                   fill
                   className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
