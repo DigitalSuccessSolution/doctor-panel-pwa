@@ -23,6 +23,8 @@ import { babyService, transformBackendBabyToPatient } from "@/services/babyServi
 import { appointmentService, transformBackendAppointmentToFrontend } from "@/services/appointmentService";
 import { prescriptionService, transformBackendPrescriptionToFrontend } from "@/services/prescriptionService";
 import { nutritionService, transformBackendNutritionPlanToFrontend } from "@/services/nutritionService";
+import { requestForToken, setupMessageListener } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
 
 
 interface DoctorDataContextType {
@@ -132,6 +134,44 @@ export function DoctorDataProvider({ children }: { children: React.ReactNode }) 
   const [activePolicy, setActivePolicy] = useState<string | null>(null);
   const [showWelcomeScreen, setShowWelcomeScreen] = useState<boolean>(true);
   const [isHydrated, setIsHydrated] = useState<boolean>(false);
+  
+  const router = useRouter();
+
+  // Listen for foreground push notifications
+  useEffect(() => {
+    let unsubscribe: any;
+    
+    if (isAuthenticated) {
+      setupMessageListener((payload) => {
+        const title = payload.notification?.title || "New Notification";
+        const options = {
+          body: payload.notification?.body || "",
+          icon: '/moncradle-icon.png',
+        };
+        
+        // Show native browser notification even when app is open
+        if ('Notification' in window && Notification.permission === 'granted') {
+          const notification = new Notification(title, options);
+          
+          notification.onclick = function() {
+            window.focus();
+            if (payload.data?.url) {
+              router.push(payload.data.url);
+            }
+            this.close();
+          };
+        }
+      }).then((unsub: any) => {
+        unsubscribe = unsub;
+      });
+    }
+
+    return () => {
+      if (unsubscribe && typeof unsubscribe === 'function') {
+        unsubscribe();
+      }
+    };
+  }, [isAuthenticated, router]);
 
   const updateDoctorProfile = (updated: Partial<DoctorProfile>, markComplete: boolean = false) => {
     setDoctorProfile((prev) => {
@@ -274,6 +314,15 @@ export function DoctorDataProvider({ children }: { children: React.ReactNode }) 
               about: profile?.about || doctorProfile.about,
               availability: profile?.availability || doctorProfile.availability,
             });
+            
+            // Prompt for notification permission automatically on load
+            if ('Notification' in window) {
+              requestForToken().then(fcmToken => {
+                if (fcmToken) {
+                  authService.updateProfile({ fcmToken }).catch(console.error);
+                }
+              }).catch(console.error);
+            }
           }
         }).catch(() => {});
 
@@ -402,6 +451,15 @@ export function DoctorDataProvider({ children }: { children: React.ReactNode }) 
         saveToStorage("moncradel_doctor_apts", apiAppointments);
       }
     }).catch(() => {});
+    
+    // Prompt for notification permission automatically after login
+    if ('Notification' in window) {
+      requestForToken().then(fcmToken => {
+        if (fcmToken) {
+          authService.updateProfile({ fcmToken }).catch(console.error);
+        }
+      }).catch(console.error);
+    }
   };
 
   const logout = () => {
