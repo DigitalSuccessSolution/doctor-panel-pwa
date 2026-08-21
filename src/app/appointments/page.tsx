@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -45,7 +46,6 @@ export default function AppointmentsPage() {
   // Edit Notes / Meeting Link Modal state
   const [editModalApt, setEditModalApt] = useState<any | null>(null);
   const [editNotes, setEditNotes] = useState<string>("");
-  const [editMeetingLink, setEditMeetingLink] = useState<string>("");
   const [isSubmittingEdit, setIsSubmittingEdit] = useState<boolean>(false);
 
   // Mobile Bottom Sheet Modal state
@@ -141,14 +141,13 @@ export default function AppointmentsPage() {
     try {
       const res = await appointmentService.updateAppointment(editModalApt.id, {
         doctorNotes: editNotes.trim(),
-        meetingLink: editMeetingLink.trim(),
       });
 
       if (res.success || res.data) {
         setAppointments((prev) =>
           prev.map((a) =>
             a.id === editModalApt.id
-              ? { ...a, doctorNotes: editNotes.trim(), meetingLink: editMeetingLink.trim() }
+              ? { ...a, doctorNotes: editNotes.trim() }
               : a
           )
         );
@@ -166,11 +165,11 @@ export default function AppointmentsPage() {
     const fullPatient = patients.find((p) => p.id === apt.patientId) || {
       name: apt.patientName,
       avatar: apt.patientAvatar,
-      age: apt.patientAge || "1 Months",
+      age: apt.patientAge || "N/A",
       parentName: apt.parentName,
       phone: apt.parentPhone,
-      gender: "girl",
-      growthScore: 90,
+      gender: "Not specified",
+      growthScore: "N/A",
     };
     setSelectedPatientModal(fullPatient);
   };
@@ -370,7 +369,6 @@ export default function AppointmentsPage() {
                             onClick={() => {
                               setEditModalApt(apt);
                               setEditNotes(apt.doctorNotes || "");
-                              setEditMeetingLink(apt.meetingLink || "");
                             }}
                             className="p-2 text-slate-600 hover:text-[#1E4E70] hover:bg-slate-100 rounded-xl transition-colors cursor-pointer border border-slate-200/80"
                             title="Edit Doctor Notes or Tele-Consult Link"
@@ -438,13 +436,24 @@ export default function AppointmentsPage() {
                   </div>
 
                   {/* Actions */}
-                  <div className="pt-2 flex items-center justify-between gap-3 border-t border-slate-100">
+                  <div className="pt-2 flex items-center justify-between gap-2 border-t border-slate-100">
                     <button
                       onClick={() => setSelectedMobileApt(apt)}
-                      className="text-[#1E4E70] font-semibold text-xs py-2 px-3 rounded-xl border border-[#1E4E70]/20 hover:bg-[#1E4E70]/5 transition-colors cursor-pointer w-full text-center"
+                      className="text-[#1E4E70] font-semibold text-xs py-2 px-3 rounded-xl border border-[#1E4E70]/20 hover:bg-[#1E4E70]/5 transition-colors cursor-pointer flex-1 text-center"
                     >
-                      View Details
+                      Details
                     </button>
+                    {(!apt.status || apt.status.toLowerCase() !== "cancelled") && (
+                      <button
+                        onClick={() => {
+                          setCancelModalApt(apt);
+                          setCancellationReason("");
+                        }}
+                        className="text-rose-600 font-semibold text-xs py-2 px-3 rounded-xl border border-rose-200 hover:bg-rose-50 transition-colors cursor-pointer shrink-0 text-center"
+                      >
+                        Reject
+                      </button>
+                    )}
                   </div>
                 </div>
               );
@@ -534,8 +543,8 @@ export default function AppointmentsPage() {
       )}
 
       {/* 5. REJECTION / CANCELLATION MODAL */}
-      {cancelModalApt && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-fadeIn">
+      {cancelModalApt && typeof document !== "undefined" && createPortal(
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-[9999] flex items-center justify-center p-4 animate-fadeIn">
           <form
             onSubmit={handleConfirmReject}
             className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4 font-sans"
@@ -587,7 +596,8 @@ export default function AppointmentsPage() {
               </button>
             </div>
           </form>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* 6. EDIT NOTES MODAL */}
@@ -618,21 +628,10 @@ export default function AppointmentsPage() {
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-slate-700">Doctor Notes</label>
               <textarea
-                rows={3}
+                rows={4}
                 value={editNotes}
                 onChange={(e) => setEditNotes(e.target.value)}
                 placeholder="Clinical consultation observations..."
-                className="w-full bg-[#F8FAFC] border border-slate-200 rounded-lg p-3 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1E4E70]"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700">Video Consultation Link (optional)</label>
-              <input
-                type="url"
-                value={editMeetingLink}
-                onChange={(e) => setEditMeetingLink(e.target.value)}
-                placeholder="https://meet.google.com/xyz..."
                 className="w-full bg-[#F8FAFC] border border-slate-200 rounded-lg p-3 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1E4E70]"
               />
             </div>
@@ -658,8 +657,8 @@ export default function AppointmentsPage() {
       )}
 
       {/* 7. MOBILE BOTTOM SHEET FOR APPOINTMENT DETAILS */}
-      {selectedMobileApt && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center animate-fadeIn sm:p-4">
+      {selectedMobileApt && typeof document !== "undefined" && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center animate-fadeIn sm:p-4">
           <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setSelectedMobileApt(null)} />
           <div className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden relative z-10 animate-slideUp transform transition-transform max-h-[85vh] flex flex-col font-sans">
             {/* Grab handle for bottom sheet effect */}
@@ -748,7 +747,6 @@ export default function AppointmentsPage() {
                     setSelectedMobileApt(null);
                     setEditModalApt(selectedMobileApt);
                     setEditNotes(selectedMobileApt.doctorNotes || "");
-                    setEditMeetingLink(selectedMobileApt.meetingLink || "");
                   }}
                   className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs py-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-colors"
                 >
@@ -769,7 +767,8 @@ export default function AppointmentsPage() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

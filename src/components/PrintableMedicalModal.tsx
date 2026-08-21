@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X, Printer, Download, CheckCircle, HeartPulse, FileText } from "lucide-react";
 import { Patient, PrescriptionItem } from "@/data/mockData";
 import { useDoctorData } from "@/context/DoctorDataContext";
@@ -43,8 +44,8 @@ export default function PrintableMedicalModal({
     window.print();
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fadeIn">
+  const modalContent = (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fadeIn">
       <div className="bg-white w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col">
         {/* Modal Action Top Bar */}
         <div className="bg-[#1E4E70] text-white px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
@@ -173,4 +174,9 @@ export default function PrintableMedicalModal({
       </div>
     </div>
   );
+
+  if (typeof document !== "undefined") {
+    return createPortal(modalContent, document.body);
+  }
+  return modalContent;
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
@@ -57,8 +58,8 @@ export default function PatientProfilePage() {
   const searchParams = useSearchParams();
   const patientId = params.id as string;
 
-  const { patients, setSelectedPatientId } = useDoctorData();
-  const contextPatient = patients.find((p) => p.id === patientId) || patients[0];
+  const { patients, setSelectedPatientId, isDataLoading } = useDoctorData();
+  const contextPatient = patients.find((p) => p.id === patientId);
 
   const [liveBaby, setLiveBaby] = useState<Patient | null>(null);
   const [showPrintModal, setShowPrintModal] = useState(false);
@@ -69,6 +70,7 @@ export default function PatientProfilePage() {
   // Tab 2: Growth Records State
   const [growthRecords, setGrowthRecords] = useState<GrowthRecord[]>([]);
   const [growthLoading, setGrowthLoading] = useState(false);
+  const [logDate, setLogDate] = useState(() => new Date().toISOString().split("T")[0]);
   const [logWeight, setLogWeight] = useState("");
   const [logHeight, setLogHeight] = useState("");
   const [logHead, setLogHead] = useState("");
@@ -98,7 +100,7 @@ export default function PatientProfilePage() {
   const [rxNutrition, setRxNutrition] = useState("");
   const [rxNextVisit, setRxNextVisit] = useState("");
   const [rxMedicines, setRxMedicines] = useState<Array<{ name: string; dosage: string; frequency: string; duration: string; instructions: string }>>([
-    { name: "", dosage: "1.25 ml", frequency: "1-0-1", duration: "5 Days", instructions: "After feeding" }
+    { name: "", dosage: "", frequency: "1-0-1", duration: "5 Days", instructions: "" }
   ]);
   const [savingRx, setSavingRx] = useState(false);
   const [editingRxId, setEditingRxId] = useState<string | null>(null);
@@ -244,8 +246,8 @@ export default function PatientProfilePage() {
         if (item.mealId && typeof item.mealId === "object") {
           return {
             day: item.day,
-            title: item.mealId.name || item.mealId.title || "Standard Baby Weaning Meal",
-            desc: item.mealId.description || "Recommended soft puree / weaning guidance.",
+            title: item.mealId.name || item.mealId.title || "Custom Meal",
+            desc: item.mealId.description || "No description provided.",
             mealId: id,
           };
         }
@@ -253,9 +255,9 @@ export default function PatientProfilePage() {
         // Final fallback
         return {
           day: item.day,
-          title: "Standard Baby Weaning Meal",
-          desc: "Recommended soft puree / weaning guidance.",
-          mealId: id || "6a7b113d4c971486e4fc4a48",
+          title: "Custom Meal",
+          desc: "No description provided.",
+          mealId: id || "",
         };
       });
       setNutritionSchedule(mapped);
@@ -275,6 +277,7 @@ export default function PatientProfilePage() {
         height: parseFloat(logHeight),
         headCircumference: logHead ? parseFloat(logHead) : undefined,
         notes: logNotes.trim(),
+        createdAt: logDate,
       });
 
       if (res.success && res.data) {
@@ -325,7 +328,7 @@ export default function PatientProfilePage() {
   const handleAddMedicineRow = () => {
     setRxMedicines([
       ...rxMedicines,
-      { name: "", dosage: "1.25 ml", frequency: "1-0-1", duration: "5 Days", instructions: "After feeding" }
+      { name: "", dosage: "", frequency: "1-0-1", duration: "5 Days", instructions: "" }
     ]);
   };
 
@@ -351,13 +354,13 @@ export default function PatientProfilePage() {
     if (Array.isArray(rx.medicines) && rx.medicines.length > 0) {
       setRxMedicines(rx.medicines.map((m: any) => ({
         name: m.medicineName || m.name || "",
-        dosage: m.dosage || "1 ml",
+        dosage: m.dosage || "",
         frequency: m.frequency || "1-0-1",
         duration: m.duration || "5 Days",
-        instructions: m.instructions || "After meals"
+        instructions: m.instructions || ""
       })));
     } else {
-      setRxMedicines([{ name: "", dosage: "1.25 ml", frequency: "1-0-1", duration: "5 Days", instructions: "After feeding" }]);
+      setRxMedicines([{ name: "", dosage: "", frequency: "1-0-1", duration: "5 Days", instructions: "" }]);
     }
   };
 
@@ -369,7 +372,7 @@ export default function PatientProfilePage() {
     setRxBP("");
     setRxNutrition("");
     setRxNextVisit("");
-    setRxMedicines([{ name: "", dosage: "1.25 ml", frequency: "1-0-1", duration: "5 Days", instructions: "After feeding" }]);
+    setRxMedicines([{ name: "", dosage: "", frequency: "1-0-1", duration: "5 Days", instructions: "" }]);
   };
 
   const handleDeletePrescription = (id: string) => {
@@ -561,6 +564,32 @@ export default function PatientProfilePage() {
 
 
 
+  if (!patient) {
+    if (isDataLoading) {
+      return (
+        <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4 animate-fadeIn">
+          <div className="relative">
+            <div className="w-16 h-16 border-4 border-slate-100 rounded-full"></div>
+            <div className="w-16 h-16 border-4 border-[#1E4E70] border-t-transparent rounded-full animate-spin absolute inset-0"></div>
+          </div>
+          <p className="text-slate-500 font-medium animate-pulse">Loading patient profile...</p>
+        </div>
+      );
+    }
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4 animate-fadeIn">
+        <div className="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center">
+          <AlertTriangle className="w-8 h-8" />
+        </div>
+        <h2 className="text-xl font-bold text-slate-800">Patient Not Found</h2>
+        <p className="text-slate-500 font-medium">This patient profile does not exist or has been removed.</p>
+        <Link href="/patients" className="mt-4 px-6 py-2.5 bg-[#1E4E70] text-white rounded-xl font-bold hover:bg-[#153852] transition-colors">
+          Return to Directory
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 animate-fadeIn pb-24 font-sans max-w-7xl mx-auto overflow-hidden">
       {/* 0. Navigation Back Link */}
@@ -666,6 +695,8 @@ export default function PatientProfilePage() {
             patient={patient}
             growthRecords={growthRecords}
             growthLoading={growthLoading}
+            logDate={logDate}
+            setLogDate={setLogDate}
             logWeight={logWeight}
             setLogWeight={setLogWeight}
             logHeight={logHeight}
@@ -756,8 +787,8 @@ export default function PatientProfilePage() {
       />
 
       {/* Shared Delete Confirmation Modal */}
-      {deleteModalConfig.isOpen && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-[150] flex items-center justify-center p-4 animate-fadeIn">
+      {deleteModalConfig.isOpen && typeof document !== "undefined" && createPortal(
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-[9999] flex items-center justify-center p-4 animate-fadeIn">
           <div className="bg-white rounded-xl max-w-sm w-full shadow-2xl border border-slate-200 overflow-hidden font-sans">
             <div className="p-6 text-center space-y-4">
               <div className="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto shadow-sm">
@@ -788,7 +819,7 @@ export default function PatientProfilePage() {
             </div>
           </div>
         </div>
-      )}
+      , document.body)}
     </div>
   );
 }

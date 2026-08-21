@@ -1,6 +1,8 @@
 "use client";
 
-import { Scale, Trash2, Plus } from "lucide-react";
+import { useState } from "react";
+import { createPortal } from "react-dom";
+import { Scale, Trash2, Plus, X, Calendar, Activity } from "lucide-react";
 import { Patient } from "@/data/mockData";
 import { GrowthRecord } from "@/services/growthService";
 import GrowthCurveChart from "@/components/GrowthCurveChart";
@@ -9,6 +11,8 @@ interface GrowthTabProps {
   patient: Patient;
   growthRecords: GrowthRecord[];
   growthLoading: boolean;
+  logDate: string;
+  setLogDate: (v: string) => void;
   logWeight: string;
   setLogWeight: (v: string) => void;
   logHeight: string;
@@ -26,6 +30,8 @@ export default function GrowthTab({
   patient,
   growthRecords,
   growthLoading,
+  logDate,
+  setLogDate,
   logWeight,
   setLogWeight,
   logHeight,
@@ -38,18 +44,76 @@ export default function GrowthTab({
   handleLogVitals,
   handleDeleteGrowth,
 }: GrowthTabProps) {
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-      {/* Left WHO Growth Curve Chart */}
-      <div className="lg:col-span-7 space-y-6">
-        <GrowthCurveChart
-          currentWeight={patient.weight !== undefined ? Number(patient.weight) : undefined}
-          ageInMonths={patient.ageInMonths !== undefined ? Number(patient.ageInMonths) : undefined}
-          records={growthRecords.map((r) => ({ weight: r.weight, month: r.headCircumference }))}
-        />
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [chartType, setChartType] = useState<"weight" | "height">("weight");
 
-        {/* Table of previous growth logs */}
-        <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-xs space-y-4">
+  const onSubmit = (e: React.FormEvent) => {
+    handleLogVitals(e);
+    setIsModalOpen(false);
+  };
+
+  return (
+    <div className="space-y-8">
+      {/* Header Area */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <h2 className="text-xl font-bold text-slate-800">Growth Chart</h2>
+        
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center bg-white rounded-full p-1 border border-slate-200/80 shadow-xs">
+            <button
+              onClick={() => setChartType("height")}
+              className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all ${
+                chartType === "height"
+                  ? "bg-[#10B981] text-white shadow-sm"
+                  : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              Height Chart
+            </button>
+            <button
+              onClick={() => setChartType("weight")}
+              className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-all ${
+                chartType === "weight"
+                  ? "bg-[#10B981] text-white shadow-sm"
+                  : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              Weight Chart
+            </button>
+          </div>
+          
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center gap-1.5 bg-[#818CF8] hover:bg-[#6366F1] text-white px-4 py-2 rounded-full text-xs font-semibold transition-colors shadow-sm cursor-pointer"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Add Entry</span>
+          </button>
+        </div>
+      </div>
+
+      {/* WHO Growth Curve Chart */}
+      <div className="w-full">
+        <GrowthCurveChart
+          chartType={chartType}
+          currentWeight={patient.weight !== undefined ? Number(patient.weight) : undefined}
+          currentHeight={patient.height !== undefined ? Number(patient.height) : undefined}
+          ageInMonths={patient.ageInMonths !== undefined ? Number(patient.ageInMonths) : undefined}
+          records={growthRecords.map((r) => {
+            let recordMonth = r.headCircumference; // Fallback
+            if (patient.dateOfBirth && r.createdAt) {
+              const birth = new Date(patient.dateOfBirth);
+              const recDate = new Date(r.createdAt);
+              const months = (recDate.getFullYear() - birth.getFullYear()) * 12 + (recDate.getMonth() - birth.getMonth());
+              recordMonth = months;
+            }
+            return { weight: r.weight, height: r.height, month: recordMonth, createdAt: r.createdAt };
+          })}
+        />
+      </div>
+
+      {/* Table of previous growth logs */}
+      <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-xs space-y-4">
           <h3 className="font-bold text-slate-900 text-sm uppercase tracking-wider">
             Vitals & Growth History List
           </h3>
@@ -98,80 +162,119 @@ export default function GrowthTab({
             </div>
           )}
         </div>
-      </div>
 
-      {/* Right Side: Log Vitals Form */}
-      <div className="lg:col-span-5">
-        <form
-          onSubmit={handleLogVitals}
-          className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-2xs space-y-4"
-        >
-          <h3 className="font-bold text-slate-800 text-sm tracking-tight border-b border-slate-100 pb-2 flex items-center gap-2">
-            <Scale className="w-4 h-4 text-[#1E4E70]" />
-            <span>Log Vitals & Growth</span>
-          </h3>
-
-          <div className="grid grid-cols-2 gap-3 text-xs">
-            <div className="space-y-1.5">
-              <label className="font-bold text-slate-700">Weight (kg) *</label>
-              <input
-                required
-                type="number"
-                step="0.01"
-                value={logWeight}
-                onChange={(e) => setLogWeight(e.target.value)}
-                placeholder="e.g. 7.2"
-                className="w-full bg-[#F8FAFC] border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1E4E70]"
-              />
+      {/* Add New Entry Modal */}
+      {isModalOpen && typeof document !== "undefined" && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center sm:p-4 bg-slate-900/50 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white rounded-t-3xl sm:rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-slideUp border border-slate-100 max-h-[90vh] flex flex-col">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50/50">
+              <h3 className="font-bold text-[#1E3A8A] text-lg flex items-center gap-2">
+                <Plus className="w-5 h-5 text-[#818CF8]" />
+                <span>Add New Entry</span>
+              </h3>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="p-1.5 rounded-full bg-slate-100 text-slate-400 hover:text-slate-600 hover:bg-slate-200 transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="font-bold text-slate-700">Height (cm) *</label>
-              <input
-                required
-                type="number"
-                step="0.1"
-                value={logHeight}
-                onChange={(e) => setLogHeight(e.target.value)}
-                placeholder="e.g. 64"
-                className="w-full bg-[#F8FAFC] border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1E4E70]"
-              />
+            {/* Modal Body */}
+            <div className="p-6 max-h-[75vh] overflow-y-auto thin-scrollbar">
+              <form onSubmit={onSubmit} className="space-y-5 text-sm">
+                
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Date of Measurement</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Calendar className="w-4 h-4 text-slate-400" />
+                    </div>
+                    <input
+                      required
+                      type="date"
+                      value={logDate}
+                      onChange={(e) => setLogDate(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#818CF8] focus:border-transparent font-medium"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                      <Scale className="w-3.5 h-3.5" /> Weight (kg)
+                    </label>
+                    <input
+                      required
+                      type="number"
+                      step="0.01"
+                      value={logWeight}
+                      onChange={(e) => setLogWeight(e.target.value)}
+                      placeholder="e.g. 10.5"
+                      className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#818CF8] focus:border-transparent"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                      <Activity className="w-3.5 h-3.5" /> Height (cm)
+                    </label>
+                    <input
+                      required
+                      type="number"
+                      step="0.1"
+                      value={logHeight}
+                      onChange={(e) => setLogHeight(e.target.value)}
+                      placeholder="e.g. 78.5"
+                      className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#818CF8] focus:border-transparent"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <div className="flex justify-between items-end">
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                      <span>👦 Head (cm)</span>
+                    </label>
+                    <span className="text-[10px] font-semibold text-slate-400">Optional</span>
+                  </div>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={logHead}
+                    onChange={(e) => setLogHead(e.target.value)}
+                    placeholder="e.g. 46.2"
+                    className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#818CF8] focus:border-transparent"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Notes</label>
+                  <textarea
+                    rows={3}
+                    value={logNotes}
+                    onChange={(e) => setLogNotes(e.target.value)}
+                    placeholder="Doctor's notes or observations..."
+                    className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#818CF8] focus:border-transparent resize-none"
+                  />
+                </div>
+
+                <div className="pt-2 flex justify-center pb-2">
+                  <button
+                    type="submit"
+                    disabled={savingGrowth || !logWeight || !logHeight}
+                    className="px-8 py-2.5 bg-[#1E3A8A] hover:bg-[#172554] text-white font-bold rounded-full cursor-pointer shadow-md hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:shadow-none flex items-center gap-2 text-sm w-max mx-auto"
+                  >
+                    {savingGrowth ? "Saving..." : "Save Entry"}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
-
-          <div className="space-y-1.5 text-xs">
-            <label className="font-bold text-slate-700">Head Circumference (cm, optional)</label>
-            <input
-              type="number"
-              step="0.1"
-              value={logHead}
-              onChange={(e) => setLogHead(e.target.value)}
-              placeholder="e.g. 42.5"
-              className="w-full bg-[#F8FAFC] border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1E4E70]"
-            />
-          </div>
-
-          <div className="space-y-1.5 text-xs">
-            <label className="font-bold text-slate-700">Consultation Observations / Notes</label>
-            <textarea
-              rows={2}
-              value={logNotes}
-              onChange={(e) => setLogNotes(e.target.value)}
-              placeholder="Growth comments..."
-              className="w-full bg-[#F8FAFC] border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#1E4E70]"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={savingGrowth || !logWeight || !logHeight}
-            className="w-full bg-[#1E4E70] text-white hover:bg-[#153852] text-xs font-semibold py-2.5 rounded-xl cursor-pointer shadow-xs transition-colors flex items-center justify-center gap-1 disabled:opacity-50"
-          >
-            <Plus className="w-4 h-4" />
-            <span>{savingGrowth ? "Logging Vital..." : "Log Growth Record"}</span>
-          </button>
-        </form>
-      </div>
+        </div>
+      , document.body)}
     </div>
   );
 }

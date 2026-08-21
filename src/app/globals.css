@@ -119,3 +119,30 @@ select {
     font-size: 15.5px !important;
   }
 }
+
+/* Modal Smooth Animations */
+@keyframes slideUp {
+  0% {
+    transform: translateY(100%);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.animate-slideUp {
+  animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease-out forwards;
+}

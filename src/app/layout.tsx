@@ -32,6 +32,7 @@ export const viewport: Viewport = {
 
 import { DoctorDataProvider } from "@/context/DoctorDataContext";
 import AppShell from "@/components/AppShell";
+import OfflineIndicator from "@/components/OfflineIndicator";
 
 export default function RootLayout({
   children,
@@ -46,6 +47,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-[#F8F9FA] text-slate-800 antialiased selection:bg-[#A5D8FF]" suppressHydrationWarning>
         <DoctorDataProvider>
+          <OfflineIndicator />
           <AppShell>{children}</AppShell>
         </DoctorDataProvider>
       </body>

@@ -161,6 +161,8 @@ export interface GrowthDataPoint {
   p97Weight: number;
   patientWeight?: number;
   medianHeight: number;
+  p3Height: number;
+  p97Height: number;
   patientHeight?: number;
 }
 
@@ -376,13 +378,13 @@ export const INITIAL_PATIENTS: Patient[] = [
 export const INITIAL_APPOINTMENTS: Appointment[] = [];
 
 export const WHO_GROWTH_DATA: GrowthDataPoint[] = [
-  { month: 0, monthLabel: 'Birth', medianWeight: 3.3, p3Weight: 2.5, p97Weight: 4.4, patientWeight: 3.2, medianHeight: 49.9, patientHeight: 50 },
-  { month: 2, monthLabel: '3m', medianWeight: 5.6, p3Weight: 4.3, p97Weight: 7.1, patientWeight: 5.3, medianHeight: 58.4, patientHeight: 57 },
-  { month: 4, monthLabel: '6m', medianWeight: 7.0, p3Weight: 5.5, p97Weight: 8.8, patientWeight: 6.8, medianHeight: 63.8, patientHeight: 63 },
-  { month: 6, monthLabel: '9m', medianWeight: 7.9, p3Weight: 6.3, p97Weight: 9.9, patientWeight: 7.7, medianHeight: 67.6, patientHeight: 67 },
-  { month: 8, monthLabel: '12m', medianWeight: 8.6, p3Weight: 6.9, p97Weight: 10.7, patientWeight: 8.4, medianHeight: 70.6, patientHeight: 71 },
-  { month: 10, monthLabel: '15m', medianWeight: 9.2, p3Weight: 7.4, p97Weight: 11.5, patientWeight: undefined, medianHeight: 73.3, patientHeight: undefined },
-  { month: 12, monthLabel: '18m', medianWeight: 9.6, p3Weight: 7.8, p97Weight: 12.0, patientWeight: undefined, medianHeight: 75.7, patientHeight: undefined }
+  { month: 0, monthLabel: 'Birth', medianWeight: 3.3, p3Weight: 2.5, p97Weight: 4.4, patientWeight: 3.2, medianHeight: 49.9, p3Height: 46.1, p97Height: 53.7, patientHeight: 50 },
+  { month: 2, monthLabel: '3m', medianWeight: 5.6, p3Weight: 4.3, p97Weight: 7.1, patientWeight: 5.3, medianHeight: 58.4, p3Height: 54.4, p97Height: 62.4, patientHeight: 57 },
+  { month: 4, monthLabel: '6m', medianWeight: 7.0, p3Weight: 5.5, p97Weight: 8.8, patientWeight: 6.8, medianHeight: 63.8, p3Height: 59.6, p97Height: 68.0, patientHeight: 63 },
+  { month: 6, monthLabel: '9m', medianWeight: 7.9, p3Weight: 6.3, p97Weight: 9.9, patientWeight: 7.7, medianHeight: 67.6, p3Height: 63.2, p97Height: 72.0, patientHeight: 67 },
+  { month: 8, monthLabel: '12m', medianWeight: 8.6, p3Weight: 6.9, p97Weight: 10.7, patientWeight: 8.4, medianHeight: 70.6, p3Height: 66.1, p97Height: 75.1, patientHeight: 71 },
+  { month: 10, monthLabel: '15m', medianWeight: 9.2, p3Weight: 7.4, p97Weight: 11.5, patientWeight: undefined, medianHeight: 73.3, p3Height: 68.6, p97Height: 78.0, patientHeight: undefined },
+  { month: 12, monthLabel: '18m', medianWeight: 9.6, p3Weight: 7.8, p97Weight: 12.0, patientWeight: undefined, medianHeight: 75.7, p3Height: 70.9, p97Height: 80.5, patientHeight: undefined }
 ];
 
 export const LEO_MILESTONES: Milestone[] = [

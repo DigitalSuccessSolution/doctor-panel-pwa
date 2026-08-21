@@ -23,6 +23,8 @@ import { babyService, transformBackendBabyToPatient } from "@/services/babyServi
 import { appointmentService, transformBackendAppointmentToFrontend } from "@/services/appointmentService";
 import { prescriptionService, transformBackendPrescriptionToFrontend } from "@/services/prescriptionService";
 import { nutritionService, transformBackendNutritionPlanToFrontend } from "@/services/nutritionService";
+import { requestForToken, setupMessageListener } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
 
 
 interface DoctorDataContextType {
@@ -36,6 +38,7 @@ interface DoctorDataContextType {
   prescriptions: Prescription[];
   nutritionPlans: Record<string, NutritionPlan>;
   notifications: NotificationItem[];
+  setNotifications: React.Dispatch<React.SetStateAction<NotificationItem[]>>;
   selectedPatientId: string;
   setSelectedPatientId: (id: string) => void;
   addPatient: (data: Partial<Patient> & { name: string }) => Patient;
@@ -61,6 +64,7 @@ interface DoctorDataContextType {
   showWelcomeScreen: boolean;
   setShowWelcomeScreen: (show: boolean) => void;
   isHydrated: boolean;
+  isDataLoading: boolean;
 }
 
 const DEFAULT_PRESCRIPTIONS: Prescription[] = [
@@ -117,11 +121,11 @@ const DEFAULT_PRESCRIPTIONS: Prescription[] = [
 const DoctorDataContext = createContext<DoctorDataContextType | undefined>(undefined);
 
 export function DoctorDataProvider({ children }: { children: React.ReactNode }) {
-  const [patients, setPatients] = useState<Patient[]>(INITIAL_PATIENTS);
-  const [appointments, setAppointments] = useState<Appointment[]>(INITIAL_APPOINTMENTS);
-  const [notes, setNotes] = useState<MedicalNote[]>(INITIAL_NOTES);
-  const [prescriptions, setPrescriptions] = useState<Prescription[]>(DEFAULT_PRESCRIPTIONS);
-  const [notifications, setNotifications] = useState<NotificationItem[]>(INITIAL_NOTIFICATIONS);
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [notes, setNotes] = useState<MedicalNote[]>([]);
+  const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [selectedPatientId, setSelectedPatientId] = useState<string>("1");
   const [doctorProfile, setDoctorProfile] = useState<DoctorProfile>(DEFAULT_DOCTOR_PROFILE);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -132,6 +136,45 @@ export function DoctorDataProvider({ children }: { children: React.ReactNode }) 
   const [activePolicy, setActivePolicy] = useState<string | null>(null);
   const [showWelcomeScreen, setShowWelcomeScreen] = useState<boolean>(true);
   const [isHydrated, setIsHydrated] = useState<boolean>(false);
+  const [isDataLoading, setIsDataLoading] = useState<boolean>(true);
+  
+  const router = useRouter();
+
+  // Listen for foreground push notifications
+  useEffect(() => {
+    let unsubscribe: any;
+    
+    if (isAuthenticated) {
+      setupMessageListener((payload) => {
+        const title = payload.notification?.title || "New Notification";
+        const options = {
+          body: payload.notification?.body || "",
+          icon: '/moncradle-icon.png',
+        };
+        
+        // Show native browser notification even when app is open
+        if ('Notification' in window && Notification.permission === 'granted') {
+          const notification = new Notification(title, options);
+          
+          notification.onclick = function() {
+            window.focus();
+            if (payload.data?.url) {
+              router.push(payload.data.url);
+            }
+            this.close();
+          };
+        }
+      }).then((unsub: any) => {
+        unsubscribe = unsub;
+      });
+    }
+
+    return () => {
+      if (unsubscribe && typeof unsubscribe === 'function') {
+        unsubscribe();
+      }
+    };
+  }, [isAuthenticated, router]);
 
   const updateDoctorProfile = (updated: Partial<DoctorProfile>, markComplete: boolean = false) => {
     setDoctorProfile((prev) => {
@@ -274,6 +317,15 @@ export function DoctorDataProvider({ children }: { children: React.ReactNode }) 
               about: profile?.about || doctorProfile.about,
               availability: profile?.availability || doctorProfile.availability,
             });
+            
+            // Prompt for notification permission automatically on load
+            if ('Notification' in window) {
+              requestForToken().then(fcmToken => {
+                if (fcmToken) {
+                  authService.updateProfile({ fcmToken }).catch(console.error);
+                }
+              }).catch(console.error);
+            }
           }
         }).catch(() => {});
 
@@ -340,6 +392,8 @@ export function DoctorDataProvider({ children }: { children: React.ReactNode }) 
       console.error("Failed to load local storage state", e);
     } finally {
       setIsHydrated(true);
+      // Give a slight delay to ensure all async fetches are initialized before hiding loader
+      setTimeout(() => setIsDataLoading(false), 1500);
     }
   }, []);
 
@@ -402,6 +456,15 @@ export function DoctorDataProvider({ children }: { children: React.ReactNode }) 
         saveToStorage("moncradel_doctor_apts", apiAppointments);
       }
     }).catch(() => {});
+    
+    // Prompt for notification permission automatically after login
+    if ('Notification' in window) {
+      requestForToken().then(fcmToken => {
+        if (fcmToken) {
+          authService.updateProfile({ fcmToken }).catch(console.error);
+        }
+      }).catch(console.error);
+    }
   };
 
   const logout = () => {
@@ -630,6 +693,7 @@ export function DoctorDataProvider({ children }: { children: React.ReactNode }) 
         prescriptions,
         nutritionPlans,
         notifications,
+        setNotifications,
         selectedPatientId,
         setSelectedPatientId,
         addPatient,
@@ -655,6 +719,7 @@ export function DoctorDataProvider({ children }: { children: React.ReactNode }) 
         showWelcomeScreen,
         setShowWelcomeScreen,
         isHydrated,
+        isDataLoading,
       }}
     >
       {children}

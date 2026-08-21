@@ -35,6 +35,7 @@ export const growthService = {
     height: number;
     headCircumference?: number;
     notes?: string;
+    createdAt?: string;
   }): Promise<ApiResponse<GrowthRecord>> {
     return apiFetch<GrowthRecord>(API_CONFIG.ENDPOINTS.GROWTH.LIST, {
       method: "POST",
