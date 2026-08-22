@@ -12,9 +12,9 @@ export default function ApkDownloadModal({ isOpen, onClose }: { isOpen: boolean;
     if (isOpen) {
       document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
     }
-    return () => { document.body.style.overflow = "unset"; };
+    return () => { document.body.style.overflow = ""; };
   }, [isOpen]);
 
   if (!isOpen || typeof document === "undefined") return null;

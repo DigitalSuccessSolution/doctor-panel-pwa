@@ -12,9 +12,9 @@ export default function PolicyModal() {
     if (activePolicy) {
       document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
     }
-    return () => { document.body.style.overflow = "unset"; };
+    return () => { document.body.style.overflow = ""; };
   }, [activePolicy]);
 
   if (!activePolicy || typeof document === "undefined") return null;

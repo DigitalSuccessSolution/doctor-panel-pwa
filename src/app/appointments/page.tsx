@@ -91,10 +91,10 @@ export default function AppointmentsPage() {
     if (selectedMobileApt || selectedPatientModal || cancelModalApt || editModalApt) {
       document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
     };
   }, [selectedMobileApt, selectedPatientModal, cancelModalApt, editModalApt]);
 
