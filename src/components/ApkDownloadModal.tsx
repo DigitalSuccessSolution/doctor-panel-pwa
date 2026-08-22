@@ -1,13 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X, Download, Smartphone, Laptop, CheckCircle2, ShieldCheck, Sparkles } from "lucide-react";
 
 export default function ApkDownloadModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const [downloading, setDownloading] = useState(false);
   const [downloadComplete, setDownloadComplete] = useState(false);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => { document.body.style.overflow = "unset"; };
+  }, [isOpen]);
+
+  if (!isOpen || typeof document === "undefined") return null;
 
   const handleDownloadApk = () => {
     setDownloading(true);
@@ -28,9 +38,10 @@ export default function ApkDownloadModal({ isOpen, onClose }: { isOpen: boolean;
     }, 1200);
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md animate-fadeIn">
-      <div className="bg-white w-full max-w-md rounded-xl shadow-2xl overflow-hidden border border-slate-100 animate-scaleUp flex flex-col relative">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-fadeIn">
+      <div className="absolute inset-0" onClick={onClose} />
+      <div className="bg-white w-full max-w-md rounded-xl shadow-2xl overflow-hidden border border-slate-100 animate-scaleUp flex flex-col relative z-10">
         {/* Header */}
         <div className="p-6 bg-gradient-to-tr from-[#1E4E70] to-[#0071E3] text-white flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -91,6 +102,7 @@ export default function ApkDownloadModal({ isOpen, onClose }: { isOpen: boolean;
           </p>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

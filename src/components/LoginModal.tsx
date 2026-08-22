@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -94,7 +95,7 @@ export default function LoginModal() {
     };
   }, [showLoginModal]);
 
-  if (!showLoginModal) return null;
+  if (!showLoginModal || typeof document === "undefined") return null;
 
   const handleMobileChange = (val: string) => {
     let numeric = val.replace(/\D/g, "");
@@ -452,10 +453,11 @@ export default function LoginModal() {
     setResetOtp(["", "", "", ""]);
   };
 
-  return (
-    <div className="fixed inset-0 z-[110] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/60 backdrop-blur-md animate-fadeIn font-sans">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/60 backdrop-blur-md animate-fadeIn font-sans">
+      <div className="absolute inset-0" onClick={resetState} />
       {/* Modal Container */}
-      <div className="bg-white w-full max-w-md rounded-t-[32px] sm:rounded-xl shadow-2xl overflow-hidden border border-white/80 animate-slideUp sm:animate-scaleUp flex flex-col relative max-h-[95vh]">
+      <div className="bg-white w-full max-w-md rounded-t-[32px] sm:rounded-xl shadow-2xl overflow-hidden border border-white/80 animate-slideUp sm:animate-scaleUp flex flex-col relative max-h-[95vh] z-10" onClick={e => e.stopPropagation()}>
         
         {/* Header with Close Button and Brand Logo */}
         <div className="p-5 pb-3 bg-white border-b border-slate-100 relative">
@@ -1053,6 +1055,7 @@ export default function LoginModal() {
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

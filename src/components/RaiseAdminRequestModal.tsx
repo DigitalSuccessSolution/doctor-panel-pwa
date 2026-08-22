@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X, Send, ShieldAlert, CheckCircle2, FileText, AlertCircle, Paperclip } from "lucide-react";
 import { useDoctorData } from "@/context/DoctorDataContext";
 
@@ -23,7 +24,7 @@ export default function RaiseAdminRequestModal() {
     return () => window.removeEventListener("open-raise-request", handleOpen);
   }, []);
 
-  if (!isOpen) return null;
+  if (!isOpen || typeof document === "undefined") return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,9 +58,10 @@ export default function RaiseAdminRequestModal() {
     }, 1000);
   };
 
-  return (
-    <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
-      <div className="bg-white w-full max-w-lg rounded-xl border border-slate-200 shadow-2xl overflow-hidden space-y-0">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn">
+      <div className="absolute inset-0" onClick={() => setIsOpen(false)} />
+      <div className="bg-white w-full max-w-lg rounded-xl border border-slate-200 shadow-2xl overflow-hidden space-y-0 relative z-10" onClick={e => e.stopPropagation()}>
         {/* Modal Header */}
         <div className="p-5 bg-gradient-to-r from-[#1E4E70] to-[#153852] text-white flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -181,6 +183,7 @@ export default function RaiseAdminRequestModal() {
           </form>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

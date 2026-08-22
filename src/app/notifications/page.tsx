@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import {
   Bell,
@@ -34,7 +35,6 @@ export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<DoctorNotification[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [filter, setFilter] = useState<"all" | "read" | "unread">("all");
-  const [showLiveBanner, setShowLiveBanner] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState<DoctorNotification | null>(null);
   const [isBulkDeleteMode, setIsBulkDeleteMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -96,11 +96,6 @@ export default function NotificationsPage() {
     setNotifications((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const handleSimulateNotification = () => {
-    playIOSNotificationSound();
-    setShowLiveBanner(true);
-    setTimeout(() => setShowLiveBanner(false), 4500);
-  };
 
   const handleBulkDeleteModeToggle = () => {
     if (isBulkDeleteMode) {
@@ -131,34 +126,6 @@ export default function NotificationsPage() {
 
   return (
     <div className="space-y-6 animate-fadeIn pb-16 font-sans w-full max-w-full overflow-hidden">
-      {/* Live Notification Bar Toast Overlay */}
-      {showLiveBanner && (
-        <div className="fixed top-14 sm:top-16 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-md bg-white/95 backdrop-blur-xl border border-slate-200/90 rounded-lg p-3.5 shadow-xl flex items-center justify-between gap-3 animate-bounce font-sans">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center shrink-0">
-              <ShieldAlert className="w-5 h-5 animate-pulse" />
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-[11px] font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded-full">
-                  LIVE CRITICAL ALERT
-                </span>
-                <span className="text-[10px] text-slate-400 font-semibold">Just Now</span>
-              </div>
-              <p className="text-xs font-bold text-slate-900 mt-0.5">
-                Backend Notification Test Ping
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={() => setShowLiveBanner(false)}
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      )}
-
       {/* 1. Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -183,14 +150,7 @@ export default function NotificationsPage() {
           >
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
           </button>
-          <button
-            onClick={handleSimulateNotification}
-            className="bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-semibold text-xs px-3.5 py-2.5 rounded-xl shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-95 whitespace-nowrap"
-            title="Simulate notification bar"
-          >
-            <Volume2 className="w-4 h-4 text-emerald-600 animate-pulse shrink-0" />
-            <span>Notification Bar</span>
-          </button>
+
           {notifications.length > 0 && (
             <div className="flex items-center gap-2">
               {isBulkDeleteMode ? (
@@ -388,10 +348,10 @@ export default function NotificationsPage() {
       </div>
 
       {/* 4. DETAILS BOTTOM SHEET / MODAL */}
-      {selectedNotification && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center animate-fadeIn sm:p-4">
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setSelectedNotification(null)} />
-          <div className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden relative z-10 animate-slideUp transform transition-transform max-h-[85vh] flex flex-col font-sans">
+      {selectedNotification && typeof document !== "undefined" && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center animate-fadeIn sm:p-4 bg-slate-900/60 backdrop-blur-md">
+          <div className="absolute inset-0" onClick={() => setSelectedNotification(null)} />
+          <div className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden relative z-10 animate-slideUp transform transition-transform max-h-[85vh] flex flex-col font-sans" onClick={e => e.stopPropagation()}>
             <div className="w-full flex justify-center pt-3 pb-1 sm:hidden">
               <div className="w-12 h-1.5 bg-slate-200 rounded-full" />
             </div>
@@ -444,14 +404,15 @@ export default function NotificationsPage() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* 5. BULK DELETE CONFIRMATION MODAL */}
-      {showConfirmDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center animate-fadeIn p-4">
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setShowConfirmDelete(false)} />
-          <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden relative z-10 animate-slideUp p-6 flex flex-col font-sans space-y-4 text-center">
+      {showConfirmDelete && typeof document !== "undefined" && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center animate-fadeIn p-4 bg-slate-900/60 backdrop-blur-md">
+          <div className="absolute inset-0" onClick={() => setShowConfirmDelete(false)} />
+          <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden relative z-10 animate-slideUp p-6 flex flex-col font-sans space-y-4 text-center" onClick={e => e.stopPropagation()}>
             <div className="w-14 h-14 bg-rose-100 rounded-full flex items-center justify-center mx-auto text-rose-600">
               <Trash2 className="w-7 h-7" />
             </div>
@@ -476,7 +437,8 @@ export default function NotificationsPage() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

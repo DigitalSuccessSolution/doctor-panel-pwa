@@ -336,7 +336,7 @@ export default function GrowthAnalysisPage() {
 
       {/* Log Vitals Modal */}
       {showLogModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-fadeIn">
           <div className="bg-white w-full max-w-md rounded-xl p-6 shadow-2xl space-y-4 border border-slate-100 font-sans">
             <div className="flex items-center justify-between border-b pb-3">
               <h3 className="font-semibold text-slate-900 text-base">

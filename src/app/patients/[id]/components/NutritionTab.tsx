@@ -339,7 +339,7 @@ export default function NutritionTab({
 
       {/* Multi-Select Meal Catalog Modal */}
       {isCatalogModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-[150] flex items-center justify-center p-4 animate-fadeIn">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[150] flex items-center justify-center p-4 animate-fadeIn">
           <div className="bg-white rounded-xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col font-sans max-h-[90vh]">
             
             {/* Modal Header */}
@@ -581,7 +581,7 @@ export default function NutritionTab({
 
       {/* Confirmation Modal for Meal Deletion */}
       {mealToDelete !== null && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-[200] flex items-center justify-center p-4 animate-fadeIn">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[200] flex items-center justify-center p-4 animate-fadeIn">
           <div className="bg-white rounded-xl max-w-sm w-full shadow-2xl border border-slate-200 overflow-hidden font-sans text-center p-6 space-y-4">
             <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center mx-auto mb-2">
               <AlertTriangle className="w-6 h-6 text-rose-500" />
@@ -615,7 +615,7 @@ export default function NutritionTab({
 
       {/* Success Popup Modal */}
       {plannerSuccessMsg && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-[200] flex items-center justify-center p-4 animate-fadeIn">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[200] flex items-center justify-center p-4 animate-fadeIn">
           <div className="bg-white rounded-xl max-w-sm w-full shadow-2xl border border-slate-200 overflow-hidden font-sans text-center p-6 space-y-4">
             <div className="w-12 h-12 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center mx-auto mb-2">
               <CheckCircle2 className="w-6 h-6 text-emerald-500" />
@@ -639,7 +639,7 @@ export default function NutritionTab({
 
       {/* Error Popup Modal */}
       {plannerErrorMsg && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-[200] flex items-center justify-center p-4 animate-fadeIn">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[200] flex items-center justify-center p-4 animate-fadeIn">
           <div className="bg-white rounded-xl max-w-sm w-full shadow-2xl border border-slate-200 overflow-hidden font-sans text-center p-6 space-y-4">
             <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center mx-auto mb-2">
               <AlertTriangle className="w-6 h-6 text-rose-500" />

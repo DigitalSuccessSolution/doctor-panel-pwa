@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { X, Printer, CheckCircle, Pill, Calendar, Activity, Utensils, User, FileText } from "lucide-react";
 
@@ -17,7 +18,7 @@ export default function ViewPrescriptionModal({
   doctorProfile,
   onClose,
 }: ViewPrescriptionModalProps) {
-  if (!isOpen || !prescription) return null;
+  if (!isOpen || !prescription || typeof document === "undefined") return null;
 
   const medicines = prescription.items || prescription.medicines || [];
   const vitals = prescription.vitals || {};
@@ -28,10 +29,11 @@ export default function ViewPrescriptionModal({
     window.print();
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/60 backdrop-blur-xs animate-fadeIn font-sans">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 bg-slate-900/60 backdrop-blur-md animate-fadeIn font-sans">
+      <div className="absolute inset-0" onClick={onClose} />
       <div
-        className="bg-white w-full max-w-2xl max-h-[90vh] rounded-xl shadow-2xl flex flex-col overflow-hidden border border-slate-200 animate-scaleUp"
+        className="bg-white w-full max-w-2xl max-h-[90vh] rounded-xl shadow-2xl flex flex-col overflow-hidden border border-slate-200 animate-scaleUp relative z-10"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Top Action Bar */}
@@ -186,6 +188,7 @@ export default function ViewPrescriptionModal({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

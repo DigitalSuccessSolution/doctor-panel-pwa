@@ -40,13 +40,45 @@ export default function PrintableMedicalModal({
 
   if (!isOpen) return null;
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => { document.body.style.overflow = "unset"; };
+  }, [isOpen]);
+
   const handlePrint = () => {
     window.print();
   };
 
   const modalContent = (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-white w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-fadeIn">
+      <div className="absolute inset-0" onClick={onClose} />
+      <style>{`
+        @media print {
+          body * {
+            visibility: hidden;
+          }
+          .printable-area, .printable-area * {
+            visibility: visible;
+          }
+          .printable-area {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 20px;
+            background: white !important;
+            -webkit-print-color-adjust: exact;
+          }
+          @page { size: auto; margin: 0mm; }
+        }
+      `}</style>
+      <div className="bg-white w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col relative z-10" onClick={e => e.stopPropagation()}>
         {/* Modal Action Top Bar */}
         <div className="bg-[#1E4E70] text-white px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 min-w-0">
@@ -73,22 +105,17 @@ export default function PrintableMedicalModal({
         </div>
 
         {/* Printable Document Body */}
-        <div className="p-8 overflow-y-auto space-y-6 text-slate-800 printable-area">
+        <div className="p-4 sm:p-8 overflow-y-auto space-y-6 text-slate-800 printable-area">
           {/* Clinic Letterhead */}
-          <div className="flex items-start justify-between border-b-2 border-[#1E4E70] pb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-lg bg-[#A5D8FF]/30 text-[#1E4E70] flex items-center justify-center border border-[#A5D8FF]">
-                <HeartPulse className="w-7 h-7" />
-              </div>
-              <div>
-                <h1 className="font-semibold text-2xl text-[#1E4E70] leading-none">MONCRADEL</h1>
-                <p className="text-xs text-slate-500 font-semibold mt-1">
-                  Pediatric Care & Child Growth Clinic
-                </p>
-              </div>
+          <div className="flex flex-col sm:flex-row items-start sm:justify-between gap-4 border-b-2 border-[#1E4E70] pb-4">
+            <div className="flex flex-col gap-1">
+              <img src="/complete-logo.png" alt="Moncradel Logo" className="w-40 h-12 object-contain object-left" />
+              <p className="text-xs text-slate-500 font-semibold mt-1">
+                Pediatric Care & Child Growth Clinic
+              </p>
             </div>
 
-            <div className="text-right text-xs text-slate-600 space-y-0.5">
+            <div className="text-left sm:text-right text-xs text-slate-600 space-y-0.5">
               <p className="font-semibold text-slate-900">{doctorProfile.fullName}, MD (Pediatrics)</p>
               <p className="text-[11px] text-slate-500">Reg No: {doctorProfile.licenseNumber}</p>
               <p className="text-[11px] text-slate-500">Date: July 31, 2026</p>
@@ -130,28 +157,30 @@ export default function PrintableMedicalModal({
             <h4 className="font-semibold text-[#1E4E70] text-xs uppercase tracking-wider">
               Rx - Prescribed Medications
             </h4>
-            <table className="w-full text-xs text-left border-collapse">
-              <thead>
-                <tr className="bg-[#1E4E70] text-white font-semibold">
-                  <th className="p-2.5 rounded-tl-xl">#</th>
-                  <th className="p-2.5">Medicine Name</th>
-                  <th className="p-2.5">Dosage</th>
-                  <th className="p-2.5">Frequency</th>
-                  <th className="p-2.5 rounded-tr-xl">Duration</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200 border border-slate-200">
-                {medicines.map((m, idx) => (
-                  <tr key={idx} className="hover:bg-slate-50">
-                    <td className="p-2.5 font-semibold text-slate-500">{idx + 1}</td>
-                    <td className="p-2.5 font-semibold text-slate-900">{m.medicineName}</td>
-                    <td className="p-2.5 text-slate-700">{m.dosage}</td>
-                    <td className="p-2.5 text-slate-700">{m.frequency}</td>
-                    <td className="p-2.5 font-semibold text-[#1E4E70]">{m.duration}</td>
+            <div className="w-full overflow-x-auto rounded-xl border border-slate-200">
+              <table className="w-full text-xs text-left border-collapse min-w-[500px]">
+                <thead>
+                  <tr className="bg-[#1E4E70] text-white font-semibold">
+                    <th className="p-2.5 rounded-tl-xl">#</th>
+                    <th className="p-2.5">Medicine Name</th>
+                    <th className="p-2.5">Dosage</th>
+                    <th className="p-2.5">Frequency</th>
+                    <th className="p-2.5 rounded-tr-xl">Duration</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-200">
+                  {medicines.map((m, idx) => (
+                    <tr key={idx} className="hover:bg-slate-50">
+                      <td className="p-2.5 font-semibold text-slate-500">{idx + 1}</td>
+                      <td className="p-2.5 font-semibold text-slate-900">{m.medicineName}</td>
+                      <td className="p-2.5 text-slate-700">{m.dosage}</td>
+                      <td className="p-2.5 text-slate-700">{m.frequency}</td>
+                      <td className="p-2.5 font-semibold text-[#1E4E70]">{m.duration}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           {/* Digital Signature & Doctor Stamp Footer */}
