@@ -459,10 +459,11 @@ export default function Dashboard() {
 
       {/* REJECTION / CANCELLATION MODAL */}
       {cancelModalApt && typeof document !== "undefined" && createPortal(
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-[9999] flex items-center justify-center p-4 animate-fadeIn">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4 animate-fadeIn">
+          <div className="absolute inset-0" onClick={() => setCancelModalApt(null)} />
           <form
             onSubmit={handleConfirmReject}
-            className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4 font-sans"
+            className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4 font-sans relative z-10"
           >
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
@@ -517,9 +518,9 @@ export default function Dashboard() {
 
       {/* MOBILE BOTTOM SHEET / DESKTOP MODAL FOR APPOINTMENT DETAILS */}
       {selectedMobileApt && typeof document !== "undefined" && createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center animate-fadeIn sm:p-4">
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setSelectedMobileApt(null)} />
-          <div className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden relative z-10 animate-slideUp transform transition-transform max-h-[85vh] flex flex-col font-sans">
+        <div className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center animate-fadeIn sm:p-4 bg-slate-900/60 backdrop-blur-md">
+          <div className="absolute inset-0" onClick={() => setSelectedMobileApt(null)} />
+          <div className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden relative z-10 animate-slideUp transform transition-transform max-h-[85vh] flex flex-col font-sans" onClick={e => e.stopPropagation()}>
             <div className="w-full flex justify-center pt-3 pb-1 sm:hidden">
               <div className="w-12 h-1.5 bg-slate-200 rounded-full" />
             </div>
@@ -625,10 +626,11 @@ export default function Dashboard() {
 
       {/* EDIT NOTES MODAL */}
       {editModalApt && typeof document !== "undefined" && createPortal(
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-[9999] flex items-center justify-center p-4 animate-fadeIn">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4 animate-fadeIn">
+          <div className="absolute inset-0" onClick={() => setEditModalApt(null)} />
           <form
             onSubmit={handleSaveEdit}
-            className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4 font-sans"
+            className="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4 font-sans relative z-10"
           >
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="font-bold text-slate-900 text-sm">Edit Appointment Details</h3>

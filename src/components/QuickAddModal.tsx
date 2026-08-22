@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import {
   X,
   Stethoscope,
@@ -87,7 +88,7 @@ export default function QuickAddModal() {
     return () => window.removeEventListener("open-quick-add", handleOpen);
   }, []);
 
-  if (!isOpen) return null;
+  if (!isOpen || typeof document === "undefined") return null;
 
   const currentPatient = patients.find((p) => p.id === selectedPatientId) || patients[0];
 
@@ -232,9 +233,10 @@ export default function QuickAddModal() {
     }, 1100);
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/40 backdrop-blur-xs animate-fadeIn">
-      <div className="bg-white w-full max-w-lg h-full shadow-2xl flex flex-col overflow-hidden border-l border-slate-200 animate-slideLeft font-sans">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex justify-end bg-slate-900/60 backdrop-blur-md animate-fadeIn">
+      <div className="absolute inset-0" onClick={() => setIsOpen(false)} />
+      <div className="bg-white w-full max-w-lg h-full shadow-2xl flex flex-col overflow-hidden border-l border-slate-200 animate-slideLeft font-sans relative z-10" onClick={e => e.stopPropagation()}>
         {/* Soft-Tone Clean Header Banner */}
         <div
           className={`px-5 sm:px-6 py-4 flex items-center justify-between border-b transition-colors shrink-0 ${
@@ -656,6 +658,7 @@ export default function QuickAddModal() {
           )}
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

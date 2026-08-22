@@ -1,12 +1,23 @@
 "use client";
 
+import { useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X, ShieldCheck, FileText, Users, HelpCircle, Star, BookOpen, Award } from "lucide-react";
 import { useDoctorData } from "@/context/DoctorDataContext";
 
 export default function PolicyModal() {
   const { activePolicy, setActivePolicy } = useDoctorData();
 
-  if (!activePolicy) return null;
+  useEffect(() => {
+    if (activePolicy) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => { document.body.style.overflow = "unset"; };
+  }, [activePolicy]);
+
+  if (!activePolicy || typeof document === "undefined") return null;
 
   const titles: Record<string, string> = {
     privacy: "Privacy Policy & Clinical Data Protection",
@@ -19,9 +30,10 @@ export default function PolicyModal() {
     blogs: "Clinical Pediatrics & Growth Research Blogs",
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/60 backdrop-blur-md animate-fadeIn">
-      <div className="bg-white w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden border border-slate-100 animate-scaleUp flex flex-col max-h-[85vh]">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-md animate-fadeIn">
+      <div className="absolute inset-0" onClick={() => setActivePolicy(null)} />
+      <div className="bg-white w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden border border-slate-100 animate-scaleUp flex flex-col max-h-[85vh] relative z-10" onClick={e => e.stopPropagation()}>
         {/* Modal Header */}
         <div className="px-6 py-4 bg-[#F8F9FA] border-b border-slate-200 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
@@ -178,6 +190,7 @@ export default function PolicyModal() {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

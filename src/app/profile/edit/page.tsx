@@ -322,7 +322,7 @@ export default function EditDoctorProfilePage() {
 
       {/* ERROR MODAL / POPUP */}
       {Object.keys(fieldErrors).length > 0 && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-fadeIn">
           <div className="bg-white rounded-2xl w-full max-w-sm shadow-xl border border-red-100 overflow-hidden">
             <div className="bg-red-50 border-b border-red-100 p-4 flex items-start justify-between">
               <div className="flex items-center gap-2">

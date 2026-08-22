@@ -592,16 +592,7 @@ export default function PatientProfilePage() {
 
   return (
     <div className="space-y-6 animate-fadeIn pb-24 font-sans max-w-7xl mx-auto overflow-hidden">
-      {/* 0. Navigation Back Link */}
-      <div className="flex items-center justify-between">
-        <Link
-          href="/patients"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1E4E70] bg-[#F0F7FF] hover:bg-[#E0F0FF] px-3.5 py-2.5 rounded-xl border border-[#BEE0FF] transition-colors"
-        >
-          <ChevronLeft className="w-4 h-4" />
-          <span>Back to Patient Directory</span>
-        </Link>
-      </div>
+
 
       {/* 1. Top Patient Header Card */}
       <div className="bg-white rounded-xl p-4 sm:p-5 border border-slate-200/80 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between text-left gap-4 sm:gap-5 relative overflow-hidden">
@@ -788,7 +779,7 @@ export default function PatientProfilePage() {
 
       {/* Shared Delete Confirmation Modal */}
       {deleteModalConfig.isOpen && typeof document !== "undefined" && createPortal(
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-[9999] flex items-center justify-center p-4 animate-fadeIn">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4 animate-fadeIn">
           <div className="bg-white rounded-xl max-w-sm w-full shadow-2xl border border-slate-200 overflow-hidden font-sans">
             <div className="p-6 text-center space-y-4">
               <div className="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto shadow-sm">

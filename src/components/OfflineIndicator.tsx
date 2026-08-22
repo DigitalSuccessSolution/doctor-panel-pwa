@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { WifiOff } from "lucide-react";
 
 export default function OfflineIndicator() {
@@ -24,11 +25,20 @@ export default function OfflineIndicator() {
     };
   }, []);
 
-  if (!isOffline) return null;
+  useEffect(() => {
+    if (isOffline) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => { document.body.style.overflow = "unset"; };
+  }, [isOffline]);
 
-  return (
-    <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-white/95 backdrop-blur-md px-6 text-center animate-fadeIn">
-      <div className="bg-white p-8 sm:p-10 rounded-[2rem] shadow-2xl flex flex-col items-center justify-center max-w-sm w-full border border-slate-100 animate-slideUp">
+  if (!isOffline || typeof document === "undefined") return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-white/95 backdrop-blur-sm px-6 text-center animate-fadeIn">
+      <div className="bg-white p-8 sm:p-10 rounded-[2rem] shadow-2xl flex flex-col items-center justify-center max-w-sm w-full border border-slate-100 animate-slideUp relative z-10">
         <div className="relative w-40 h-12 mb-8 opacity-60 grayscale hover:grayscale-0 transition-all">
           <img
             src="/complete-logo.png"
@@ -49,6 +59,7 @@ export default function OfflineIndicator() {
           Please check your internet connection. The application will automatically reconnect when the network is restored.
         </p>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

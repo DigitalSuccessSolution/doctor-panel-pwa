@@ -44,8 +44,56 @@ export default function ReportsPage() {
   const earningsCount = earningsData?.count ?? 0;
   const earningsList: EarningItem[] = earningsData?.data || [];
 
+  const handleExportCSV = () => {
+    if (!earningsList || earningsList.length === 0) {
+      alert("No data to export");
+      return;
+    }
+    const headers = ["Date", "Amount (INR)", "Status", "Notes"];
+    const rows = earningsList.map((item) => [
+      item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "N/A",
+      item.amount.toString(),
+      item.status.toUpperCase(),
+      (item.notes || "").replace(/,/g, " "),
+    ]);
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `earnings_report_${new Date().toISOString().split("T")[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
-    <div className="space-y-6 animate-fadeIn pb-24 font-sans overflow-hidden">
+    <div className="space-y-6 animate-fadeIn pb-24 font-sans overflow-hidden reports-printable-area">
+      <style>{`
+        @media print {
+          body * {
+            visibility: hidden;
+          }
+          .reports-printable-area, .reports-printable-area * {
+            visibility: visible;
+          }
+          .reports-printable-area {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            margin: 0;
+            padding: 20px;
+            background: white !important;
+            -webkit-print-color-adjust: exact;
+          }
+          .no-print {
+            display: none !important;
+          }
+          @page { size: auto; margin: 0mm; }
+        }
+      `}</style>
       {/* Page Header */}
       <div className="flex flex-row items-start sm:items-center justify-between gap-4">
         <div>
@@ -57,9 +105,9 @@ export default function ReportsPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap no-print">
           <button
-            onClick={() => alert("Exporting Earnings Dataset to CSV...")}
+            onClick={handleExportCSV}
             className="flex items-center gap-1.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold text-xs px-3.5 py-2.5 rounded-lg shadow-xs transition-colors cursor-pointer"
           >
             <FileSpreadsheet className="w-4 h-4 text-emerald-600 shrink-0" />
@@ -76,7 +124,7 @@ export default function ReportsPage() {
       </div>
 
       {/* Segmented Control Tabs */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none w-full">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none w-full no-print">
         <button
           onClick={() => setActiveTab("financial")}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer ${
