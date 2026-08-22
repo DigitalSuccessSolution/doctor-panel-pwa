@@ -40,7 +40,7 @@ export const API_CONFIG = {
     },
     PRESCRIPTIONS: {
       LIST: "/api/prescriptions",
-      BY_BABY: (babyId: string) => `/api/prescriptions/${babyId}`,
+      BY_BABY: (babyId: string) => `/api/prescriptions/baby/${babyId}`,
       BY_ID: (id: string) => `/api/prescriptions/${id}`,
     },
     NUTRITION_PLANS: {

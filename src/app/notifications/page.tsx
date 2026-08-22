@@ -240,7 +240,7 @@ export default function NotificationsPage() {
                 ? AlertTriangle
                 : n.type === "appointment"
                 ? Calendar
-                : FileText;
+                : Bell;
 
             return (
               <div
@@ -373,7 +373,7 @@ export default function NotificationsPage() {
                 }`}>
                   {selectedNotification.type === 'growth_alert' ? <AlertTriangle className="w-6 h-6" /> : 
                    selectedNotification.type === 'appointment' ? <Calendar className="w-6 h-6" /> : 
-                   <FileText className="w-6 h-6" />}
+                   <Bell className="w-6 h-6" />}
                 </div>
                 <div className="space-y-1">
                   <h3 className="font-bold text-slate-900 text-base">{selectedNotification.title || selectedNotification.patientName}</h3>
