@@ -297,14 +297,19 @@ export default function ProfilePage() {
       </div>
 
       {/* Footer Links */}
-      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 pt-12 pb-8 text-[11px] font-medium text-slate-400">
-        <Link href="/privacy-policy" className="hover:text-slate-600 transition-colors">Privacy Policy</Link>
-        <span className="text-slate-300">•</span>
-        <Link href="/terms-of-service" className="hover:text-slate-600 transition-colors">Terms of Service</Link>
-        <span className="text-slate-300">•</span>
-        <Link href="/partner-program" className="hover:text-slate-600 transition-colors">Doctor Partner Program</Link>
-        <span className="text-slate-300">•</span>
-        <Link href="/faqs" className="hover:text-slate-600 transition-colors">Clinical FAQs</Link>
+      <div className="flex flex-col items-center justify-center gap-4 pt-12 pb-8">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-[11px] font-medium text-slate-400">
+          <Link href="/privacy-policy" className="hover:text-slate-600 transition-colors">Privacy Policy</Link>
+          <span className="text-slate-300">•</span>
+          <Link href="/terms-of-service" className="hover:text-slate-600 transition-colors">Terms of Service</Link>
+          <span className="text-slate-300">•</span>
+          <Link href="/partner-program" className="hover:text-slate-600 transition-colors">Doctor Partner Program</Link>
+          <span className="text-slate-300">•</span>
+          <Link href="/faqs" className="hover:text-slate-600 transition-colors">Clinical FAQs</Link>
+        </div>
+        <div className="text-[11px] text-slate-400 font-medium">
+          Designed and developed by <a href="https://digitalsuccesssolutions.in/" target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:text-emerald-700 hover:underline transition-colors">Digital Success Solutions</a>
+        </div>
       </div>
     </div>
   );
