@@ -88,10 +88,10 @@ export default function LoginModal() {
     if (showLoginModal) {
       document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
     };
   }, [showLoginModal]);
 
@@ -404,7 +404,8 @@ export default function LoginModal() {
   };
 
   const handleOtpChange = (val: string, index: number) => {
-    const digit = val.slice(-1);
+    const numericVal = val.replace(/[^0-9]/g, '');
+    const digit = numericVal.slice(-1);
     const newOtp = [...otp];
     newOtp[index] = digit;
     setOtp(newOtp);
@@ -424,7 +425,8 @@ export default function LoginModal() {
   };
 
   const handleResetOtpChange = (val: string, index: number) => {
-    const digit = val.slice(-1);
+    const numericVal = val.replace(/[^0-9]/g, '');
+    const digit = numericVal.slice(-1);
     const newOtp = [...resetOtp];
     newOtp[index] = digit;
     setResetOtp(newOtp);
@@ -656,6 +658,7 @@ export default function LoginModal() {
                         key={idx}
                         id={`otp-input-${idx}`}
                         type="text"
+                        inputMode="numeric"
                         maxLength={1}
                         value={digit}
                         onChange={(e) => handleOtpChange(e.target.value, idx)}
@@ -904,6 +907,7 @@ export default function LoginModal() {
                         key={idx}
                         id={`reset-otp-input-${idx}`}
                         type="text"
+                        inputMode="numeric"
                         maxLength={1}
                         value={digit}
                         onChange={(e) => handleResetOtpChange(e.target.value, idx)}

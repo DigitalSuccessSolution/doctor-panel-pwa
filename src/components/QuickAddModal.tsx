@@ -519,9 +519,10 @@ export default function QuickAddModal() {
                         Calories
                       </label>
                       <input
-                        type="number"
+                        type="text"
+                        inputMode="numeric"
                         value={targetCalories}
-                        onChange={(e) => setTargetCalories(e.target.value)}
+                        onChange={(e) => setTargetCalories(e.target.value.replace(/[^0-9.]/g, ''))}
                         className="w-full bg-[#F8F9FA] border border-slate-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none"
                       />
                     </div>
@@ -530,9 +531,10 @@ export default function QuickAddModal() {
                         Protein (g)
                       </label>
                       <input
-                        type="number"
+                        type="text"
+                        inputMode="numeric"
                         value={targetProtein}
-                        onChange={(e) => setTargetProtein(e.target.value)}
+                        onChange={(e) => setTargetProtein(e.target.value.replace(/[^0-9.]/g, ''))}
                         className="w-full bg-[#F8F9FA] border border-slate-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none"
                       />
                     </div>
@@ -541,9 +543,10 @@ export default function QuickAddModal() {
                         Iron (mg)
                       </label>
                       <input
-                        type="number"
+                        type="text"
+                        inputMode="numeric"
                         value={targetIron}
-                        onChange={(e) => setTargetIron(e.target.value)}
+                        onChange={(e) => setTargetIron(e.target.value.replace(/[^0-9.]/g, ''))}
                         className="w-full bg-[#F8F9FA] border border-slate-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none"
                       />
                     </div>
@@ -623,13 +626,14 @@ export default function QuickAddModal() {
                     </div>
                     <div>
                       <label className="block text-[11px] font-semibold text-slate-600 uppercase mb-1">
-                        Dosage
+                        Dose (ml/drops)
                       </label>
                       <input
                         type="text"
-                        placeholder="e.g. 1.5 ml"
+                        inputMode="decimal"
+                        placeholder="e.g. 1.5"
                         value={dosage}
-                        onChange={(e) => setDosage(e.target.value)}
+                        onChange={(e) => setDosage(e.target.value.replace(/[^0-9.]/g, ''))}
                         className="w-full bg-[#F8F9FA] border border-slate-200 rounded-lg px-3 py-2 text-xs focus:outline-none"
                       />
                     </div>

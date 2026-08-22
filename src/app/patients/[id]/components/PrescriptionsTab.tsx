@@ -86,22 +86,24 @@ export default function PrescriptionsTab({
           {/* Vitals subform */}
           <div className="grid grid-cols-3 gap-2.5 text-xs">
             <div className="space-y-1.5">
-              <label className="font-semibold text-slate-700">Weight</label>
+              <label className="font-semibold text-slate-700">Weight (kg)</label>
               <input
                 type="text"
+                inputMode="decimal"
                 value={rxWeight}
-                onChange={(e) => setRxWeight(e.target.value)}
-                placeholder={`${patient.weight || 6.8} kg`}
+                onChange={(e) => setRxWeight(e.target.value.replace(/[^0-9.]/g, ''))}
+                placeholder={`${patient.weight || 6.8}`}
                 className="w-full bg-[#F8FAFC] border border-slate-200 rounded-xl p-2.5 text-xs focus:outline-none"
               />
             </div>
             <div className="space-y-1.5">
-              <label className="font-semibold text-slate-700">Temp</label>
+              <label className="font-semibold text-slate-700">Temp (°F)</label>
               <input
                 type="text"
+                inputMode="decimal"
                 value={rxTemp}
-                onChange={(e) => setRxTemp(e.target.value)}
-                placeholder="98.6 F"
+                onChange={(e) => setRxTemp(e.target.value.replace(/[^0-9.]/g, ''))}
+                placeholder="98.6"
                 className="w-full bg-[#F8FAFC] border border-slate-200 rounded-xl p-2.5 text-xs focus:outline-none"
               />
             </div>
@@ -109,9 +111,10 @@ export default function PrescriptionsTab({
               <label className="font-semibold text-slate-700">BP</label>
               <input
                 type="text"
+                inputMode="text"
                 value={rxBP}
-                onChange={(e) => setRxBP(e.target.value)}
-                placeholder="N/A"
+                onChange={(e) => setRxBP(e.target.value.replace(/[^0-9/]/g, ''))}
+                placeholder="120/80"
                 className="w-full bg-[#F8FAFC] border border-slate-200 rounded-xl p-2.5 text-xs focus:outline-none"
               />
             </div>
@@ -160,12 +163,13 @@ export default function PrescriptionsTab({
                     />
                   </div>
                   <div className="sm:col-span-3 space-y-1">
-                    <label className="font-semibold text-slate-500">Dose</label>
+                    <label className="font-semibold text-slate-500">Dose (ml/drops)</label>
                     <input
                       type="text"
+                      inputMode="decimal"
                       value={med.dosage}
-                      onChange={(e) => handleMedicineChange(index, "dosage", e.target.value)}
-                      placeholder="e.g. 2.5 ml"
+                      onChange={(e) => handleMedicineChange(index, "dosage", e.target.value.replace(/[^0-9.]/g, ''))}
+                      placeholder="e.g. 2.5"
                       className="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs focus:outline-none focus:ring-1 focus:ring-[#1E4E70]"
                     />
                   </div>
@@ -277,7 +281,19 @@ export default function PrescriptionsTab({
             <p className="text-center text-xs text-slate-400 py-6">No previous prescriptions recorded.</p>
           ) : (
             <div className="space-y-3">
-              {prescriptionList.map((rx) => (
+              {prescriptionList.map((rx) => {
+                const getFreqLabel = (freq: string) => {
+                  const labels: Record<string, string> = {
+                    "1-0-0": "Morning",
+                    "0-1-0": "Afternoon",
+                    "0-0-1": "Night",
+                    "1-0-1": "Morning & Night",
+                    "1-1-1": "3 Times a Day",
+                  };
+                  return labels[freq] || freq;
+                };
+
+                return (
                 <div key={rx.id} className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-lg space-y-2">
                   <div className="flex items-center justify-between text-xs border-b border-slate-200/60 pb-1.5">
                     <span className="font-bold text-slate-800">{rx.date}</span>
@@ -311,7 +327,7 @@ export default function PrescriptionsTab({
                         <div key={idx} className="flex flex-col mb-1 border-b border-slate-100/50 pb-1 last:border-0">
                           <div className="flex justify-between font-semibold">
                             <span>• {m.medicineName || m.name}</span>
-                            <span>{m.dosage} ({m.frequency}) - {m.duration}</span>
+                            <span>{m.dosage} ({getFreqLabel(m.frequency)}) - {m.duration}</span>
                           </div>
                           {m.instructions && (
                             <span className="text-[9px] text-slate-500 pl-2 italic">Instructions: {m.instructions}</span>
@@ -326,7 +342,7 @@ export default function PrescriptionsTab({
                     </p>
                   )}
                 </div>
-              ))}
+              )})}
             </div>
           )}
         </div>

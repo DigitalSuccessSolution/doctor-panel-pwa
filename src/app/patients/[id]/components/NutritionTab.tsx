@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { PlusCircle, Utensils, Search, Trash2, FileText, Save, CheckCircle2, X, Loader2, AlertTriangle } from "lucide-react";
 import { Patient } from "@/data/mockData";
 import { getPatientNutrientGoals, nutritionService } from "@/services/nutritionService";
@@ -338,9 +339,10 @@ export default function NutritionTab({
       </div>
 
       {/* Multi-Select Meal Catalog Modal */}
-      {isCatalogModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[150] flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white rounded-xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col font-sans max-h-[90vh]">
+      {isCatalogModalOpen && typeof document !== "undefined" && createPortal(
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4 animate-fadeIn">
+          <div className="absolute inset-0" onClick={() => { setIsCatalogModalOpen(false); setSelectedMealIds([]); setExpandedMealId(null); }} />
+          <div className="bg-white rounded-xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col font-sans max-h-[90vh] relative z-10" onClick={e => e.stopPropagation()}>
             
             {/* Modal Header */}
             <div className="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-50 shrink-0">
@@ -575,14 +577,17 @@ export default function NutritionTab({
                 </button>
               </div>
             </div>
+
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Confirmation Modal for Meal Deletion */}
-      {mealToDelete !== null && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[200] flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white rounded-xl max-w-sm w-full shadow-2xl border border-slate-200 overflow-hidden font-sans text-center p-6 space-y-4">
+      {mealToDelete !== null && typeof document !== "undefined" && createPortal(
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4 animate-fadeIn">
+          <div className="absolute inset-0" onClick={() => setMealToDelete(null)} />
+          <div className="bg-white rounded-xl max-w-sm w-full shadow-2xl border border-slate-200 overflow-hidden font-sans text-center p-6 space-y-4 relative z-10" onClick={e => e.stopPropagation()}>
             <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center mx-auto mb-2">
               <AlertTriangle className="w-6 h-6 text-rose-500" />
             </div>
@@ -610,13 +615,15 @@ export default function NutritionTab({
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Success Popup Modal */}
-      {plannerSuccessMsg && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[200] flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white rounded-xl max-w-sm w-full shadow-2xl border border-slate-200 overflow-hidden font-sans text-center p-6 space-y-4">
+      {plannerSuccessMsg && typeof document !== "undefined" && createPortal(
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4 animate-fadeIn">
+          <div className="absolute inset-0" onClick={() => setPlannerSuccessMsg("")} />
+          <div className="bg-white rounded-xl max-w-sm w-full shadow-2xl border border-slate-200 overflow-hidden font-sans text-center p-6 space-y-4 relative z-10" onClick={e => e.stopPropagation()}>
             <div className="w-12 h-12 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center mx-auto mb-2">
               <CheckCircle2 className="w-6 h-6 text-emerald-500" />
             </div>
@@ -634,13 +641,15 @@ export default function NutritionTab({
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Error Popup Modal */}
-      {plannerErrorMsg && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[200] flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white rounded-xl max-w-sm w-full shadow-2xl border border-slate-200 overflow-hidden font-sans text-center p-6 space-y-4">
+      {plannerErrorMsg && typeof document !== "undefined" && createPortal(
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4 animate-fadeIn">
+          <div className="absolute inset-0" onClick={() => setPlannerErrorMsg("")} />
+          <div className="bg-white rounded-xl max-w-sm w-full shadow-2xl border border-slate-200 overflow-hidden font-sans text-center p-6 space-y-4 relative z-10" onClick={e => e.stopPropagation()}>
             <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center mx-auto mb-2">
               <AlertTriangle className="w-6 h-6 text-rose-500" />
             </div>
@@ -658,7 +667,8 @@ export default function NutritionTab({
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

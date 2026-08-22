@@ -91,10 +91,10 @@ export default function AppointmentsPage() {
     if (selectedMobileApt || selectedPatientModal || cancelModalApt || editModalApt) {
       document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
     };
   }, [selectedMobileApt, selectedPatientModal, cancelModalApt, editModalApt]);
 
@@ -141,6 +141,10 @@ export default function AppointmentsPage() {
     setIsSubmittingEdit(true);
     try {
       const res = await appointmentService.updateAppointment(editModalApt.id, {
+        doctorId: editModalApt.doctorId,
+        babyId: editModalApt.patientId, // In frontend it's mapped to patientId
+        date: editModalApt.date,
+        time: editModalApt.time,
         doctorNotes: editNotes.trim(),
       });
 
@@ -381,7 +385,7 @@ export default function AppointmentsPage() {
                             className="p-2 text-slate-600 hover:text-[#1E4E70] hover:bg-slate-100 rounded-xl transition-colors cursor-pointer border border-slate-200/80"
                             title="Edit Doctor Notes or Tele-Consult Link"
                           >
-                            <Edit3 className="w-3.5 h-3.5" />
+                            <FileText className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       </td>
@@ -689,7 +693,8 @@ export default function AppointmentsPage() {
               </button>
             </div>
           </form>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* 7. MOBILE BOTTOM SHEET FOR APPOINTMENT DETAILS */}
@@ -786,7 +791,7 @@ export default function AppointmentsPage() {
                   }}
                   className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs py-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-colors"
                 >
-                  <Edit3 className="w-4 h-4" /> Doctor Notes
+                  <FileText className="w-4 h-4" /> Doctor Notes
                 </button>
                 {(!selectedMobileApt.status || selectedMobileApt.status.toLowerCase() !== "cancelled") && (
                   <button

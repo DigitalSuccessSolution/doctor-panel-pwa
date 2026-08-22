@@ -151,9 +151,15 @@ export const authService = {
    * PUT /api/users/profile
    */
   async updateProfile(data: any): Promise<ApiResponse> {
+    const isFormData = data instanceof FormData;
     return apiFetch(API_CONFIG.ENDPOINTS.USERS.PROFILE, {
       method: "PUT",
-      body: JSON.stringify(data),
+      body: isFormData ? data : JSON.stringify(data),
+      ...(isFormData ? {
+        headers: {
+          // fetch will automatically set Content-Type to multipart/form-data with the correct boundary when body is FormData
+        }
+      } : {})
     });
   },
 

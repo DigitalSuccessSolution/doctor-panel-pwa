@@ -90,6 +90,8 @@ export const appointmentService = {
   async updateAppointment(
     id: string,
     data: {
+      doctorId?: string;
+      babyId?: string;
       date?: string;
       time?: string;
       notes?: string;
