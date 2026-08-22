@@ -108,17 +108,10 @@ export default function ReportsPage() {
         <div className="flex items-center gap-2 flex-wrap no-print">
           <button
             onClick={handleExportCSV}
-            className="flex items-center gap-1.5 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold text-xs px-3.5 py-2.5 rounded-lg shadow-xs transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 bg-[#1E4E70] border border-[#1E4E70] text-white hover:bg-[#153852] font-semibold text-xs px-4 py-2.5 rounded-lg shadow-xs transition-colors cursor-pointer"
           >
-            <FileSpreadsheet className="w-4 h-4 text-emerald-600 shrink-0" />
+            <FileSpreadsheet className="w-4 h-4 text-white shrink-0" />
             <span>Export CSV</span>
-          </button>
-          <button
-            onClick={() => window.print()}
-            className="flex items-center gap-1.5 bg-[#1E4E70] text-white hover:bg-[#153852] font-semibold text-xs px-4 py-2.5 rounded-lg shadow-xs transition-colors cursor-pointer"
-          >
-            <Download className="w-4 h-4 shrink-0" />
-            <span>Download Report</span>
           </button>
         </div>
       </div>
