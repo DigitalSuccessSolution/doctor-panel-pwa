@@ -81,6 +81,11 @@ export async function apiFetch<T = any>(
     ...(options.headers as Record<string, string>),
   };
 
+  // If body is FormData, let the browser set the Content-Type with correct boundary
+  if (options.body instanceof FormData) {
+    delete headers["Content-Type"];
+  }
+
   const token = getStoredToken();
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;

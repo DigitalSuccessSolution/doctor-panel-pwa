@@ -67,6 +67,7 @@ export default function EditDoctorProfilePage() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [selectedAvatar, setSelectedAvatar] = useState(doctorProfile?.avatar || "/doctor_female.png");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasNewPhoto, setHasNewPhoto] = useState(false);
 
   useEffect(() => {
     if (doctorProfile) {
@@ -138,6 +139,7 @@ export default function EditDoctorProfilePage() {
           const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.7);
           setSelectedAvatar(compressedDataUrl);
           setFormData((prev) => ({ ...prev, avatar: compressedDataUrl }));
+          setHasNewPhoto(true);
         };
         img.src = event.target?.result as string;
       };
@@ -173,6 +175,7 @@ export default function EditDoctorProfilePage() {
       email: formData.email || "",
       phone: formData.phone || "",
       avatar: selectedAvatar || formData.avatar,
+      gender: formData.gender || "",
       specialization: formData.specialization || "",
       experienceYears: parseInt(formData.experience) || 0,
       clinicName: formData.hospital || "",
@@ -203,6 +206,7 @@ export default function EditDoctorProfilePage() {
       email: formData.email,
       phone: formData.phone,
       avatar: selectedAvatar || formData.avatar,
+      gender: formData.gender,
       specialization: formData.specialization,
       licenseNumber: formData.licenseNumber,
       hospital: formData.hospital,
@@ -459,7 +463,25 @@ export default function EditDoctorProfilePage() {
                   </button>
                 </div>
 
-
+                <div className="flex flex-col items-center sm:items-start gap-2">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Gender</span>
+                  <div className="flex items-center bg-white border border-slate-200 p-1 rounded-lg shadow-xs">
+                    {['Male', 'Female', 'Other'].map(g => (
+                      <button
+                        key={g}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, gender: g })}
+                        className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+                          formData.gender === g 
+                            ? 'bg-[#1E4E70] text-white shadow-sm' 
+                            : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                        }`}
+                      >
+                        {g}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               {/* UPLOAD CUSTOM BUTTON */}
@@ -473,11 +495,18 @@ export default function EditDoctorProfilePage() {
 
                 <button
                   type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="bg-[#1E4E70] hover:bg-[#153852] text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+                  onClick={(e) => {
+                    if (hasNewPhoto) {
+                      handleSubmit(e, false);
+                      setHasNewPhoto(false);
+                    } else {
+                      fileInputRef.current?.click();
+                    }
+                  }}
+                  className={`text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-xs transition-all flex items-center gap-2 cursor-pointer active:scale-95 ${hasNewPhoto ? "bg-emerald-600 hover:bg-emerald-700" : "bg-[#1E4E70] hover:bg-[#153852]"}`}
                 >
-                  <Upload className="w-3.5 h-3.5" />
-                  <span>Upload Custom Photo</span>
+                  {hasNewPhoto ? <Check className="w-3.5 h-3.5" /> : <Upload className="w-3.5 h-3.5" />}
+                  <span>{hasNewPhoto ? (isSubmitting ? "Saving..." : "Save New Photo") : "Upload Custom Photo"}</span>
                 </button>
               </div>
             </div>
