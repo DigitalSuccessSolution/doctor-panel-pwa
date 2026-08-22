@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
 import QuickAddModal from "@/components/QuickAddModal";
+import EnterToNextField from "@/components/EnterToNextField";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -47,6 +48,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-[#F8F9FA] text-slate-800 antialiased selection:bg-[#A5D8FF]" suppressHydrationWarning>
         <DoctorDataProvider>
+          <EnterToNextField />
           <OfflineIndicator />
           <AppShell>{children}</AppShell>
         </DoctorDataProvider>
