@@ -230,9 +230,6 @@ export default function EditDoctorProfilePage() {
 
       setTimeout(() => {
         setSaveSuccess(false);
-        if (shouldRedirect) {
-          router.push("/profile");
-        }
       }, 1500);
 
     } catch (err: any) {

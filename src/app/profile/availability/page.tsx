@@ -270,7 +270,6 @@ export default function AvailabilityManagerPage() {
       setSaveSuccess(true);
       setTimeout(() => {
         setSaveSuccess(false);
-        router.push("/profile");
       }, 1500);
     } catch (err) {
       console.warn("Failed to update profile timings:", err);
@@ -283,7 +282,6 @@ export default function AvailabilityManagerPage() {
       setSaveSuccess(true);
       setTimeout(() => {
         setSaveSuccess(false);
-        router.push("/profile");
       }, 2000);
     } finally {
       setIsSubmitting(false);
