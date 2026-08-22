@@ -622,7 +622,7 @@ export default function EditDoctorProfilePage() {
                   type="text"
                   required
                   value={formData.experience || ""}
-                  onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, experience: e.target.value.replace(/[^0-9]/g, '') })}
                   placeholder="10"
                   className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
                 />
@@ -696,8 +696,8 @@ export default function EditDoctorProfilePage() {
                   </label>
                   <input
                     type="number"
-                    value={consultationFee}
-                    onChange={(e) => setConsultationFee(Number(e.target.value))}
+                    value={consultationFee || ""}
+                    onChange={(e) => setConsultationFee(Number(e.target.value.replace(/[^0-9]/g, '')) || 0)}
                     placeholder="500"
                     className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
                   />
@@ -770,8 +770,9 @@ export default function EditDoctorProfilePage() {
                 </label>
                 <input
                   type="text"
+                  inputMode="numeric"
                   value={bankAccountNumber}
-                  onChange={(e) => setBankAccountNumber(e.target.value)}
+                  onChange={(e) => setBankAccountNumber(e.target.value.replace(/[^0-9]/g, ''))}
                   placeholder="123456789012"
                   className="w-full text-xs sm:text-sm font-medium px-4 py-3 bg-[#F8FAFC] border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1E4E70] focus:bg-white text-slate-900"
                 />

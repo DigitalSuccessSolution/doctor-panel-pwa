@@ -208,10 +208,10 @@ export default function GrowthTab({
                     </label>
                     <input
                       required
-                      type="number"
-                      step="0.01"
+                      type="text"
+                      inputMode="decimal"
                       value={logWeight}
-                      onChange={(e) => setLogWeight(e.target.value)}
+                      onChange={(e) => setLogWeight(e.target.value.replace(/[^0-9.]/g, ''))}
                       placeholder="e.g. 10.5"
                       className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#818CF8] focus:border-transparent"
                     />
@@ -223,10 +223,10 @@ export default function GrowthTab({
                     </label>
                     <input
                       required
-                      type="number"
-                      step="0.1"
+                      type="text"
+                      inputMode="decimal"
                       value={logHeight}
-                      onChange={(e) => setLogHeight(e.target.value)}
+                      onChange={(e) => setLogHeight(e.target.value.replace(/[^0-9.]/g, ''))}
                       placeholder="e.g. 78.5"
                       className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#818CF8] focus:border-transparent"
                     />
@@ -241,10 +241,10 @@ export default function GrowthTab({
                     <span className="text-[10px] font-semibold text-slate-400">Optional</span>
                   </div>
                   <input
-                    type="number"
-                    step="0.1"
+                    type="text"
+                    inputMode="decimal"
                     value={logHead}
-                    onChange={(e) => setLogHead(e.target.value)}
+                    onChange={(e) => setLogHead(e.target.value.replace(/[^0-9.]/g, ''))}
                     placeholder="e.g. 46.2"
                     className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#818CF8] focus:border-transparent"
                   />
